@@ -1,4 +1,11 @@
 # Controller
+
+## Create a key
+
+```shell
+openssl rand 32 | base64 > .key
+```
+
 ## Start ipfs for local testing
 `ipfs daemon --init`
 ## Build
