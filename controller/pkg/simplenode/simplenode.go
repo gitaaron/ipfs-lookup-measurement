@@ -17,8 +17,8 @@ func Experiment(publish int, key []byte, nodesList []string) {
 	// Publish string from node[publish]
 	publisher := nodesList[publish]
 
-	// Generate random content, 512 bytes.
-	content := make([]byte, 512)
+	// Generate random content, 0.5 MB.
+	content := make([]byte, 500_000)
 	rand.Read(content)
 
 	// Request Publish
