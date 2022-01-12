@@ -7,8 +7,8 @@ num_nodes = 6
 
 
 def downloadLogs():
-    for i in range(0, num_nodes):
-        cmd = """ logcli query --limit=987654321 --since=24h --output=jsonl '{host="node%d"}' >%d.log """ % (
+    for i in range(5, num_nodes):
+        cmd = """ logcli query --limit=987654321 --since=2000h --output=jsonl '{host="node%d"}' >%d.log """ % (
             i, i)
         run(cmd, shell=True)
 

@@ -43,7 +43,7 @@ const (
 
 // NewServer creates a new server.
 func NewServer(ctx context.Context, listenAddr string, keyStr string) error {
-	key, err := base64.RawStdEncoding.DecodeString(keyStr)
+	key, err := base64.StdEncoding.DecodeString(keyStr)
 	if err != nil {
 		return err
 	}

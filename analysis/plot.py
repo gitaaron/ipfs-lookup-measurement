@@ -3,6 +3,10 @@ import json
 import os
 import matplotlib.pyplot as plt
 import psutil
+import seaborn as sns
+import numpy as np
+
+sns.set_theme()
 
 
 def trim_agent(agent):
@@ -69,7 +73,7 @@ errs_1 = []
 agents_2 = dict()
 
 
-for file in ["1.log", "2.log", "3.log", "4.log", "5.log"]:
+for file in ["0.log", "1.log", "2.log", "3.log", "4.log", "5.log"]:
     pvd_on = False
     pvd_start = None
     pvd_search = None
@@ -81,18 +85,22 @@ for file in ["1.log", "2.log", "3.log", "4.log", "5.log"]:
     for line in reversed(list(open(file))):
         data = json.loads(line)
         if data["line"].startswith("Start providing"):
-            pvd_start = datetime.datetime.strptime(data["timestamp"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
+            pvd_start = datetime.datetime.strptime(
+                data["timestamp"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
             pvd_on = True
         elif data["line"].startswith("Finish providing"):
-            end = datetime.datetime.strptime(data["timestamp"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
+            end = datetime.datetime.strptime(
+                data["timestamp"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
             pvd_put_latencies.append(millis_interval(pvd_search, end))
             pvd_latencies.append(millis_interval(pvd_start, end))
             pvd_on = False
         elif data["line"].startswith("Start retrieving"):
-            ret_start = datetime.datetime.strptime(data["timestamp"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
+            ret_start = datetime.datetime.strptime(
+                data["timestamp"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
             ret_on = True
         elif data["line"].startswith("Done retrieving"):
-            end = datetime.datetime.strptime(data["timestamp"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
+            end = datetime.datetime.strptime(
+                data["timestamp"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
             ret_get_latencies.append(millis_interval(ret_search, end))
             ret_latencies.append(millis_interval(ret_start, end))
             ret_on = False
@@ -101,77 +109,104 @@ for file in ["1.log", "2.log", "3.log", "4.log", "5.log"]:
                 agent = trim_agent(data["line"].split("(")[-1].split(")")[0])
                 if data["line"].startswith("Getting closest peers for cid"):
                     pvd_agents[agent] = pvd_agents.get(agent, 0) + 1
-                    pvd_dht_walk_agents[agent] = pvd_dht_walk_agents.get(agent, 0) + 1
+                    pvd_dht_walk_agents[agent] = pvd_dht_walk_agents.get(
+                        agent, 0) + 1
                 elif data["line"].startswith("Succeed in putting provider record"):
                     pvd_agents[agent] = pvd_agents.get(agent, 0) + 1
                     pvd_put_agents[agent] = pvd_put_agents.get(agent, 0) + 1
-                    pvd_put_agents_succeed[agent] = pvd_put_agents_succeed.get(agent, 0) + 1
+                    pvd_put_agents_succeed[agent] = pvd_put_agents_succeed.get(
+                        agent, 0) + 1
                     latency = data["line"].split(":")[-1][1:]
                     pvd_put_latencies_succeed.append(get_millis(latency))
                 elif data["line"].startswith("Error putting provider record"):
                     pvd_agents[agent] = pvd_agents.get(agent, 0) + 1
                     pvd_put_agents[agent] = pvd_put_agents.get(agent, 0) + 1
-                    pvd_put_agents_failed[agent] = pvd_put_agents_failed.get(agent, 0) + 1
+                    pvd_put_agents_failed[agent] = pvd_put_agents_failed.get(
+                        agent, 0) + 1
                     latency = data["line"].split(":")[-1][1:]
                     pvd_put_latencies_failed.append(get_millis(latency))
                     if agent == "hydra-booster":
-                        errs.append(data["line"].split(")")[1].split("time taken")[0])
+                        errs.append(data["line"].split(")")[
+                                    1].split("time taken")[0])
                 elif data["line"].startswith("In total"):
-                    pvd_search = datetime.datetime.strptime(data["timestamp"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
-                    pvd_dht_walk_latencies.append(millis_interval(pvd_start, pvd_search))
+                    pvd_search = datetime.datetime.strptime(
+                        data["timestamp"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
+                    pvd_dht_walk_latencies.append(
+                        millis_interval(pvd_start, pvd_search))
                 elif data["line"].startswith("Error getting provider record for cid"):
                     agents_1[agent] = agents_1.get(agent, 0) + 1
-                    errs_1.append(data["line"].split("after a successful put")[1])
+                    errs_1.append(data["line"].split(
+                        "after a successful put")[1])
                 elif data["line"].startswith("Got 0 provider records back from"):
                     agents_2[agent] = agents_2.get(agent, 0) + 1
             if ret_on:
                 agent = trim_agent(data["line"].split("(")[-1].split(")")[0])
                 if data["line"].startswith("Getting providers for cid"):
                     ret_agents[agent] = ret_agents.get(agent, 0) + 1
-                    ret_dht_walk_agents[agent] = ret_dht_walk_agents.get(agent, 0) + 1
+                    ret_dht_walk_agents[agent] = ret_dht_walk_agents.get(
+                        agent, 0) + 1
                 elif data["line"].startswith("Found provider for cid"):
                     ret_agents[agent] = ret_agents.get(agent, 0) + 1
                     ret_get_agents[agent] = ret_get_agents.get(agent, 0) + 1
                 elif data["line"].startswith("Connected to provider"):
-                    ret_search = datetime.datetime.strptime(data["timestamp"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
-                    ret_dht_walk_latencies.append(millis_interval(ret_start, ret_search))
+                    ret_search = datetime.datetime.strptime(
+                        data["timestamp"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
+                    ret_dht_walk_latencies.append(
+                        millis_interval(ret_start, ret_search))
                 pass
             pass
 
 # Generate graphs
 plt.rc('font', size=8)
-plt.rcParams["figure.figsize"] = (10,6)
+plt.rcParams["figure.figsize"] = (15, 6)
 # Overall pvd latency
 plt.clf()
-plt.hist(list(pvd_latencies), bins=20, density=False)
-plt.title("Content publish overall latency")
-plt.xlabel("Latency (ms)")
+xdata = np.array(list(pvd_latencies))/1000
+plt.hist(xdata, bins=100, density=False)
+p50 = "%.2f" % np.percentile(xdata, 50)
+p90 = "%.2f" % np.percentile(xdata, 90)
+p95 = "%.2f" % np.percentile(xdata, 95)
+plt.title(
+    f"Content publish overall latency (Sample Size {len(pvd_latencies)}), {p50}s (p50), {p90}s (p90), {p95}s (p95)")
+plt.xlabel("Latency (s)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/pvd_latency.png")
 # Overall pvd latency trim
 trim = list(pvd_latencies)
 trim = [x for x in trim if x <= 200000]
+xdata = np.array(list(trim))/1000
 plt.clf()
-plt.hist(trim, bins=100, density=False)
-plt.title("Content publish overall latency (Trimmed)")
-plt.xlabel("Latency (ms)")
+plt.hist(xdata, bins=np.arange(0, 200, 2), density=False)
+plt.title(
+    f"Content publish overall latency (Trimmed) (Sample Size {len(trim)}), {p50}s (p50), {p90}s (p90), {p95}s (p95)")
+plt.xlabel("Latency (s)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/pvd_latency_trim.png")
 # DHT Walk pvd latency
 plt.clf()
-plt.hist(list(pvd_dht_walk_latencies), bins=20, density=False)
-plt.title("Content publish DHT walk latency")
-plt.xlabel("Latency (ms)")
+xdata = np.array(list(pvd_dht_walk_latencies))/1000
+plt.hist(xdata, bins=50, density=False)
+p50 = "%.2f" % np.percentile(xdata, 50)
+p90 = "%.2f" % np.percentile(xdata, 90)
+p95 = "%.2f" % np.percentile(xdata, 95)
+plt.title(
+    f"Content publish DHT walk latency (Sample Size {len(xdata)}), {p50}s (p50), {p90}s (p90), {p95}s (p95)")
+plt.xlabel("Latency (s)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/pvd_dht_walk_latency.png")
 # Overall pvd latency trim
 trim = list(pvd_dht_walk_latencies)
 trim = [x for x in trim if x <= 150000]
 plt.clf()
-plt.hist(trim, bins=100, density=False)
+xdata = np.array(list(trim))/1000
+plt.hist(xdata, bins=100, density=False)
 plt.title("Content publish DHT walk latency (Trimmed)")
-plt.xlabel("Latency (ms)")
+plt.xlabel("Latency (s)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/pvd_dht_walk_latency_trim.png")
 # PVD put latency
 plt.clf()
@@ -179,14 +214,21 @@ plt.hist(list(pvd_put_latencies), bins=20, density=False)
 plt.title("Content publish put latency")
 plt.xlabel("Latency (ms)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/pvd_put_latency.png")
 trim = list(pvd_put_latencies)
 trim = [x for x in trim if x <= 60000]
 plt.clf()
-plt.hist(trim, bins=100, density=False)
-plt.title("Content publish put latency (Trimmed)")
-plt.xlabel("Latency (ms)")
+xdata = np.array(list(trim))/1000
+plt.hist(xdata, bins=100, density=False)
+p50 = "%.2f" % np.percentile(np.array(list(pvd_put_latencies))/1000, 50)
+p90 = "%.2f" % np.percentile(np.array(list(pvd_put_latencies))/1000, 90)
+p95 = "%.2f" % np.percentile(np.array(list(pvd_put_latencies))/1000, 95)
+plt.title(
+    f"Content publish put latency (Trimmed) (Sample Size {len(xdata)}), {p50}s (p50), {p90}s (p90), {p95}s (p95)")
+plt.xlabel("Latency (s)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/pvd_put_latency_trim.png")
 # PVD put latency succeed
 plt.clf()
@@ -194,6 +236,7 @@ plt.hist(list(pvd_put_latencies_succeed), bins=20, density=False)
 plt.title("Content publish put latency (succeed)")
 plt.xlabel("Latency (ms)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/pvd_put_latency_succeed.png")
 trim = list(pvd_put_latencies_succeed)
 trim = [x for x in trim if x <= 2000]
@@ -202,6 +245,7 @@ plt.hist(list(trim), bins=100, density=False)
 plt.title("Content publish put latency (succeed) (Trimmed)")
 plt.xlabel("Latency (ms)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/pvd_put_latency_succeed_trim.png")
 # PVD put latency failed
 plt.clf()
@@ -209,6 +253,7 @@ plt.hist(list(pvd_put_latencies_failed), bins=20, density=False)
 plt.title("Content publish put latency (failed)")
 plt.xlabel("Latency (ms)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/pvd_put_latency_failed.png")
 trim = list(pvd_put_latencies_failed)
 trim = [x for x in trim if x <= 60000]
@@ -217,6 +262,7 @@ plt.hist(list(trim), bins=100, density=False)
 plt.title("Content publish put latency (failed) (Trimmed)")
 plt.xlabel("Latency (ms)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/pvd_put_latency_failed_trim.png")
 # PVD all agents
 plt.clf()
@@ -226,6 +272,7 @@ for index, value in enumerate(list(pvd_agents.values())):
 plt.title("All agents encountered in overall content publish")
 plt.xlabel("Count")
 plt.ylabel("Agent")
+plt.tight_layout()
 plt.savefig("./figs/pvd_agents.png")
 # PVD dht walk agents
 plt.clf()
@@ -235,6 +282,7 @@ for index, value in enumerate(list(pvd_dht_walk_agents.values())):
 plt.title("All agents encountered in DHT walk content publish")
 plt.xlabel("Count")
 plt.ylabel("Agent")
+plt.tight_layout()
 plt.savefig("./figs/pvd_agents_dht_walk.png")
 # PVD dht put agents
 plt.clf()
@@ -244,24 +292,29 @@ for index, value in enumerate(list(pvd_put_agents.values())):
 plt.title("All agents encountered in PUT content publish")
 plt.xlabel("Count")
 plt.ylabel("Agent")
+plt.tight_layout()
 plt.savefig("./figs/pvd_agents_put.png")
 # PVD dht put succeed agents
 plt.clf()
-plt.barh(list(pvd_put_agents_succeed.keys()), list(pvd_put_agents_succeed.values()))
+plt.barh(list(pvd_put_agents_succeed.keys()),
+         list(pvd_put_agents_succeed.values()))
 for index, value in enumerate(list(pvd_put_agents_succeed.values())):
     plt.text(value, index, str(value))
 plt.title("All agents encountered in PUT Succeed content publish")
 plt.xlabel("Count")
 plt.ylabel("Agent")
+plt.tight_layout()
 plt.savefig("./figs/pvd_agents_put_succeed.png")
 # PVD dht put failed agents
 plt.clf()
-plt.barh(list(pvd_put_agents_failed.keys()), list(pvd_put_agents_failed.values()))
+plt.barh(list(pvd_put_agents_failed.keys()),
+         list(pvd_put_agents_failed.values()))
 for index, value in enumerate(list(pvd_put_agents_failed.values())):
     plt.text(value, index, str(value))
 plt.title("All agents encountered in PUT Failed content publish")
 plt.xlabel("Count")
 plt.ylabel("Agent")
+plt.tight_layout()
 plt.savefig("./figs/pvd_agents_put_failed.png")
 # Overall ret latency
 plt.clf()
@@ -270,6 +323,7 @@ plt.hist(list(ret_latencies), bins=20, density=False)
 plt.title("Content fetch overall latency")
 plt.xlabel("Latency (ms)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/ret_latency.png")
 trim = list(ret_latencies)
 trim = [x for x in trim if x <= 5000]
@@ -279,6 +333,7 @@ plt.hist(list(trim), bins=100, density=False)
 plt.title("Content fetch overall latency (Trimmed)")
 plt.xlabel("Latency (ms)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/ret_latency_trim.png")
 # DHT Walk ret latency
 plt.clf()
@@ -286,6 +341,7 @@ plt.hist(list(ret_dht_walk_latencies), bins=20, density=False)
 plt.title("Content fetch DHT walk latency")
 plt.xlabel("Latency (ms)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/ret_dht_walk_latency.png")
 trim = list(ret_dht_walk_latencies)
 trim = [x for x in trim if x <= 3000]
@@ -294,6 +350,7 @@ plt.hist(list(trim), bins=100, density=False)
 plt.title("Content fetch DHT walk latency (Trimmed)")
 plt.xlabel("Latency (ms)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/ret_dht_walk_latency_trim.png")
 # Get ret latency
 plt.clf()
@@ -301,6 +358,7 @@ plt.hist(list(ret_get_latencies), bins=20, density=False)
 plt.title("Content fetch GET latency")
 plt.xlabel("Latency (ms)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/ret_get_latency.png")
 trim = list(ret_get_latencies)
 trim = [x for x in trim if x <= 1000]
@@ -309,6 +367,7 @@ plt.hist(list(trim), bins=20, density=False)
 plt.title("Content fetch GET latency (Trimmed)")
 plt.xlabel("Latency (ms)")
 plt.ylabel("Count")
+plt.tight_layout()
 plt.savefig("./figs/ret_get_latency_trim.png")
 # Ret all agents
 plt.clf()
@@ -318,6 +377,7 @@ for index, value in enumerate(list(ret_agents.values())):
 plt.title("All agents encountered in overall content fetch")
 plt.xlabel("Count")
 plt.ylabel("Agent")
+plt.tight_layout()
 plt.savefig("./figs/ret_agents.png")
 # Ret dht walk agents
 plt.clf()
@@ -327,6 +387,7 @@ for index, value in enumerate(list(ret_dht_walk_agents.values())):
 plt.title("All agents encountered in DHT walk content fetch")
 plt.xlabel("Count")
 plt.ylabel("Agent")
+plt.tight_layout()
 plt.savefig("./figs/ret_agents_dht_walk.png")
 # Ret dht get agents
 plt.clf()
@@ -336,6 +397,7 @@ for index, value in enumerate(list(ret_get_agents.values())):
 plt.title("All agents encountered for getting a provider record")
 plt.xlabel("Count")
 plt.ylabel("Agent")
+plt.tight_layout()
 plt.savefig("./figs/ret_agents_get.png")
 # Hydra-booster error type, PVD put
 errdict = dict()
@@ -345,11 +407,13 @@ for err in errs:
             if "i/o timeout" in e:
                 errdict["i/o timeout"] = errdict.get("i/o timeout", 0) + 1
             elif "timeout: no recent network activity" in e:
-                errdict["timeout: no recent \nnetwork activity"] = errdict.get("timeout: no recent \nnetwork activity", 0) + 1
+                errdict["timeout: no recent \nnetwork activity"] = errdict.get(
+                    "timeout: no recent \nnetwork activity", 0) + 1
             elif "dial backoff" in e:
                 errdict["dial backoff"] = errdict.get("dial backoff", 0) + 1
             elif "context deadline exceeded" in e:
-                errdict["context deadline \nexceeded"] = errdict.get("context deadline \nexceeded", 0) + 1
+                errdict["context deadline \nexceeded"] = errdict.get(
+                    "context deadline \nexceeded", 0) + 1
             else:
                 print("uncaptured error", e)
 plt.clf()
@@ -359,15 +423,18 @@ for index, value in enumerate(list(errdict.values())):
 plt.title("Error in putting provider record to hydra-booster nodes")
 plt.xlabel("Count")
 plt.ylabel("Error type")
+plt.tight_layout()
 plt.savefig("./figs/pvd_agents_put_failed_hydra_booster_err.png")
 # Agents error getting provider record back
 plt.clf()
 plt.barh(list(agents_1.keys()), list(agents_1.values()))
 for index, value in enumerate(list(agents_1.values())):
     plt.text(value, index, str(value))
-plt.title("Agents for having error in getting provider record back after a successful put")
+plt.title(
+    "Agents for having error in getting provider record back after a successful put")
 plt.xlabel("Count")
 plt.ylabel("Agent")
+plt.tight_layout()
 plt.savefig("./figs/pvd_agents_get_error.png")
 # The error of getting provider record back
 errdict = dict()
@@ -375,11 +442,14 @@ for err in errs_1:
     if "stream reset" in err:
         errdict["stream reset"] = errdict.get("stream reset", 0) + 1
     elif "timeout: no recent network activity" in err:
-        errdict["timeout: no recent \nnetwork activity"] = errdict.get("timeout: no recent \nnetwork activity", 0) + 1
+        errdict["timeout: no recent \nnetwork activity"] = errdict.get(
+            "timeout: no recent \nnetwork activity", 0) + 1
     elif "timed out reading response" in err:
-        errdict["timed out \nreading response"] = errdict.get("timed out \nreading response", 0) + 1
+        errdict["timed out \nreading response"] = errdict.get(
+            "timed out \nreading response", 0) + 1
     elif "Application error 0x0" in err:
-        errdict["Application error \n0x0"] = errdict.get("Application error \n0x0", 0) + 1
+        errdict["Application error \n0x0"] = errdict.get(
+            "Application error \n0x0", 0) + 1
     elif "failed to dial" in err:
         errdict["failed to dial"] = errdict.get("failed to dial", 0) + 1
     else:
@@ -391,6 +461,7 @@ for index, value in enumerate(list(errdict.values())):
 plt.title("The error in getting provider record back after a successful put")
 plt.xlabel("Count")
 plt.ylabel("Error type")
+plt.tight_layout()
 plt.savefig("./figs/pvd_agents_get_error_type.png")
 # Empty provider record after a successful put
 plt.clf()
@@ -400,5 +471,7 @@ for index, value in enumerate(list(agents_2.values())):
 plt.title("Agents for having empty provider record back after a successful put")
 plt.xlabel("Count")
 plt.ylabel("Agent")
+plt.tight_layout()
 plt.savefig("./figs/pvd_agents_get_empty.png")
-print("memory used:", psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2, "MB")
+print("memory used:", psutil.Process(
+    os.getpid()).memory_info().rss / 1024 ** 2, "MB")

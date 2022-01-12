@@ -62,15 +62,15 @@ resource "aws_instance" "ipfs_testing_node" {
     make agent
     cd ..
     cd ..
-    git clone https://github.com/wcgcyx/go-libp2p-kad-dht.git
+    git clone https://github.com/dennis-tra/go-libp2p-kad-dht.git
     cd go-libp2p-kad-dht
     git checkout more-logging
     cd ..
-    git clone https://github.com/wcgcyx/go-bitswap.git
+    git clone https://github.com/dennis-tra/go-bitswap.git
     cd go-bitswap
     git checkout more-logging
     cd ..
-    git clone https://github.com/wcgcyx/go-ipfs.git
+    git clone https://github.com/dennis-tra/go-ipfs.git
     cd go-ipfs
     git checkout more-logging
     echo "replace github.com/libp2p/go-libp2p-kad-dht => ../go-libp2p-kad-dht" >> go.mod
