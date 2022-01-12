@@ -14,5 +14,5 @@ def downloadLogs():
 
 
 if __name__ == "__main__":
-    os.putenv("LOKI_ADDR", "http://18.157.182.86:3100/")
+    os.putenv("LOKI_ADDR", "http://3.69.26.31:3100/")
     downloadLogs()
