@@ -1,6 +1,14 @@
-docker:
-	printf "8twhpZqypAdqrbhD8feb mCl6L9aX5UaokvwxCLcM\n" > node/.key
+docker: key docker-monitor docker-agent
+
+key:
+	openssl rand 32 | base64 > node/.key
 	cp -p node/.key controller/.key
-	cd controller; make agent && cp -vp agent ../node
+
+
+docker-monitor:
 	cd monitor; docker build -t ipfs-monitor .; cd ..
-	cd node; docker build --no-cache -t ipfs-node .; cd ..
+
+
+docker-agent:
+	docker build -t ipfs-node -f ./node/Dockerfile .
+
