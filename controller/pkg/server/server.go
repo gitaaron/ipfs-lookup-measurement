@@ -30,7 +30,16 @@ type agent struct {
 	peerIDs []string
 }
 
-// Message type
+var handlerNames = map[byte]string{
+  1: "GetID",
+  2: "SetID",
+  3: "Check",
+  4: "Publish",
+  5: "Lookup",
+  6: "Clean",
+  7: "Disconnect",
+}
+
 const (
 	GetID      = 1
 	SetID      = 2
@@ -41,21 +50,28 @@ const (
 	Disconnect = 7
 )
 
+
+
 // NewServer creates a new server.
 func NewServer(ctx context.Context, listenAddr string, keyStr string) error {
+	log.Debugf("key : %s", keyStr)
 	key, err := base64.StdEncoding.DecodeString(keyStr)
 	if err != nil {
+		log.Errorf("error in creating the key: %v\n", err.Error())
 		return err
 	}
+
 	if len(key) != 32 {
 		return fmt.Errorf("Wrong key size, expect 32, got: %v", len(key))
 	}
+
 	a := &agent{
 		ctx:      ctx,
 		key:      key,
 		handlers: make(map[byte]func(data []byte) (byte, []byte, error)),
 		peerIDs:  make([]string, 0),
 	}
+
 	a.server = &http.Server{
 		Addr:           listenAddr,
 		Handler:        a,
@@ -63,6 +79,7 @@ func NewServer(ctx context.Context, listenAddr string, keyStr string) error {
 		WriteTimeout:   60 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
+
 	// Add handlers
 	a.handlers[GetID] = handleGetID
 	a.handlers[SetID] = a.handleSetID
@@ -73,7 +90,7 @@ func NewServer(ctx context.Context, listenAddr string, keyStr string) error {
 	a.handlers[Disconnect] = a.handleDisonnect
 	// 	Start server
 	log.Infof("Start listening at %v", listenAddr)
-	if err = a.server.ListenAndServe(); err != nil {
+  if err = a.server.ListenAndServe(); err != nil {
 		return err
 	}
 	return nil
@@ -81,6 +98,7 @@ func NewServer(ctx context.Context, listenAddr string, keyStr string) error {
 
 // ServeHTTP serves http.
 func (a *agent) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
 	content, err := ioutil.ReadAll(r.Body)
 	if closeErr := r.Body.Close(); closeErr != nil {
 		log.Warn("HTTP can't close request body")
@@ -102,8 +120,10 @@ func (a *agent) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	msgType := plain[0]
+  log.Debugf("handle : %s", handlerNames[msgType])
 	msgData := plain[1:]
 	handler, ok := a.handlers[msgType]
+
 	if !ok {
 		log.Error("Unsupported message type: %v", msgType)
 		WriteError(w, 400, fmt.Sprintf("Unsupported method: %v", msgType))
@@ -111,7 +131,7 @@ func (a *agent) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	respType, respData, err := handler(msgData)
 	if err != nil {
-		log.Error("Error handling request: %v", err.Error())
+		log.Errorf("Error handling request: %v", err.Error())
 		WriteError(w, 400, fmt.Sprintf("Error handling request: %v", err.Error()))
 		return
 	}

@@ -115,6 +115,7 @@ func handleLookup(data []byte) (byte, []byte, error) {
 
 	// Get cid
 	cid := string(data)
+  log.Debugf("cid : %s", cid)
 
 	// write cid to a file
 	err := os.WriteFile(fmt.Sprintf("lookup-%v", cid), []byte{1}, 0644)
