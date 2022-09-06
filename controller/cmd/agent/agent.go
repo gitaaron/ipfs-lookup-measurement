@@ -22,12 +22,15 @@ func main() {
 		return
 	}
 
-	cmd := flag.NewFlagSet("simple", flag.ExitOnError)
-	portNumStr := cmd.String("p", "3030", "port number")
+
+  hostStr := flag.String("host", "", "host")
+  portNumStr := flag.String("port", "3030", "port number")
+  flag.Parse()
 	key, err := ioutil.ReadFile(".key")
 	if err != nil {
 		fmt.Printf("error in getting the key: %v\n", err.Error())
 		return
 	}
-	server.NewServer(context.Background(), ":"+*portNumStr, string(key))
+
+	server.NewServer(context.Background(), *hostStr+":"+*portNumStr, string(key))
 }
