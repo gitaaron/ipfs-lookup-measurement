@@ -56,7 +56,7 @@ resource "aws_instance" "ipfs_testing_node" {
     export HOME=/home/ubuntu
     export GOPATH=/home/ubuntu/go
     export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    git clone https://github.com/ConsenSys/ipfs-lookup-measurement.git
+    git clone https://github.com/gitaaron/ipfs-lookup-measurement.git
     cd ipfs-lookup-measurement
     cd controller
     make agent
