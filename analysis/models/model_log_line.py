@@ -297,10 +297,10 @@ class LogLine:
         return parsed
 
     def is_finish_searching_pvd(self) -> Optional[ParsedLogLine]:
-        if "Finish searching providers for cid" not in self.line:
+        if "Finished searching providers for cid" not in self.line:
             return None
         match = re.search(
-            r"([^\s]+): Finish searching providers for cid (\w+) with ctx error: (.+)?", self.line)
+            r"([^\s]+): Finished searching providers for cid (\w+) ctx error: (.+)?", self.line)
         if match is None:
             return None
 
