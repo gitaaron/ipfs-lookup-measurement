@@ -40,6 +40,16 @@ Then you should be able to see figures under `./figs` directory.
 
 Note, if you are running multiple nodes, change the `download_logs.py` line 6 `num_nodes=$(Number of nodes)`.
 
+## More-Logging
+
+The code with IPFS (`go-ipfs v0.10.0`) modifications can be found in the following repositories:
+
+- [`go-ipfs`](https://github.com/dennis-tra/go-ipfs/tree/more-logging) - Branch `more-logging`
+- [`go-libp2p-kad-dht`](https://github.com/dennis-tra/go-libp2p-kad-dht/tree/more-logging) - Branch `more-logging`
+- [`go-bitswap`](https://github.com/dennis-tra/go-bitswap/tree/more-logging) - Branch `more-logging`
+
+The modifications consist of additional log messages to gather more information about peer interactions.
+
 ## Result
 
 ### Content publish
