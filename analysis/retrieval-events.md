@@ -49,7 +49,6 @@ The following is an ordered sequence of events for retrieval.
   GETTING_CLOSEST_PEERS: dial_started_at - get_providers_queries_started_at,
   DIALING: connected_at - dial_started_at,
   FETCHING: done_retrieving_at - connected_at,
-  DONE: done_retrieving_at | finished_searching_providers_at
 }
 ```
 
