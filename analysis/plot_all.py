@@ -1,4 +1,4 @@
-from plot import cdf_retrievals, pie_phase_retrieval_latency
+from plot import cdf_retrievals, bar_region_retrieval_latency, pie_phase_retrieval_latency
 from log_parse import load_parsed_logs, ParsedLogFile
 from models.model_publication import Publication
 from models.model_retrieval import Retrieval
@@ -50,5 +50,6 @@ if __name__=='__main__':
 
     plot_cdf(retrievals)
     pie_phase_retrieval_latency.plot(retrievals)
+    bar_region_retrieval_latency.plot(parsed_logs)
 
     plt.show()

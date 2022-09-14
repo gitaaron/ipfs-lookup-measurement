@@ -6,21 +6,17 @@ from models.model_publication import Publication
 from models.model_retrieval import Retrieval
 
 
-def plot():
+def plot(parsed_logs: List[ParsedLogFile]):
 
-    region_labels = ['af_south_1', 'ap_southeast_2', 'eu_central_1', 'me_south_1', 'sa_east_1', 'us_west_1']
+    region_labels = []
 
     regions_average_retrieval_duration = []
 
-    logs = [ './2022-01-16-data/%s.log' % rl for rl in region_labels]
+    for log in parsed_logs:
 
-    for log in logs:
+        region_labels.append(log.region())
 
-        parsed_logs = load_parsed_logs([log])
-
-        #retrievals: List[Retrieval] = []
-
-        retrievals = parsed_logs[0].retrievals
+        retrievals = log.retrievals
 
         # Remove all retrievals that are marked as invalid
         before = len(retrievals)
@@ -35,10 +31,6 @@ def plot():
             f"Removed {before - len(retrievals)} of {before} retrievals because they were not started")  # error in our measurement setup
 
         total_retrieval_durations = [(ret.done_retrieving_at - ret.retrieval_started_at).total_seconds() for ret in retrievals]
-        for ret in retrievals:
-            print('tot duration : %s' % (ret.done_retrieving_at - ret.retrieval_started_at).total_seconds())
-
-        print('log : %s total_retrieval_durations %s' % (log, np.average(total_retrieval_durations)))
 
         regions_average_retrieval_duration.append(np.average(total_retrieval_durations))
 
@@ -46,9 +38,6 @@ def plot():
 
     plt.rcdefaults()
     fig1, ax1 = plt.subplots()
-
-    print(x_pos)
-    print(regions_average_retrieval_duration)
 
     ax1.bar(x_pos, regions_average_retrieval_duration, align='center')
     ax1.set_xticks(x_pos, labels=region_labels)

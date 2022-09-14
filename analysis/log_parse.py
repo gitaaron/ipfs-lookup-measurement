@@ -8,11 +8,17 @@ from models.model_retrieval import Retrieval
 
 
 class ParsedLogFile:
+
+    def region(self):
+        return self.filename.split('/')[-1].split('.')[0]
+
     def __init__(
             self,
+            filename: str,
             publications: List[Publication],
             retrievals: List[Retrieval],
             unattempted_retrieval_cids: List[str]):
+        self.filename: str = filename
         self.publications: List[Publication] = publications
         self.retrievals: List[Retrieval] = retrievals
         self.unattempted_retrieval_cids: List[str] = unattempted_retrieval_cids
@@ -33,7 +39,7 @@ def load_parsed_logs(log_files: List[str]) -> List[ParsedLogFile]:
 def parse(log_files: List[str]):
     for log_file in log_files:
         parsed = LogFile.parse(log_file)
-        plf = ParsedLogFile(list(parsed[0].values()), list(
+        plf = ParsedLogFile(log_file, list(parsed[0].values()), list(
             parsed[1].values()), parsed[2])
         with open(log_file + ".p", "wb") as f:
             pickle.dump(plf, f)
