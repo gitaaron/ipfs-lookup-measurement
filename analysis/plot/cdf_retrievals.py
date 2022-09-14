@@ -1,9 +1,8 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from models.model_retrieval import Retrieval
 from typing import List
 
-def initiated_phase(retrievals: List[Retrieval]):
+def initiated_phase(axl, retrievals: List[Retrieval]):
     overall_retrieval_durations = []
     for ret in retrievals:
         overall_retrieval_durations += [
@@ -15,10 +14,10 @@ def initiated_phase(retrievals: List[Retrieval]):
     dx = bin_edges[1]-bin_edges[0]
     cdf = np.cumsum(hist)*dx
 
-    plt.plot(bin_edges[:-1], cdf, label='initiated')
+    axl.plot(bin_edges[:-1], cdf, label='initiated')
 
 
-def getting_closest_peers_phase(retrievals: List[Retrieval]):
+def getting_closest_peers_phase(axl, retrievals: List[Retrieval]):
     overall_retrieval_durations = []
     for ret in retrievals:
         overall_retrieval_durations += [
@@ -30,10 +29,10 @@ def getting_closest_peers_phase(retrievals: List[Retrieval]):
     dx = bin_edges[1]-bin_edges[0]
     cdf = np.cumsum(hist)*dx
 
-    plt.plot(bin_edges[:-1], cdf, label='getting_closest_peers')
+    axl.plot(bin_edges[:-1], cdf, label='getting_closest_peers')
 
 
-def dialing_phase(retrievals: List[Retrieval]):
+def dialing_phase(axl, retrievals: List[Retrieval]):
     overall_retrieval_durations = []
     for ret in retrievals:
         overall_retrieval_durations += [
@@ -45,9 +44,9 @@ def dialing_phase(retrievals: List[Retrieval]):
     dx = bin_edges[1]-bin_edges[0]
     cdf = np.cumsum(hist)*dx
 
-    plt.plot(bin_edges[:-1], cdf, label='dialing')
+    axl.plot(bin_edges[:-1], cdf, label='dialing')
 
-def fetching_phase(retrievals: List[Retrieval]):
+def fetching_phase(axl, retrievals: List[Retrieval]):
     overall_retrieval_durations = []
     for ret in retrievals:
         overall_retrieval_durations += [
@@ -59,11 +58,11 @@ def fetching_phase(retrievals: List[Retrieval]):
     dx = bin_edges[1]-bin_edges[0]
     cdf = np.cumsum(hist)*dx
 
-    plt.plot(bin_edges[:-1], cdf, label='fetching')
+    axl.plot(bin_edges[:-1], cdf, label='fetching')
 
 
 
-def total(retrievals: List[Retrieval]):
+def total(axl, retrievals: List[Retrieval]):
 
     overall_retrieval_durations = []
     for ret in retrievals:
@@ -76,4 +75,4 @@ def total(retrievals: List[Retrieval]):
     dx = bin_edges[1]-bin_edges[0]
     cdf = np.cumsum(hist)*dx
 
-    plt.plot(bin_edges[:-1], cdf, label='total')
+    axl.plot(bin_edges[:-1], cdf, label='total')

@@ -1,10 +1,20 @@
-from plot import cdf_retrievals
+from plot import cdf_retrievals, pie_phase_retrieval_latency
 from log_parse import load_parsed_logs, ParsedLogFile
 from models.model_publication import Publication
 from models.model_retrieval import Retrieval
 from typing import List
 import matplotlib.pyplot as plt
 
+
+def plot_cdf(retrievals):
+    fig, axl = plt.subplots()
+    cdf_retrievals.total(axl, retrievals)
+    cdf_retrievals.initiated_phase(axl, retrievals)
+    cdf_retrievals.getting_closest_peers_phase(axl, retrievals)
+    cdf_retrievals.dialing_phase(axl, retrievals)
+    cdf_retrievals.fetching_phase(axl, retrievals)
+    axl.set_title('Retrieval Phase Latency Distribution')
+    axl.legend(loc='lower right')
 
 if __name__=='__main__':
     logs = [
@@ -38,10 +48,7 @@ if __name__=='__main__':
     print(
         f"Removed {before - len(retrievals)} of {before} retrievals because they were not started")  # error in our measurement setup
 
-    cdf_retrievals.total(retrievals)
-    cdf_retrievals.initiated_phase(retrievals)
-    cdf_retrievals.getting_closest_peers_phase(retrievals)
-    cdf_retrievals.dialing_phase(retrievals)
-    cdf_retrievals.fetching_phase(retrievals)
-    plt.legend(loc='lower right')
+    plot_cdf(retrievals)
+    pie_phase_retrieval_latency.plot(retrievals)
+
     plt.show()
