@@ -30,23 +30,11 @@ if __name__=='__main__':
 
 
     publications: List[Publication] = []
-
     retrievals: List[Retrieval] = []
+
     for parsed_log in parsed_logs:
         publications += parsed_log.publications
-        retrievals += parsed_log.retrievals
-
-    # Remove all retrievals that are marked as invalid
-    before = len(retrievals)
-    retrievals = list(
-        filter(lambda ret: not ret.marked_as_incomplete, retrievals))
-    print(
-        f"Removed {before - len(retrievals)} of {before} retrievals because they were incomplete")
-
-    retrievals = list(filter(lambda ret: ret.state !=
-                      Retrieval.State.DONE_WITHOUT_ASKING_PEERS, retrievals))
-    print(
-        f"Removed {before - len(retrievals)} of {before} retrievals because they were not started")  # error in our measurement setup
+        retrievals += parsed_log.completed_retrievals()
 
     plot_cdf(retrievals)
     pie_phase_retrieval_latency.plot(retrievals)

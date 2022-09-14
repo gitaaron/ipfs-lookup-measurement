@@ -12,6 +12,28 @@ class ParsedLogFile:
     def region(self):
         return self.filename.split('/')[-1].split('.')[0]
 
+    _completed_retrievals: List[Retrieval] = None
+
+    def completed_retrievals(self):
+        if(self._completed_retrievals==None):
+            self._completed_retrievals = []
+            # Remove all retrievals that are marked as invalid
+            before = len(self.retrievals)
+            self._completed_retrievals = list(
+                filter(lambda ret: not ret.marked_as_incomplete, self.retrievals))
+            print(
+                f"Removed {before - len(self._completed_retrievals)} of {before} retrievals because they were incomplete for region {self.region()}")
+
+            before = len(self._completed_retrievals)
+
+            self._completed_retrievals = list(filter(lambda ret: ret.state !=
+                            Retrieval.State.DONE_WITHOUT_ASKING_PEERS, self._completed_retrievals))
+            print(
+                f"Removed {before - len(self._completed_retrievals)} of {before} retrievals because they were not started for region {self.region()}")  # error in our measurement setup
+
+        return self._completed_retrievals
+
+
     def __init__(
             self,
             filename: str,
