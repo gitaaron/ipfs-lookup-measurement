@@ -1,6 +1,8 @@
 import numpy as np
 from models.model_retrieval import Retrieval
 from typing import List
+import matplotlib.pyplot as plt
+
 
 def initiated_phase(axl, retrievals: List[Retrieval]):
     overall_retrieval_durations = []
@@ -17,7 +19,7 @@ def initiated_phase(axl, retrievals: List[Retrieval]):
     axl.plot(bin_edges[:-1], cdf, label='initiated')
 
 
-def getting_closest_peers_phase(axl, retrievals: List[Retrieval]):
+def getting_closest_peers_phase(axl, retrievals: List[Retrieval], label: str):
     overall_retrieval_durations = []
     for ret in retrievals:
         overall_retrieval_durations += [
@@ -29,7 +31,7 @@ def getting_closest_peers_phase(axl, retrievals: List[Retrieval]):
     dx = bin_edges[1]-bin_edges[0]
     cdf = np.cumsum(hist)*dx
 
-    axl.plot(bin_edges[:-1], cdf, label='getting_closest_peers')
+    axl.plot(bin_edges[:-1], cdf, label=label)
 
 
 def dialing_phase(axl, retrievals: List[Retrieval]):
@@ -46,7 +48,7 @@ def dialing_phase(axl, retrievals: List[Retrieval]):
 
     axl.plot(bin_edges[:-1], cdf, label='dialing')
 
-def fetching_phase(axl, retrievals: List[Retrieval]):
+def fetching_phase(axl, retrievals: List[Retrieval], label: str):
     overall_retrieval_durations = []
     for ret in retrievals:
         overall_retrieval_durations += [
@@ -58,11 +60,11 @@ def fetching_phase(axl, retrievals: List[Retrieval]):
     dx = bin_edges[1]-bin_edges[0]
     cdf = np.cumsum(hist)*dx
 
-    axl.plot(bin_edges[:-1], cdf, label='fetching')
+    axl.plot(bin_edges[:-1], cdf, label=label)
 
 
 
-def total(axl, retrievals: List[Retrieval]):
+def total(axl, retrievals: List[Retrieval], label: str):
 
     overall_retrieval_durations = []
     for ret in retrievals:
@@ -75,4 +77,46 @@ def total(axl, retrievals: List[Retrieval]):
     dx = bin_edges[1]-bin_edges[0]
     cdf = np.cumsum(hist)*dx
 
-    axl.plot(bin_edges[:-1], cdf, label='total')
+    axl.plot(bin_edges[:-1], cdf, label=label)
+
+def plot_total(parsed_logs):
+    fig, axl = plt.subplots()
+
+    for parsed_log in parsed_logs:
+        total(axl, parsed_log.completed_retrievals(), parsed_log.region())
+
+    axl.set_title('Retrieval Total Latency by Region (fig. d)')
+    axl.legend(loc='lower right')
+
+
+def plot_getting_closest_peers(parsed_logs):
+    fig, axl = plt.subplots()
+
+    for parsed_log in parsed_logs:
+        getting_closest_peers_phase(axl, parsed_log.completed_retrievals(), parsed_log.region())
+
+    axl.set_title('Retrieval Getting Closest Peer Latency by Region (fig. e)')
+    axl.legend(loc='lower right')
+
+def plot_fetch(parsed_logs):
+    fig, axl = plt.subplots()
+
+    for parsed_log in parsed_logs:
+        fetching_phase(axl, parsed_log.completed_retrievals(), parsed_log.region())
+
+    axl.set_title('Retrieval Fetch Latency by Region (fig. f)')
+    axl.legend(loc='lower right')
+
+
+
+def plot_cumulative_regions(retrievals):
+    fig, axl = plt.subplots()
+    total(axl, retrievals, 'total')
+    initiated_phase(axl, retrievals)
+    getting_closest_peers_phase(axl, retrievals, 'getting_closest_peers')
+    dialing_phase(axl, retrievals)
+    fetching_phase(axl, retrievals, 'fetch')
+    axl.set_title('Retrieval Phase Latency Distribution')
+    axl.legend(loc='lower right')
+
+
