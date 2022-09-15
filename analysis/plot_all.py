@@ -1,4 +1,4 @@
-from plot import cdf_retrievals, bar_region_retrieval_latency, pie_phase_retrieval_latency
+from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency, pie_phase_retrieval_latency
 from log_parse import load_parsed_logs, ParsedLogFile
 from models.model_publication import Publication
 from models.model_retrieval import Retrieval
@@ -26,9 +26,14 @@ if __name__=='__main__':
         publications += parsed_log.publications
         retrievals += parsed_log.completed_retrievals()
 
-    cdf_retrievals.plot_cumulative_regions(retrievals)
+
+    cdf_publications.plot_total(parsed_logs)
+    cdf_publications.plot_getting_closest_peers(parsed_logs)
+    cdf_publications.plot_total_add_provider(parsed_logs)
     cdf_retrievals.plot_total(parsed_logs)
+    cdf_retrievals.plot_cumulative_regions(retrievals)
     cdf_retrievals.plot_getting_closest_peers(parsed_logs)
+
     cdf_retrievals.plot_fetch(parsed_logs)
     pie_phase_retrieval_latency.plot(retrievals)
     bar_region_retrieval_latency.plot(parsed_logs)
