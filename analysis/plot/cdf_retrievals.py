@@ -109,7 +109,7 @@ def plot_fetch(parsed_logs):
 
 
 
-def plot_cumulative_regions(retrievals):
+def plot_phase_comparison(retrievals):
     fig, axl = plt.subplots()
     total(axl, retrievals, 'total')
     initiated_phase(axl, retrievals)

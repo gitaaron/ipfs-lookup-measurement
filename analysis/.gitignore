@@ -1,4 +1,7 @@
-# Log files
+# Figure output
+figs
+
+# Log file output
 *.log
 *.log.p
 

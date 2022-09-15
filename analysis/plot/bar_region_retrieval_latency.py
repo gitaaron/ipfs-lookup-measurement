@@ -32,7 +32,6 @@ def plot(parsed_logs: List[ParsedLogFile]):
 
     ax1.set_xlabel('Regions')
     ax1.set_title('Retrieval Latency by Region')
-    plt.show()
 
 
 if __name__ == "__main__":
