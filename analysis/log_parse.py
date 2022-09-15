@@ -1,6 +1,7 @@
 import pickle
 from datetime import datetime
 from typing import List
+import json
 
 from models.model_log_file import LogFile
 from models.model_publication import Publication
@@ -68,12 +69,5 @@ def parse(log_files: List[str]):
 
 
 if __name__ == '__main__':
-    logs = [
-        "./2022-01-16-data/af_south_1.log",
-        "./2022-01-16-data/ap_southeast_2.log",
-        "./2022-01-16-data/eu_central_1.log",
-        "./2022-01-16-data/me_south_1.log",
-        "./2022-01-16-data/sa_east_1.log",
-        "./2022-01-16-data/us_west_1.log",
-    ]
+    logs = json.load(open('./log_config.json'))
     parse(logs)

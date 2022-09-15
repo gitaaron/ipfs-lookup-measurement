@@ -8,14 +8,7 @@ from models.model_retrieval import Retrieval
 
 
 def plot():
-    logs = [
-        "./2022-01-16-data/af_south_1.log",
-        "./2022-01-16-data/ap_southeast_2.log",
-        "./2022-01-16-data/eu_central_1.log",
-        "./2022-01-16-data/me_south_1.log",
-        "./2022-01-16-data/sa_east_1.log",
-        "./2022-01-16-data/us_west_1.log",
-    ]
+    logs = json.load(open('./log_config.json'))
     parsed_logs = load_parsed_logs(logs)
 
     publications: List[Publication] = []
