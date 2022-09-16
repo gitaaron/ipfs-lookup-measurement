@@ -105,9 +105,10 @@ def create_build():
     figs_info_list = []
     home_dir = os.path.join(build_dir, 'home')
     Path(home_dir).mkdir(exist_ok=True, parents=True)
-    figs_dir_list = os.listdir(FIGS_ROOT_DIR)
-    figs_dir_list.sort()
+    figs_dir_list = [int(d) for d in os.listdir(FIGS_ROOT_DIR)]
+    figs_dir_list.sort(reverse=True)
     for figs_dir in figs_dir_list:
+        figs_dir = str(figs_dir)
         print('figs_dir : %s' % figs_dir)
         target_figs_dir = os.path.join(build_dir, figs_dir)
         source_figs_dir = os.path.join(FIGS_ROOT_DIR, figs_dir)
