@@ -62,5 +62,5 @@ if __name__ == "__main__":
 
     downloadLogs(
         os.getenv('DOWNLOAD_DIR', '/tmp/dht_lookup/logs'),
-        os.getenv('SINCE', 24)
+        os.getenv('SINCE', 4)
     )
