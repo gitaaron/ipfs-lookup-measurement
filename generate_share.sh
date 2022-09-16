@@ -8,7 +8,5 @@ python log_parse.py
 echo "plot_all..."
 python plot_all.py
 cd ../share
-echo "create_build..."
-python create_build.py
-echo "share_to_ipfs..."
-sh add_to_ipfs.sh
+echo "create_and_share_build..."
+python create_and_share_build.py
