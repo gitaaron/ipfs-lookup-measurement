@@ -26,7 +26,7 @@ def create_index_page(build_dir, meta_info_list):
                 """)
     for meta_info in meta_info_list:
         index_page.write(f"""
-            <a href="{meta_info['name']}/figs.html">{printDate(meta_info['started_at'])} to {printDate(meta_info['ended_at'])}</a>
+            <a href="{meta_info['name']}/figs.html">{printDate(meta_info['started_at'])} to {printDate(meta_info['ended_at'])}</a><br />
         """)
 
     index_page.write("""
@@ -45,7 +45,7 @@ def create_fig_page(figs_dir_name, target_figs_dir, meta_info):
     for fig in glob.glob(image_pat):
         figName = fig.split('/')[-1]
         fig_page.write(f'''
-            <img src="/{os.path.join(figs_dir_name, figName)}" />
+            <img src="/{os.path.join(figs_dir_name, figName)}" /><br />
         ''')
 
     fig_page.write("""
