@@ -1,3 +1,5 @@
+import os
+import glob
 import pickle
 from datetime import datetime
 from typing import List
@@ -59,6 +61,7 @@ def load_parsed_logs(log_files: List[str]) -> List[ParsedLogFile]:
     return parsed_logs
 
 
+
 def parse(log_files: List[str]):
     for log_file in log_files:
         parsed = LogFile.parse(log_file)
@@ -68,6 +71,12 @@ def parse(log_files: List[str]):
             pickle.dump(plf, f)
 
 
+def get_log_file_paths(log_dir):
+    log_file_pat = f"{log_dir}/*.log"
+    return glob.glob(log_file_pat)
+
+
 if __name__ == '__main__':
-    logs = json.load(open('./log_config.json'))
-    parse(logs)
+    logs_config = json.load(open('./log_config.json'))
+    latest_log_dir = os.path.join(logs_config['root_dir_path'], logs_config['latest_dir_name'])
+    parse(get_log_file_paths(latest_log_dir))

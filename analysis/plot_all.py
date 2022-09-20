@@ -1,10 +1,11 @@
 import os
 import json
 import pickle
+import glob
 from typing import List
 import matplotlib.pyplot as plt
 from pathlib import Path
-from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency, pie_phase_retrieval_latency
+from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency, pie_phase_retrieval_latency, timeseries_retrievals
 from log_parse import load_parsed_logs, ParsedLogFile
 from models.model_publication import Publication
 from models.model_retrieval import Retrieval
@@ -45,8 +46,8 @@ def dateEnded(parsed_logs: List[ParsedLogFile]):
     return ended_at
 
 
-def writeMeta(contained_dir: str, parsed_logs: List[ParsedLogFile]):
-    fpt = open(f"{contained_dir}/meta.p", 'wb')
+def writeMeta(out_target_dir: str, parsed_logs: List[ParsedLogFile]):
+    fpt = open(f"{out_target_dir}/meta.p", 'wb')
     meta = {
         'started_at': dateStarted(parsed_logs),
         'ended_at': dateEnded(parsed_logs)
@@ -54,8 +55,8 @@ def writeMeta(contained_dir: str, parsed_logs: List[ParsedLogFile]):
     pickle.dump(meta, fpt)
     fpt.close()
 
-def doPlot(container_dir):
-    parsed_logs = load_parsed_logs(logs)
+def doPlotSinceTimeStarted(out_target_dir, log_file_paths):
+    parsed_logs = load_parsed_logs(log_file_paths)
 
     publications: List[Publication] = []
     retrievals: List[Retrieval] = []
@@ -64,61 +65,104 @@ def doPlot(container_dir):
         publications += parsed_log.publications
         retrievals += parsed_log.completed_retrievals()
 
-    if OUT_DIR is not None:
-        contained_dir = os.path.join(OUT_DIR, container_dir)
-        Path(contained_dir).mkdir(exist_ok=True, parents=True)
+    timeseries_retrievals.plot_total_phase(retrievals, 'Retrieval Latency Trends (since beginning)')
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'ret_phase_trend_all_time.png'))
+        plt.clf()
+
+
+def doPlotLatest(out_target_dir, log_file_paths):
+    print('latest : %s' % log_file_paths)
+
+    parsed_logs = load_parsed_logs(log_file_paths)
+
+    publications: List[Publication] = []
+    retrievals: List[Retrieval] = []
+
+    for parsed_log in parsed_logs:
+        publications += parsed_log.publications
+        retrievals += parsed_log.completed_retrievals()
+
 
     cdf_publications.plot_total(parsed_logs)
-    if OUT_DIR is not None:
-        plt.savefig(os.path.join(contained_dir, 'pvd_total.png'))
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'pvd_total.png'))
         plt.clf()
 
     cdf_publications.plot_getting_closest_peers(parsed_logs)
-    if OUT_DIR is not None:
-        plt.savefig(os.path.join(contained_dir, 'pvd_getting_closest_peers.png'))
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'pvd_getting_closest_peers.png'))
         plt.clf()
 
     cdf_publications.plot_total_add_provider(parsed_logs)
-    if OUT_DIR is not None:
-        plt.savefig(os.path.join(contained_dir, 'pvd_total_add_provider.png'))
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'pvd_total_add_provider.png'))
         plt.clf()
 
     cdf_retrievals.plot_total(parsed_logs)
-    if OUT_DIR is not None:
-        plt.savefig(os.path.join(contained_dir, 'ret_total.png'))
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'ret_total.png'))
         plt.clf()
 
     cdf_retrievals.plot_getting_closest_peers(parsed_logs)
-    if OUT_DIR is not None:
-        plt.savefig(os.path.join(contained_dir, 'ret_getting_closest_peers.png'))
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'ret_getting_closest_peers.png'))
         plt.clf()
 
     cdf_retrievals.plot_fetch(parsed_logs)
-    if OUT_DIR is not None:
-        plt.savefig(os.path.join(contained_dir, 'ret_fetch.png'))
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'ret_fetch.png'))
         plt.clf()
 
     cdf_retrievals.plot_phase_comparison(retrievals)
-    if OUT_DIR is not None:
-        plt.savefig(os.path.join(contained_dir, 'ret_phase_comparison_cdf.png'))
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'ret_phase_comparison_cdf.png'))
         plt.clf()
 
     pie_phase_retrieval_latency.plot(retrievals)
-    if OUT_DIR is not None:
-        plt.savefig(os.path.join(contained_dir, 'ret_phase_comparison_pie.png'))
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'ret_phase_comparison_pie.png'))
         plt.clf()
-
 
     bar_region_retrieval_latency.plot(parsed_logs)
-    if OUT_DIR is not None:
-        plt.savefig(os.path.join(contained_dir, 'ret_region_comparison_bar.png'))
+
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'ret_region_comparison_bar.png'))
         plt.clf()
+
+    timeseries_retrievals.plot_total_phase(retrievals, 'Retrieval Latency Trends (last 4 hours)')
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'ret_phase_trend_recent.png'))
+        plt.clf()
+
+    if out_target_dir is not None:
+        writeMeta(out_target_dir, parsed_logs)
+
+
+def doPlot(out_target_dir, latest_log_file_paths, all_log_file_paths):
+    if OUT_DIR is not None:
+        out_target_dir = os.path.join(OUT_DIR, out_target_dir)
+        Path(out_target_dir).mkdir(exist_ok=True, parents=True)
+    else:
+        out_target_dir = None
+
+    doPlotLatest(out_target_dir, latest_log_file_paths)
+    doPlotSinceTimeStarted(out_target_dir, all_log_file_paths)
 
     if OUT_DIR is None:
         plt.show()
 
-    writeMeta(contained_dir, parsed_logs)
+
+def get_log_file_paths(log_dir):
+    log_file_pat = f"{log_dir}/*.log"
+    return glob.glob(log_file_pat)
 
 if __name__=='__main__':
-    logs = json.load(open('./log_config.json'))
-    doPlot(logs[0].split('/')[-2])
+    logs_config = json.load(open('./log_config.json'))
+    latest_log_dir = os.path.join(logs_config['root_dir_path'], logs_config['latest_dir_name'])
+
+    all_log_file_paths = []
+    for log_dir in  os.listdir(logs_config['root_dir_path']):
+        all_log_file_paths += get_log_file_paths(os.path.join(logs_config['root_dir_path'], log_dir))
+
+    doPlot(logs_config['latest_dir_name'], get_log_file_paths(latest_log_dir), all_log_file_paths)

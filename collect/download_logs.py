@@ -3,6 +3,7 @@
 import os
 from subprocess import run
 from pathlib import Path
+import json
 
 nodes = {
     0: 'me_south_1',
@@ -13,9 +14,9 @@ nodes = {
     5: 'sa_east_1'
 }
 
-def getContainerDir(downloadDir):
+def getContainerDir(download_dir):
     num = 0
-    for d in os.listdir(downloadDir):
+    for d in os.listdir(download_dir):
         try:
             newNum = int(d)
             if newNum > num:
@@ -26,33 +27,25 @@ def getContainerDir(downloadDir):
 
     return str(num+1)
 
-def writeAnalysisConfig(logFiles):
+def writeAnalysisConfig(root_dir_path, latest_dir_name):
     f = open('analysis/log_config.json', 'w')
-    f.write('[')
-    isFirst = True
-    for logFile in logFiles:
-        if not isFirst:
-            f.write(', ')
-        isFirst = False
-        f.write('"%s"' % logFile)
-    f.write(']')
+    f.write(json.dumps({'root_dir_path':root_dir_path, 'latest_dir_name':latest_dir_name}))
+    f.close()
 
-def downloadLogs(downloadDir, sinceHours):
-    Path(downloadDir).mkdir(exist_ok=True, parents=True)
-    container = getContainerDir(downloadDir)
-    outputDir = os.path.join(downloadDir, container)
-    Path(outputDir).mkdir(exist_ok=True, parents=True)
+def downloadLogs(download_dir, sinceHours):
+    Path(download_dir).mkdir(exist_ok=True, parents=True)
+    container = getContainerDir(download_dir)
+    output_dir = os.path.join(download_dir, container)
+    Path(output_dir).mkdir(exist_ok=True, parents=True)
 
-    logFiles = []
     for i in nodes:
-        logFile = "%s/%s.log" % (outputDir, nodes[i])
+        logFile = "%s/%s.log" % (output_dir, nodes[i])
         cmd = """ logcli query --limit=987654321 --since=%dh --output=jsonl '{host="node%d"}' > %s """ % (
             sinceHours, i, logFile)
         print(cmd)
-        run(cmd, shell=True)
-        logFiles.append(logFile)
+        #run(cmd, shell=True)
 
-    writeAnalysisConfig(logFiles)
+    writeAnalysisConfig(download_dir, container)
 
 if __name__ == "__main__":
     defaultAddr = "http://3.69.26.31:3100/"
