@@ -43,7 +43,7 @@ def downloadLogs(download_dir, sinceHours):
         cmd = """ logcli query --limit=987654321 --since=%dh --output=jsonl '{host="node%d"}' > %s """ % (
             sinceHours, i, logFile)
         print(cmd)
-        #run(cmd, shell=True)
+        run(cmd, shell=True)
 
     writeAnalysisConfig(download_dir, container)
 
