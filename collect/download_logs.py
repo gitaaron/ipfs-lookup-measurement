@@ -5,7 +5,7 @@ from subprocess import run
 from pathlib import Path
 import json
 
-nodes = {
+DEFAULT_NODES = {
     0: 'me_south_1',
     1: 'ap_southeast_2',
     2: 'af_south_1',
@@ -32,7 +32,8 @@ def writeAnalysisConfig(root_dir_path, latest_dir_name):
     f.write(json.dumps({'root_dir_path':root_dir_path, 'latest_dir_name':latest_dir_name}))
     f.close()
 
-def downloadLogs(download_dir, sinceHours):
+def downloadLogs(download_dir, sinceHours, nodes):
+    print('nodes: %s' % nodes)
     Path(download_dir).mkdir(exist_ok=True, parents=True)
     container = getContainerDir(download_dir)
     output_dir = os.path.join(download_dir, container)
@@ -53,7 +54,16 @@ if __name__ == "__main__":
         print('Setting LOKI_ADDR to default %s' % defaultAddr)
         os.putenv("LOKI_ADDR", defaultAddr)
 
+    if(os.getenv("NODE_LIST")!=None):
+        cs_nodes = os.getenv("NODE_LIST")
+        nodes = {k:v for k,v in enumerate(cs_nodes.split(','))}
+        print('node_list: %s' % nodes)
+    else:
+        print('Setting DEFAULT_NODES %s' % DEFAULT_NODES)
+        nodes = DEFAULT_NODES
+
     downloadLogs(
         os.getenv('DOWNLOAD_DIR', '/tmp/dht_lookup/logs'),
-        os.getenv('SINCE', 4)
+        os.getenv('SINCE', 4),
+        nodes
     )
