@@ -9,7 +9,7 @@ docker-monitor:
 
 
 docker-agent:
-	rm -f node/agent; docker build -t ipfs-node -f ./node/Dockerfile .
+	rm -f controller/agent; docker build -t ipfs-node -f ./node/Dockerfile .
 
 docker-controller:
-	rm -f node/controller; docker build -t controller-node -f ./controller/Dockerfile .
+	rm -f controller/controller; docker build -t controller-node -f ./controller/Dockerfile .
