@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/ConsenSys/ipfs-lookup-measurement/controller/pkg/server"
+	"github.com/gitaaron/ipfs-lookup-measurement/controller/pkg/server"
 )
 
 func main() {

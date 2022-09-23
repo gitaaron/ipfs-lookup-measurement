@@ -8,9 +8,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/ConsenSys/ipfs-lookup-measurement/controller/pkg/config"
-	"github.com/ConsenSys/ipfs-lookup-measurement/controller/pkg/server"
-	"github.com/ConsenSys/ipfs-lookup-measurement/controller/pkg/simplenode"
+	"github.com/gitaaron/ipfs-lookup-measurement/controller/pkg/config"
+	"github.com/gitaaron/ipfs-lookup-measurement/controller/pkg/server"
+	"github.com/gitaaron/ipfs-lookup-measurement/controller/pkg/simplenode"
 )
 
 func main() {
@@ -59,17 +59,25 @@ func main() {
 	}
 
 	// Start the experiment.
-	publish := 0
+	mainPlayer := 0
 	max := len(nodesList) - 1
 	for {
-		simplenode.Experiment(publish, key, nodesList)
-		log.Println("one test is done")
+
+    e := simplenode.NewExperiment()
+    log.Println("start mainPlayer retriever run")
+    e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList)
+    log.Println("start mainPlayer publisher run")
+    e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList)
+
+		log.Println("one retrieval and publish run is done")
+
 		if *intervalSeconds == 0 {
 			break
 		}
-		publish++
-		if publish > max {
-			publish = 0
+		mainPlayer++
+		if mainPlayer > max {
+      log.Println("one round of experiments is done")
+			mainPlayer = 0
 		}
 		time.Sleep(time.Duration(*intervalSeconds) * time.Second)
 	}
