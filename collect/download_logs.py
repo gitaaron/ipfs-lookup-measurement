@@ -46,7 +46,7 @@ def downloadLogs(download_dir, sinceHours, nodes):
         print(cmd)
         run(cmd, shell=True)
 
-    writeAnalysisConfig(download_dir, container)
+    writeAnalysisConfig(os.path.abspath(download_dir), container)
 
 if __name__ == "__main__":
     defaultAddr = "http://3.69.26.31:3100/"
