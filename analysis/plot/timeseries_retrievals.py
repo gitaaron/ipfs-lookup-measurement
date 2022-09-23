@@ -3,6 +3,24 @@ import matplotlib.pyplot as plt
 from typing import List
 from models.model_retrieval import Retrieval
 
+def plot_num_providers(retrievals:List[Retrieval], title: str):
+
+    num_providers_in_retrievals = []
+
+    for ret in retrievals:
+        num_providers_in_retrievals.append(len(ret.provider_peers))
+
+
+    start_dates = [ret.retrieval_started_at for ret in retrievals]
+
+    DF = pd.DataFrame(
+            {
+                "num_providers_in_retrievals":num_providers_in_retrievals,
+            }, index=start_dates)
+
+    ax = DF.plot(x_compat=True, rot=90, figsize=(16, 5),)
+    ax.set_title(title)
+
 def plot_total_phase(retrievals:List[Retrieval], title: str):
     overall_durations = []
     initiated_durations = []

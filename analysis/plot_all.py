@@ -135,6 +135,13 @@ def doPlotLatest(out_target_dir, log_file_paths):
         plt.savefig(os.path.join(out_target_dir, 'ret_phase_trend_recent.png'))
         plt.clf()
 
+
+    timeseries_retrievals.plot_num_providers(retrievals, 'Retrieval Number Providers (last 4 hours)')
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'ret_num_providers_recent.png'))
+        plt.clf()
+
+
     if out_target_dir is not None:
         writeMeta(out_target_dir, parsed_logs)
 
