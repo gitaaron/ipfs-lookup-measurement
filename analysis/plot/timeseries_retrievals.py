@@ -30,7 +30,7 @@ def plot_total_phase(retrievals:List[Retrieval], title: str):
 
     for ret in retrievals:
         overall_durations += [
-            (ret.done_retrieving_at - ret.retrieval_started_at).total_seconds()]
+            (ret.duration_total()).total_seconds()]
 
         initiated_durations += [
             (ret.get_providers_queries_started_at - ret.retrieval_started_at).total_seconds()]

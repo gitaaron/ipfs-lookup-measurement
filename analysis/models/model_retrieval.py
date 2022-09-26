@@ -1,5 +1,5 @@
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timedelta
 from models.model_get_providers_query import GetProvidersQuery
 from models.model_peer import Peer
 from typing import Optional, List, Dict, Set
@@ -79,6 +79,9 @@ class Retrieval:
         else:
             raise Exception(
                 f"Illegal state transition from {self._state} to {state}")
+
+    def duration_total(self) -> timedelta:
+        return self.done_retrieving_at - self.retrieval_started_at
 
     def getting_provider_peers_started(self, timestamp: datetime):
         try:
