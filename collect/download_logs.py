@@ -21,7 +21,7 @@ def getContainerDir(download_dir):
             newNum = int(d)
             if newNum > num:
                 num = newNum
-        except e:
+        except Exception as e:
             print(f"{d} is not an int")
             print(e)
 
