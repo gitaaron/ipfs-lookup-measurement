@@ -1,7 +1,10 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from typing import List
 from models.model_retrieval import Retrieval
+from log_parse import ParsedLogFile
+
 
 def plot_num_providers(retrievals:List[Retrieval], title: str):
 
@@ -21,7 +24,32 @@ def plot_num_providers(retrievals:List[Retrieval], title: str):
     ax = DF.plot(x_compat=True, rot=90, figsize=(16, 5),)
     ax.set_title(title)
 
-def plot_total_phase(retrievals:List[Retrieval], title: str):
+def plot_total_duration_each_region(retrievals: List[Retrieval], parsed_logs: List[ParsedLogFile], title: str):
+
+    start_dates = [ret.retrieval_started_at for ret in retrievals]
+    start_dates.sort()
+
+    region_durations = {}
+
+    for log in parsed_logs:
+        reg = log.region()
+        region_durations[reg] = []
+        retrievals = log.completed_retrievals()
+
+        for start_date in start_dates:
+            region_durations[reg].append(np.nan)
+
+        for ret in retrievals:
+            start_index = start_dates.index(ret.retrieval_started_at)
+            region_durations[reg][start_index] = (ret.duration_total()).total_seconds()
+
+
+
+    DF = pd.DataFrame(region_durations, index=start_dates).bfill()
+    ax = DF.plot(x_compat=True, rot=90, figsize=(16, 5),)
+    ax.set_title(title)
+
+def plot_each_phase_all_regions(retrievals:List[Retrieval], title: str):
     overall_durations = []
     initiated_durations = []
     getting_closest_peers_durations = []

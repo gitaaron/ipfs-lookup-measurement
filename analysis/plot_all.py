@@ -65,9 +65,14 @@ def doPlotSinceTimeStarted(out_target_dir, log_file_paths):
         publications += parsed_log.publications
         retrievals += parsed_log.completed_retrievals()
 
-    timeseries_retrievals.plot_total_phase(retrievals, 'Retrieval Latency Trends (since beginning)')
+    timeseries_retrievals.plot_each_phase_all_regions(retrievals, 'Retrieval Latency Trends by Phase (since beginning)')
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_phase_trend_all_time.png'))
+        plt.clf()
+
+    timeseries_retrievals.plot_total_duration_each_region(retrievals, parsed_logs, 'Retrieval Latency Trends by Region (since beginning)')
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'ret_phase_trend_recent.png'))
         plt.clf()
 
 
@@ -82,7 +87,6 @@ def doPlotLatest(out_target_dir, log_file_paths):
     for parsed_log in parsed_logs:
         publications += parsed_log.publications
         retrievals += parsed_log.completed_retrievals()
-
 
     cdf_publications.plot_total(parsed_logs)
     if out_target_dir is not None:
@@ -130,7 +134,13 @@ def doPlotLatest(out_target_dir, log_file_paths):
         plt.savefig(os.path.join(out_target_dir, 'ret_region_comparison_bar.png'))
         plt.clf()
 
-    timeseries_retrievals.plot_total_phase(retrievals, 'Retrieval Latency Trends (last 4 hours)')
+
+    timeseries_retrievals.plot_each_phase_all_regions(retrievals, 'Retrieval Latency Trends by Phase (last 4 hours)')
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'ret_phase_trend_recent.png'))
+        plt.clf()
+
+    timeseries_retrievals.plot_total_duration_each_region(retrievals, parsed_logs, 'Retrieval Latency Trends by Region (last 4 hours)')
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_phase_trend_recent.png'))
         plt.clf()
@@ -140,7 +150,6 @@ def doPlotLatest(out_target_dir, log_file_paths):
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_num_providers_recent.png'))
         plt.clf()
-
 
     if out_target_dir is not None:
         writeMeta(out_target_dir, parsed_logs)
