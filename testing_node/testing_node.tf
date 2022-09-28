@@ -36,6 +36,10 @@ output "public_ip" {
   value = aws_instance.ipfs_testing_node.public_ip
 }
 
+output "arn" {
+  value = aws_instance.ipfs_testing_node.arn
+}
+
 resource "aws_instance" "ipfs_testing_node" {
   ami           = var.ami
   instance_type = var.instance
