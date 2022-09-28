@@ -4,6 +4,9 @@ build controller : cmd/controller/*.go pkg/*/*.go
 agent: cmd/agent/*.go pkg/*/*.go
 	go build cmd/agent/*
 
+info: cmd/info/*.go pkg/*/*.go
+	go build cmd/info/*
+
 nodes-list.out :
 	printf " http://localhost:3031 \n http://localhost:3032 \n http://localhost:3033 \n http://localhost:3034 \n http://localhost:3035 \n " > nodes-list.out
 

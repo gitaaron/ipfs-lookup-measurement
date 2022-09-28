@@ -18,7 +18,11 @@ func main() {
 	intervalSeconds := flag.Int("i", 0, "interval between each test")
 
 	flag.Parse()
-	nodesList := config.GetNodesList(*simpleNodesFile)
+	nodesList, err := config.GetNodesList(*simpleNodesFile)
+
+	if err != nil {
+		panic(err)
+	}
 
 	// Try to load key
 	keyStr, err := ioutil.ReadFile(".key")
@@ -39,7 +43,7 @@ func main() {
 	ids := make([]string, 0)
 	for _, node := range nodesList {
 		fmt.Printf("Start asking for node id from %v\n", node)
-		id, err := server.RequestGetID(node, key)
+		id, err := server.RequestGetID(node.Host(), key)
 		if err != nil {
 			fmt.Printf("error getting node id for %v: %v\n", node, err.Error())
 			return
@@ -50,7 +54,7 @@ func main() {
 	// Ask every node to set IDs.
 	for _, node := range nodesList {
 		fmt.Printf("Start asking node %v to set up ids\n", node)
-		out, err := server.RequestSetID(node, key, ids)
+		out, err := server.RequestSetID(node.Host(), key, ids)
 		if err != nil {
 			fmt.Printf("error setting id for node %v: %v", node, err.Error())
 			return
@@ -63,11 +67,11 @@ func main() {
 	max := len(nodesList) - 1
 	for {
 
-    e := simplenode.NewExperiment()
-    log.Println("start mainPlayer retriever run")
-    e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList)
-    log.Println("start mainPlayer publisher run")
-    e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList)
+		e := simplenode.NewExperiment()
+		log.Println("start mainPlayer retriever run")
+		e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList)
+		log.Println("start mainPlayer publisher run")
+		e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList)
 
 		log.Println("one retrieval and publish run is done")
 
@@ -76,7 +80,7 @@ func main() {
 		}
 		mainPlayer++
 		if mainPlayer > max {
-      log.Println("one round of experiments is done")
+			log.Println("one round of experiments is done")
 			mainPlayer = 0
 		}
 		time.Sleep(time.Duration(*intervalSeconds) * time.Second)
