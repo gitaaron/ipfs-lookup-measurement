@@ -72,7 +72,7 @@ def doPlotSinceTimeStarted(out_target_dir, log_file_paths):
 
     timeseries_retrievals.plot_total_duration_each_region(retrievals, parsed_logs, 'Retrieval Latency Trends by Region (since beginning)')
     if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'ret_phase_trend_recent.png'))
+        plt.savefig(os.path.join(out_target_dir, 'ret_region_trend_all_time.png'))
         plt.clf()
 
 
@@ -142,7 +142,7 @@ def doPlotLatest(out_target_dir, log_file_paths):
 
     timeseries_retrievals.plot_total_duration_each_region(retrievals, parsed_logs, 'Retrieval Latency Trends by Region (last 4 hours)')
     if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'ret_phase_trend_recent.png'))
+        plt.savefig(os.path.join(out_target_dir, 'ret_region_trend_recent.png'))
         plt.clf()
 
 
