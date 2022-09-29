@@ -1,22 +1,8 @@
 import json
-from typing import Dict
+from typing import List, Dict
 
 from models.model_region import Region
 
-agents = json.load(open('./agent_info.json'))
-
-peer_id_agent_map = {}
-
-def from_peer_id(peer_id: str):
-    if peer_id in peer_id_agent_map:
-        return peer_id_agent_map[peer_id]
-    else:
-        for agent in agents:
-            if(agent['Peer_ID']==peer_id):
-                peer_id_agent_map[peer_id] = Agent(agent)
-                return peer_id_agent_map[peer_id]
-
-        raise Exception('Peer_ID %s not found in agent list' % peer_id)
 
 class Agent:
     public_ip: str
@@ -32,3 +18,19 @@ class Agent:
 
     def region(self):
         return Region(self.region_key)
+
+class Agents:
+    _peer_agents_map: List[Agent]
+
+    def __init__(self, agents: List[Dict]):
+        self._peer_agents_map = {}
+        for a in agents:
+            agent = Agent(a)
+            self._peer_agents_map[agent.peer_id] = agent
+
+    def agent_from_peer_id(self, peer_id: str,):
+
+        if (peer_id not in self._peer_agents_map):
+            raise Exception('Peer_ID %s not found in agent list' % peer_id)
+        else:
+            return self._peer_agents_map[peer_id]

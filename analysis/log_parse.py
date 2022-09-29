@@ -8,6 +8,7 @@ import json
 from models.model_log_file import LogFile
 from models.model_publication import Publication
 from models.model_retrieval import Retrieval
+from models.model_agent import Agents
 from helpers import proximity
 
 class ParsedLogFile:
@@ -57,8 +58,10 @@ class ParsedLogFiles:
     _first_provider_nearest_retrievals: List[Retrieval]
     _non_first_provider_nearest_retrievals: List[Retrieval]
     _total_publications: List[Publication]
+    _agents: Agents
 
-    def __init__(self, logs: List[ParsedLogFile]):
+    def __init__(self, agents: Agents, logs: List[ParsedLogFile]):
+        self._agents = agents
         self._logs = logs
         self._total_retrievals = None
         self._total_completed_retrievals = None
@@ -98,9 +101,11 @@ class ParsedLogFiles:
             self._first_provider_nearest_retrievals = []
             self._non_first_provider_nearest_retrievals = []
 
+            print('num has_first: %s' % len(self.has_first_provider_retrievals))
             for ret in self.has_first_provider_retrievals:
                 try:
                     if(proximity.is_nearest_neighbor(
+                            self._agents,
                             ret.region_of_origin(),
                             ret.first_provider_peer,
                             ret.provider_peers) == True):
@@ -134,7 +139,8 @@ class ParsedLogFiles:
 
 
 def load_ParsedLogFiles(log_files: List[str]) -> ParsedLogFiles:
-    return ParsedLogFiles(load_parsed_logs(log_files))
+    agents = json.load(open('./agent_info.json'))
+    return ParsedLogFiles(Agents(agents), load_parsed_logs(log_files))
 
 def load_parsed_logs(log_files: List[str]) -> List[ParsedLogFile]:
     parsed_logs: List[ParsedLogFile] = []
