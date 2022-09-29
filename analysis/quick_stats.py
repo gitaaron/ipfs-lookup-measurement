@@ -2,10 +2,10 @@ import os
 import json
 import glob
 from typing import List
-from log_parse import load_parsed_logs, ParsedLogFile
+from log_parse import load_ParsedLogFiles, ParsedLogFile
 from models.model_publication import Publication
 from models.model_retrieval import Retrieval
-from geography import proximity
+from lib import proximity
 
 def get_log_file_paths(log_dir):
     log_file_pat = f"{log_dir}/*.log"
@@ -13,26 +13,24 @@ def get_log_file_paths(log_dir):
 
 
 def slow_retrievals(retrievals):
-    return list(filter(lambda ret: (ret.duration_total().total_seconds() > 3), retrievals))
+    return list(filter(lambda ret: (ret.duration_total().total_seconds() > 4), retrievals))
 
 if __name__=='__main__':
     logs_config = json.load(open('./log_config.json'))
     latest_log_dir = os.path.join(logs_config['root_dir_path'], logs_config['latest_dir_name'])
     log_file_paths = get_log_file_paths(latest_log_dir)
-    parsed_logs = load_parsed_logs(log_file_paths)
+    parsed_logs = load_ParsedLogFiles(log_file_paths)
 
-    publications: List[Publication] = []
-    retrievals: List[Retrieval] = []
 
-    for parsed_log in parsed_logs:
-        publications += parsed_log.publications
-        retrievals += parsed_log.completed_retrievals()
+    publications: List[Publication] = parsed_logs.total_publications
+    completed_retrievals: List[Retrieval] = parsed_logs.total_completed_retrievals
+
 
     many_providers_count = 0
     single_provider_count = 0
     total_providers = 0
 
-    for r in retrievals:
+    for r in completed_retrievals:
         if len(r.provider_peers) > 1:
             many_providers_count += 1
         else:
@@ -40,7 +38,7 @@ if __name__=='__main__':
 
         total_providers += len(r.provider_peers)
 
-    slow = slow_retrievals(retrievals)
+    slow = slow_retrievals(completed_retrievals)
 
     num_slow_many_providers = 0
     num_slow_one_provider = 0
@@ -51,17 +49,17 @@ if __name__=='__main__':
             num_slow_one_provider += 1
 
     stats = {}
-    stats['num_retrievals'] = len(retrievals)
+    stats['num_retrievals'] = len(completed_retrievals)
     stats['slow_retrievals (>3s)'] = len(slow)
-    stats['percent_retrievals_are_slow'] = len(slow)/len(retrievals) * 100
+    stats['percent_retrievals_are_slow'] = len(slow)/len(completed_retrievals) * 100
     stats['many_providers_count'] = many_providers_count
     stats['single_provider_count'] = single_provider_count
-    stats['avg_providers_per_retrieval'] = total_providers / len(retrievals)
+    stats['avg_providers_per_retrieval'] = total_providers / len(completed_retrievals)
     stats['slow_many_providers'] = f"{round(num_slow_many_providers/len(slow),3)*100}%"
     stats['slow_one_provider'] = f"{round(num_slow_one_provider/len(slow),3)*100}%"
     stats['many_providers_slow_likelihood'] = f"{round(num_slow_many_providers/many_providers_count,3)*100}%"
     stats['one_provider_slow_likelihood'] = f"{round(num_slow_one_provider/single_provider_count,3)*100}%"
-    stats['percent_nearest_neighbor_first_provider'] = proximity.percent_nearest_neighbor_first_provider(retrievals)
+    stats['percent_nearest_neighbor_first_provider'] = proximity.percent_nearest_neighbor_first_provider(completed_retrievals)
 
 
     print(json.dumps(stats, indent=4))

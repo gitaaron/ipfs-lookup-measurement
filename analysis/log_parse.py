@@ -9,7 +9,6 @@ from models.model_log_file import LogFile
 from models.model_publication import Publication
 from models.model_retrieval import Retrieval
 
-
 class ParsedLogFile:
 
     def region(self):
@@ -48,6 +47,49 @@ class ParsedLogFile:
         self.retrievals: List[Retrieval] = retrievals
         self.unattempted_retrieval_cids: List[str] = unattempted_retrieval_cids
 
+
+class ParsedLogFiles:
+    _logs: List[ParsedLogFile]
+    _total_retrievals: List[Retrieval]
+    _total_completed_retrievals: List[Retrieval]
+    _total_publications: List[Publication]
+
+    def __init__(self, logs: List[ParsedLogFile]):
+        self._logs = logs
+        self._total_retrievals = None
+        self._total_completed_retrievals = None
+        self._total_publications = None
+
+    @property
+    def total_retrievals(self):
+        if(self._total_retrievals is None):
+            self._total_retrievals = []
+            for log in self._logs:
+                self._total_retrievals += log.retrievals
+
+        return self._total_retrievals
+
+    @property
+    def total_completed_retrievals(self):
+        if(self._total_completed_retrievals is None):
+            self._total_completed_retrievals = []
+            for log in self._logs:
+                self._total_completed_retrievals += log.completed_retrievals()
+
+        return self._total_completed_retrievals
+
+    @property
+    def total_publications(self):
+        if(self._total_publications is None):
+            self._total_publications = []
+            for log in self._logs:
+                self._total_publications += log.publications
+
+        return self._total_publications
+
+
+def load_ParsedLogFiles(log_files: List[str]) -> ParsedLogFiles:
+    return ParsedLogFiles(load_parsed_logs(log_files))
 
 def load_parsed_logs(log_files: List[str]) -> List[ParsedLogFile]:
     parsed_logs: List[ParsedLogFile] = []
