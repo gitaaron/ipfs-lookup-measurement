@@ -54,10 +54,10 @@ func main() {
 		fmt.Printf("failed to marshal nodesList to json: %+v", nodesList)
 	}
 
-	f_err := os.WriteFile("./agent_config.json", jsonString, 0644)
+	f_err := os.WriteFile("./agent_info.json", jsonString, 0644)
 
 	if f_err == nil {
-		fmt.Printf("wrote to ./agent_config.json")
+		fmt.Printf("wrote to ./agent_info.json")
 	} else {
 		panic(err)
 	}

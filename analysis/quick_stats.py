@@ -5,6 +5,7 @@ from typing import List
 from log_parse import load_parsed_logs, ParsedLogFile
 from models.model_publication import Publication
 from models.model_retrieval import Retrieval
+from geography import proximity
 
 def get_log_file_paths(log_dir):
     log_file_pat = f"{log_dir}/*.log"
@@ -58,8 +59,9 @@ if __name__=='__main__':
     stats['avg_providers_per_retrieval'] = total_providers / len(retrievals)
     stats['slow_many_providers'] = f"{round(num_slow_many_providers/len(slow),3)*100}%"
     stats['slow_one_provider'] = f"{round(num_slow_one_provider/len(slow),3)*100}%"
-    stats['many_providers_slow_likelyhood'] = f"{round(num_slow_many_providers/many_providers_count,3)*100}%"
-    stats['one_provider_slow_likelyhood'] = f"{round(num_slow_one_provider/single_provider_count,3)*100}%"
+    stats['many_providers_slow_likelihood'] = f"{round(num_slow_many_providers/many_providers_count,3)*100}%"
+    stats['one_provider_slow_likelihood'] = f"{round(num_slow_one_provider/single_provider_count,3)*100}%"
+    stats['percent_nearest_neighbor_first_provider'] = proximity.percent_nearest_neighbor_first_provider(retrievals)
 
 
     print(json.dumps(stats, indent=4))

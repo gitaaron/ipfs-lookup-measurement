@@ -1,5 +1,9 @@
 # Log config
 log_config.json
+
+# Agent Info
+agent_info.json
+
 # Figure output
 figs
 

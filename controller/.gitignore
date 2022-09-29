@@ -4,4 +4,4 @@ agent
 info
 !cmd/*
 ipfs-test/
-agent_config.json
+agent_info.json

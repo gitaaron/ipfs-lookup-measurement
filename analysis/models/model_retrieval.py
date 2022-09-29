@@ -2,6 +2,7 @@ from enum import Enum
 from datetime import datetime, timedelta
 from models.model_get_providers_query import GetProvidersQuery
 from models.model_peer import Peer
+from models.model_region import Region
 from typing import Optional, List, Dict, Set
 
 
@@ -31,6 +32,7 @@ class Retrieval:
     finished_searching_providers_at: Optional[datetime]
 
     provider_peers: Set[Peer]
+    first_provider_peer: Peer
     provider_record_storing_peers: Set[Peer]
     get_providers_queries: Dict[Peer, GetProvidersQuery]
     done_retrieving_error: Optional[str]
@@ -46,6 +48,7 @@ class Retrieval:
         self._state = Retrieval.State.INITIATED
         self.get_providers_queries = {}
         self.provider_peers = set({})
+        self.first_provider_peer = None
         self.provider_record_storing_peers = set({})
         self.marked_for_removal = False
         self.marked_as_incomplete = False
@@ -79,6 +82,9 @@ class Retrieval:
         else:
             raise Exception(
                 f"Illegal state transition from {self._state} to {state}")
+
+    def region_of_origin(self):
+        return Region(self.origin.split('/')[-1].split('.')[0])
 
     def duration_total(self) -> timedelta:
         return self.done_retrieving_at - self.retrieval_started_at
@@ -149,6 +155,7 @@ class Retrieval:
         self.provider_peers.add(provider)
         if self.received_first_HAVE_at is None or self.received_first_HAVE_at > timestamp:
             self.received_first_HAVE_at = timestamp
+            self.first_provider_peer = provider
 
     def done_retrieving(self, timestamp: datetime, error_str: Optional[str]):
         self.done_retrieving_error = error_str
