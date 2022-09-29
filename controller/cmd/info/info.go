@@ -57,7 +57,7 @@ func main() {
 	f_err := os.WriteFile("./agent_info.json", jsonString, 0644)
 
 	if f_err == nil {
-		fmt.Printf("wrote to ./agent_info.json")
+		fmt.Printf("wrote to ./agent_info.json\n")
 	} else {
 		panic(err)
 	}
