@@ -5,7 +5,7 @@ from typing import List
 from log_parse import load_ParsedLogFiles, ParsedLogFile
 from models.model_publication import Publication
 from models.model_retrieval import Retrieval
-from helpers import proximity, calc, reduce
+from helpers import proximity, calc, reduce, constants
 
 def get_log_file_paths(log_dir):
     log_file_pat = f"{log_dir}/*.log"
@@ -47,7 +47,7 @@ if __name__=='__main__':
 
     stats = {}
     stats['num_retrievals'] = len(completed_retrievals)
-    stats['slow_retrievals (>3s)'] = len(slow)
+    stats[f"slow_retrievals (>{constants.SLOW_THRESHOLD} sec.)"] = len(slow)
     stats['percent_retrievals_are_slow'] = f"{round(len(slow)/len(completed_retrievals)*100,3)}%"
     stats['many_providers_count'] = many_providers_count
     stats['single_provider_count'] = single_provider_count
