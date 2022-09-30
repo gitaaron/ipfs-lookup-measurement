@@ -9,6 +9,7 @@ from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency,
 from log_parse import load_parsed_logs, ParsedLogFile
 from models.model_publication import Publication
 from models.model_retrieval import Retrieval
+from helpers.constants import RetrievalPhase
 
 # Set OUT_DIR to `None` to display the graphs with the GUI
 #OUT_DIR = None
@@ -65,15 +66,16 @@ def doPlotSinceTimeStarted(out_target_dir, log_file_paths):
         publications += parsed_log.publications
         retrievals += parsed_log.completed_retrievals()
 
-    timeseries_retrievals.plot_each_phase_all_regions(retrievals, 'Retrieval Latency Trends by Phase (since beginning)')
+    timeseries_retrievals.plot_each_phase_all_regions(retrievals, 'Retrieval Duration by Phase (since beginning)')
     if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'ret_phase_trend_all_time.png'))
-        plt.clf()
+        plt.savefig(os.path.join(out_target_dir, 'trend_ret_phase_breakdown_all_time.png'))
+        plt.close()
 
-    timeseries_retrievals.plot_total_duration_each_region(retrievals, parsed_logs, 'Retrieval Latency Trends by Region (since beginning)')
-    if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'ret_region_trend_all_time.png'))
-        plt.clf()
+    for phase in RetrievalPhase:
+        timeseries_retrievals.plot_duration_each_region(phase, retrievals, parsed_logs, f"Retrieval {phase.name} Duration by Region (since beginning)")
+        if out_target_dir is not None:
+            plt.savefig(os.path.join(out_target_dir, f"trend_ret_{phase.name}_region_breakdown_all_time.png"))
+            plt.close()
 
 
 def doPlotLatest(out_target_dir, log_file_paths):
@@ -91,65 +93,65 @@ def doPlotLatest(out_target_dir, log_file_paths):
     cdf_publications.plot_total(parsed_logs)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'pvd_total.png'))
-        plt.clf()
+        plt.close()
 
     cdf_publications.plot_getting_closest_peers(parsed_logs)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'pvd_getting_closest_peers.png'))
-        plt.clf()
+        plt.close()
 
     cdf_publications.plot_total_add_provider(parsed_logs)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'pvd_total_add_provider.png'))
-        plt.clf()
+        plt.close()
 
     cdf_retrievals.plot_total(parsed_logs)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_total.png'))
-        plt.clf()
+        plt.close()
 
     cdf_retrievals.plot_getting_closest_peers(parsed_logs)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_getting_closest_peers.png'))
-        plt.clf()
+        plt.close()
 
     cdf_retrievals.plot_fetch(parsed_logs)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_fetch.png'))
-        plt.clf()
+        plt.close()
 
     cdf_retrievals.plot_phase_comparison(retrievals)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_phase_comparison_cdf.png'))
-        plt.clf()
+        plt.close()
 
     pie_phase_retrieval_latency.plot(retrievals)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_phase_comparison_pie.png'))
-        plt.clf()
+        plt.close()
 
     bar_region_retrieval_latency.plot(parsed_logs)
 
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_region_comparison_bar.png'))
-        plt.clf()
+        plt.close()
 
 
-    timeseries_retrievals.plot_each_phase_all_regions(retrievals, 'Retrieval Latency Trends by Phase (last 4 hours)')
+    timeseries_retrievals.plot_each_phase_all_regions(retrievals, 'Retrieval Duration by Phase (last 4 hours)')
     if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'ret_phase_trend_recent.png'))
-        plt.clf()
+        plt.savefig(os.path.join(out_target_dir, 'trend_ret_phase_breakdown_recent.png'))
+        plt.close()
 
-    timeseries_retrievals.plot_total_duration_each_region(retrievals, parsed_logs, 'Retrieval Latency Trends by Region (last 4 hours)')
-    if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'ret_region_trend_recent.png'))
-        plt.clf()
-
+    for phase in RetrievalPhase:
+        timeseries_retrievals.plot_duration_each_region(phase, retrievals, parsed_logs, f"Retrieval {phase.name} Duration by Region (last 4 hours)")
+        if out_target_dir is not None:
+            plt.savefig(os.path.join(out_target_dir, f"trend_ret_{phase.name}_region_breakdown_recent.png"))
+            plt.close()
 
     timeseries_retrievals.plot_num_providers(retrievals, 'Retrieval Number Providers (last 4 hours)')
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_num_providers_recent.png'))
-        plt.clf()
+        plt.close()
 
     if out_target_dir is not None:
         writeMeta(out_target_dir, parsed_logs)

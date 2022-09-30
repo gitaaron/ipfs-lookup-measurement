@@ -4,6 +4,7 @@ from models.model_get_providers_query import GetProvidersQuery
 from models.model_peer import Peer
 from models.model_region import Region
 from typing import Optional, List, Dict, Set
+from helpers.constants import RetrievalPhase
 
 
 class Retrieval:
@@ -86,8 +87,20 @@ class Retrieval:
     def region_of_origin(self):
         return Region(self.origin.split('/')[-1].split('.')[0])
 
-    def duration_total(self) -> timedelta:
-        return self.done_retrieving_at - self.retrieval_started_at
+    def duration(self, phase: RetrievalPhase) -> timedelta:
+        if(phase==RetrievalPhase.TOTAL):
+            return self.done_retrieving_at - self.retrieval_started_at
+        elif(phase==RetrievalPhase.INITIATED):
+            return self.get_providers_queries_started_at - self.retrieval_started_at
+        elif(phase==RetrievalPhase.GETTING_CLOSEST_PEERS):
+            return self.dial_started_at - self.get_providers_queries_started_at
+        elif(phase==RetrievalPhase.DIALING):
+            return self.connected_at - self.dial_started_at
+        elif(phase==RetrievalPhase.FETCHING):
+            return self.done_retrieving_at - self.connected_at
+        else:
+            raise Exception(f"Failed to calculate duration: {phase.name} is not recognized")
+
 
     def getting_provider_peers_started(self, timestamp: datetime):
         try:

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from typing import List
 from models.model_retrieval import Retrieval
 from log_parse import ParsedLogFile
+from helpers.constants import RetrievalPhase
 
 
 def plot_num_providers(retrievals:List[Retrieval], title: str):
@@ -24,7 +25,7 @@ def plot_num_providers(retrievals:List[Retrieval], title: str):
     ax = DF.plot(x_compat=True, rot=90, figsize=(16, 5),)
     ax.set_title(title)
 
-def plot_total_duration_each_region(retrievals: List[Retrieval], parsed_logs: List[ParsedLogFile], title: str):
+def plot_duration_each_region(phase: RetrievalPhase, retrievals: List[Retrieval], parsed_logs: List[ParsedLogFile], title: str):
 
     start_dates = [ret.retrieval_started_at for ret in retrievals]
     start_dates.sort()
@@ -41,7 +42,7 @@ def plot_total_duration_each_region(retrievals: List[Retrieval], parsed_logs: Li
 
         for ret in retrievals:
             start_index = start_dates.index(ret.retrieval_started_at)
-            region_durations[reg][start_index] = (ret.duration_total()).total_seconds()
+            region_durations[reg][start_index] = (ret.duration(phase)).total_seconds()
 
 
 
@@ -58,7 +59,7 @@ def plot_each_phase_all_regions(retrievals:List[Retrieval], title: str):
 
     for ret in retrievals:
         overall_durations += [
-            (ret.duration_total()).total_seconds()]
+            (ret.duration(RetrievalPhase.TOTAL)).total_seconds()]
 
         initiated_durations += [
             (ret.get_providers_queries_started_at - ret.retrieval_started_at).total_seconds()]
