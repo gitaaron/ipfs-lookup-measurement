@@ -26,7 +26,7 @@ echo "      host: $HOST_NAME" >> promtail-local-config.yaml
 ./promtail-linux-amd64 -config.file=promtail-local-config.yaml &
 
 # Start agent
-IPFS=/app/kubo/cmd/ipfs/ipfs IPFS_LOGGING=INFO ./agent -host=$AGENT_HOST -port=$AGENT_PORT &
+IPFS=/app/kubo/cmd/ipfs/ipfs IPFS_LOGGING=INFO ./agent -host=$AGENT_HOST -port=$AGENT_PORT 2>&1 | tee /app/agent.log &
 ./kubo/cmd/ipfs/ipfs init
 ./kubo/cmd/ipfs/ipfs config Addresses.API "/ip4/127.0.0.1/tcp/$SERVER_PORT"
 ./kubo/cmd/ipfs/ipfs config Addresses.Gateway "/ip4/127.0.0.1/tcp/$GATEWAY_PORT"
