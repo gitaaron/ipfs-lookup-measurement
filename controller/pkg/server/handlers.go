@@ -106,6 +106,13 @@ func handlePublish(data []byte) (byte, []byte, error) {
 
 // handleLookup handles lookup request.
 func handleLookup(data []byte) (byte, []byte, error) {
+	// Get cid
+	cid := string(data)
+  log.Debugf("cid : %s", cid)
+
+
+  log.Infof("Start retrieve for CID:%v expected content length:%v", cid, 50000)
+
 	// Use IPFS shell
 	sh := api.NewLocalShell()
 	if sh == nil {
@@ -113,9 +120,6 @@ func handleLookup(data []byte) (byte, []byte, error) {
 	}
 	sh.SetTimeout(20 * time.Second)
 
-	// Get cid
-	cid := string(data)
-  log.Debugf("cid : %s", cid)
 
 	// write cid to a file
 	err := os.WriteFile(fmt.Sprintf("lookup-%v", cid), []byte{1}, 0644)
@@ -132,7 +136,7 @@ func handleLookup(data []byte) (byte, []byte, error) {
 	if err != nil {
 		log.Errorf("error reading from retrieved content.")
 	} else {
-		log.Infof("retrieved content length is %v", len(retrieved))
+    log.Infof("Finished retrieve for CID:%s actual content length:%v", len(retrieved))
 	}
 
 	return Lookup, []byte(cid), nil
