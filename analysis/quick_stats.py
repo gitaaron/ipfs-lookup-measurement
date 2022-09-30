@@ -57,10 +57,10 @@ if __name__=='__main__':
     stats['many_providers_slow_likelihood'] = f"{round(num_slow_many_providers/many_providers_count,3)*100}%"
     stats['one_provider_slow_likelihood'] = f"{round(num_slow_one_provider/single_provider_count,3)*100}%"
     stats['percent_first_provider_nearest[fpn]'] = f"{round(calc.percent_nearest_neighbor_first_provider(parsed_logs),3)}%"
-    stats['num_fpns'] = len(parsed_logs.first_provider_nearest_retrievals)
-    stats['num_non_fpns'] = len(parsed_logs.non_first_provider_nearest_retrievals)
-    stats['avg_duration_fpns'] = f"{round(calc.avg_duration_first_provider_nearest(parsed_logs),3)} sec."
-    stats['avg_duration_non_fpns'] = f"{round(calc.avg_duration_non_first_provider_nearest(parsed_logs),3)} sec."
+    stats['num_fpn'] = len(parsed_logs.first_provider_nearest_retrievals)
+    stats['num_non_fpn'] = len(parsed_logs.non_first_provider_nearest_retrievals)
+    stats['avg_duration_fpn'] = f"{round(calc.avg_duration_first_provider_nearest(parsed_logs),3)} sec."
+    stats['avg_duration_non_fpn'] = f"{round(calc.avg_duration_non_first_provider_nearest(parsed_logs),3)} sec."
     stats['fpn_slow_likelihood'] = f"{round(calc.percent_fpn_slow(parsed_logs),3)}%"
     stats['non_fpn_slow_likelihood'] = f"{round(calc.percent_non_fpn_slow(parsed_logs),3)}%"
 
