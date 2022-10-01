@@ -12,13 +12,14 @@ import (
 
 type AgentNode struct {
 	Public_ip  string
+  Port string
 	Region_key string
 	Node_num   int
 	Peer_ID    string
 }
 
 func (an *AgentNode) Host() string {
-	return fmt.Sprintf("http://%v:3030", an.Public_ip)
+	return fmt.Sprintf("http://%v:%v", an.Public_ip, an.Port)
 }
 
 func GetNodesList(nodesListFile string) ([]AgentNode, error) {
@@ -59,7 +60,9 @@ func GetNodesList(nodesListFile string) ([]AgentNode, error) {
 					node_nums_val_map[node_num]["ip"] = value
 				} else if key_type == "arn" {
 					node_nums_val_map[node_num]["arn"] = value
-				} else {
+				} else if key_type == "port" {
+          node_nums_val_map[node_num]["port"] = value
+        } else {
 					log.Printf("unknown key type: (%v)\n", key_type)
 					continue
 				}
@@ -72,7 +75,7 @@ func GetNodesList(nodesListFile string) ([]AgentNode, error) {
 		}
 	}
 
-	agent_nodes := []AgentNode{}
+  agent_nodes := []AgentNode{}
 
 	for node_num, node := range node_nums_val_map {
 
@@ -86,10 +89,15 @@ func GetNodesList(nodesListFile string) ([]AgentNode, error) {
 			continue
 		}
 
+    if node["port"] == "" {
+      node["port"] = "3030"
+    }
+
 		region_key := strings.ReplaceAll(strings.Split(node["arn"], ":")[3], "-", "_")
 
 		an := AgentNode{
 			Public_ip:  node["ip"],
+      Port: node["port"],
 			Region_key: region_key,
 			Node_num:   node_num}
 

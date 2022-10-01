@@ -1,3 +1,11 @@
-http://node0:3030
-http://node1:3031
-http://node2:3032
+node_0_arn = "arn:aws:ec2:me-south-1:449621117945:instance/i-0"
+node_0_ip = "node0"
+node_0_port = "3030"
+
+node_1_arn = "arn:aws:ec2:ap-southeast-2:449621117945:instance/i-1"
+node_1_ip = "node1"
+node_1_port = "3031"
+
+node_2_arn = "arn:aws:ec2:af-south-1:449621117945:instance/i-2"
+node_2_ip = "node2"
+node_2_port = "3032"
