@@ -28,7 +28,7 @@ func NewExperiment() *Experiment {
 	return &Experiment{}
 }
 
-func (exp Experiment) doRetrieve(key []byte, cid string, retrieverNode string) {
+func (exp Experiment) doRetrieve(key []byte, cid string, fileSize int, retrieverNode string) {
 	// First do a disconnection to avoid using bitswap
 	out, err := server.RequestDisconnect(retrieverNode, key)
 	if err != nil {
@@ -37,7 +37,10 @@ func (exp Experiment) doRetrieve(key []byte, cid string, retrieverNode string) {
 	}
 	log.Infof("Response of disconnection from %v is: %v", retrieverNode, out)
 	log.Infof("Start lookup %v from %v", cid, retrieverNode)
-	err = server.RequestLookup(retrieverNode, key, cid)
+
+
+  err = server.RequestLookup(retrieverNode, key, server.SendFile{Cid:cid, Size:fileSize})
+
 	if err != nil {
 		log.Errorf("Error requesting lookup to %v: %v", retrieverNode, err.Error())
 		return
@@ -106,7 +109,8 @@ func (exp *Experiment) DoRun(key []byte, mainPlayerIndex int, mainPlayerMode Pla
 	mainPlayer := nodesList[mainPlayerIndex].Host()
 
 	// Generate random content, 0.5 MB.
-	content := make([]byte, 500_000)
+  size := 500_000
+	content := make([]byte, size)
 	rand.Read(content)
 
 	var cid string
@@ -129,7 +133,7 @@ func (exp *Experiment) DoRun(key []byte, mainPlayerIndex int, mainPlayerMode Pla
 			wg.Add(1)
 			go func(wg *sync.WaitGroup, retriever string) {
 				defer wg.Done()
-				exp.doRetrieve(key, cid, retriever)
+				exp.doRetrieve(key, cid, size, retriever)
 			}(&wg, retriever.Host())
 		}
 		wg.Wait()
@@ -160,7 +164,7 @@ func (exp *Experiment) DoRun(key []byte, mainPlayerIndex int, mainPlayerMode Pla
 			return
 		}
 
-		exp.doRetrieve(key, cid, mainPlayer)
+		exp.doRetrieve(key, cid, size, mainPlayer)
 
 	} else {
 		log.Errorf("Invalid mainPlayerMode %s", mainPlayerMode)

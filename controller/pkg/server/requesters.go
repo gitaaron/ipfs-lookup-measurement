@@ -3,10 +3,12 @@ package server
 import (
 	"bytes"
 	"fmt"
+  "encoding/json"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
+
 )
 
 // Request sends a request to given addr with given key, msg type and data.
@@ -93,16 +95,29 @@ func RequestPublish(addr string, key []byte, content []byte) (string, error) {
 }
 
 // RequestLookup requests a lookup.
-func RequestLookup(addr string, key []byte, cid string) error {
-	msgType, data, err := Request(addr, key, Lookup, []byte(cid))
+func RequestLookup(addr string, key []byte, sendFile SendFile) error {
+
+  msg, err := json.Marshal(sendFile)
+
+  if err != nil {
+    panic(err)
+  }
+
+
+	msgType, data, err := Request(addr, key, Lookup, []byte(msg))
 	if err != nil {
 		return err
 	}
 	if msgType != Lookup {
 		return fmt.Errorf("wrong msg type received, expect %v, got %v", Publish, msgType)
 	}
-	if cid != string(data) {
-		return fmt.Errorf("look up the wrong cid, expect %v, got %v", cid, string(data))
+
+  var resp SendFile
+  json.Unmarshal(data, &resp)
+
+
+	if sendFile.Cid != resp.Cid {
+		return fmt.Errorf("look up the wrong cid, expect %v, got %v", sendFile.Cid, resp.Cid)
 	}
 	return nil
 }

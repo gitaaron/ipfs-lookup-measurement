@@ -3,6 +3,7 @@ package server
 import (
 	"bytes"
 	"fmt"
+  "encoding/json"
 	"io"
 	"os"
 	"os/exec"
@@ -106,12 +107,14 @@ func handlePublish(data []byte) (byte, []byte, error) {
 
 // handleLookup handles lookup request.
 func handleLookup(data []byte) (byte, []byte, error) {
-	// Get cid
-	cid := string(data)
-  log.Debugf("cid : %s", cid)
+  fmt.Printf("data: %v", string(data))
+  var resp SendFile
+  json.Unmarshal(data, &resp)
 
+	cid := resp.Cid
+  size := resp.Size
 
-  log.Infof("Start retrieve for CID:%v expected content length:%v", cid, 50000)
+  log.Infof("Start retrieve for CID:%v expected content length:%v", cid, size)
 
 	// Use IPFS shell
 	sh := api.NewLocalShell()
@@ -139,7 +142,13 @@ func handleLookup(data []byte) (byte, []byte, error) {
     log.Infof("Finished retrieve for CID:%s actual content length:%v", len(retrieved))
 	}
 
-	return Lookup, []byte(cid), nil
+  out, err := json.Marshal(SendFile{Cid:cid, Size:size})
+
+  if err != nil {
+    panic(err)
+  }
+
+	return Lookup, []byte(out), nil
 }
 
 // handleClean handles clean request.
