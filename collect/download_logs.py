@@ -40,10 +40,18 @@ def downloadLogs(download_dir, sinceHours, nodes):
     Path(output_dir).mkdir(exist_ok=True, parents=True)
 
     for i in nodes:
-        logFile = "%s/%s.log" % (output_dir, nodes[i])
-        cmd = """ logcli query --limit=987654321 --since=%dh --output=jsonl '{host="node%d"}' > %s """ % (
+        logFile = "%s/ipfs-%s.log" % (output_dir, nodes[i])
+        cmd = """ logcli query --limit=987654321 --since=%dh --output=jsonl '{host="node%d",filename=~".*/all.log"}' > %s """ % (
             sinceHours, i, logFile)
         print(cmd)
+        run(cmd, shell=True)
+
+
+        logFile = "%s/agent-%s.log" % (output_dir, nodes[i])
+        cmd = """ logcli query --limit=987654321 --since=%dh --output=jsonl '{host="node%d",filename=~".*/agent.log"}' > %s """ % (
+            sinceHours, i, logFile)
+        print(cmd)
+
         run(cmd, shell=True)
 
     writeAnalysisConfig(os.path.abspath(download_dir), container)

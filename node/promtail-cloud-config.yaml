@@ -6,10 +6,10 @@ positions:
   filename: /tmp/positions.yaml
 
 scrape_configs:
-- job_name: ipfs
+- job_name: agent
   static_configs:
   - targets:
       - localhost
     labels:
-      job: ipfslogs
-      __path__: /home/ubuntu/all.log
+      job: agentlogs
+      __path__: /home/ubuntu/*.log
