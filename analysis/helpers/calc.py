@@ -2,12 +2,14 @@ from log_parse import ParsedLogFiles
 from helpers import reduce
 from typing import List
 from models.model_retrieval import Retrieval
+from helpers.constants import RetrievalPhase
+
 
 def _avg_duration(retrievals: List[Retrieval]):
     num: float = len(retrievals)
     _total_duration: int = 0
     for ret in retrievals:
-        _total_duration += ret.duration_total().total_seconds()
+        _total_duration += ret.duration(RetrievalPhase.TOTAL).total_seconds()
 
     return _total_duration / num
 
