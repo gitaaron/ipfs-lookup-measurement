@@ -139,7 +139,7 @@ func handleLookup(data []byte) (byte, []byte, error) {
 	if err != nil {
 		log.Errorf("error reading from retrieved content.")
 	} else {
-    log.Infof("Finished retrieve for CID:%s actual content length:%v", len(retrieved))
+    log.Infof("Finished retrieve for CID:%s actual content length:%v", cid, len(retrieved))
 	}
 
   out, err := json.Marshal(SendFile{Cid:cid, Size:size})
