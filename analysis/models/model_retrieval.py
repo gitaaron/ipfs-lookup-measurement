@@ -18,7 +18,7 @@ class Retrieval:
 
     _state: State
 
-    origin: str
+    origin: Region
     cid: str
 
     retrieval_started_at: datetime
@@ -42,7 +42,7 @@ class Retrieval:
     marked_as_incomplete: bool
     marked_for_removal: bool
 
-    def __init__(self, origin: str, cid: str, retrieval_started_at: datetime) -> None:
+    def __init__(self, origin: Region, cid: str, retrieval_started_at: datetime) -> None:
         self.origin = origin
         self.cid = cid
         self.retrieval_started_at = retrieval_started_at
@@ -83,9 +83,6 @@ class Retrieval:
         else:
             raise Exception(
                 f"Illegal state transition from {self._state} to {state}")
-
-    def region_of_origin(self):
-        return Region(self.origin.split('/')[-1].split('.')[0])
 
     def duration(self, phase: RetrievalPhase) -> timedelta:
         if(phase==RetrievalPhase.TOTAL):

@@ -1,20 +1,20 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from log_parse import ParsedLogFile
+from models.model_parsed_log_file import ParsedLogFiles
 from typing import List
 from models.model_publication import Publication
 from models.model_retrieval import Retrieval
 
 
-def plot(parsed_logs: List[ParsedLogFile]):
+def plot(parsed_logs: ParsedLogFiles):
 
     region_labels = []
 
     regions_average_retrieval_duration = []
 
-    for log in parsed_logs:
+    for log in parsed_logs.all:
 
-        region_labels.append(log.region())
+        region_labels.append(log.region_log_file.region)
 
         retrievals = log.completed_retrievals()
 

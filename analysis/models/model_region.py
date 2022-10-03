@@ -21,6 +21,7 @@ class Region:
     longitude: float
 
     def __init__(self, name: str):
+        self.name = name
         self.coords = name_coords_map[name]
 
     @property
@@ -35,3 +36,6 @@ class Region:
     # Returns distance (km) between from_region and self
     def distance(self, from_region):
         return geopy.distance.geodesic(self.coords, from_region.coords).km
+
+    def __repr__(self):
+        return self.name

@@ -6,10 +6,12 @@ from typing import List
 import matplotlib.pyplot as plt
 from pathlib import Path
 from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency, pie_phase_retrieval_latency, timeseries_retrievals
-from log_parse import load_parsed_logs, ParsedLogFile
+from models.model_parsed_log_file import ParsedLogFile, ParsedLogFiles
 from models.model_publication import Publication
 from models.model_retrieval import Retrieval
 from helpers.constants import RetrievalPhase
+from helpers import logs
+from models.model_logs_config import LogsConfig
 
 # Set OUT_DIR to `None` to display the graphs with the GUI
 #OUT_DIR = None
@@ -56,13 +58,12 @@ def writeMeta(out_target_dir: str, parsed_logs: List[ParsedLogFile]):
     pickle.dump(meta, fpt)
     fpt.close()
 
-def doPlotSinceTimeStarted(out_target_dir, log_file_paths):
-    parsed_logs = load_parsed_logs(log_file_paths)
+def doPlotSinceTimeStarted(out_target_dir, parsed_logs: ParsedLogFiles):
 
     publications: List[Publication] = []
     retrievals: List[Retrieval] = []
 
-    for parsed_log in parsed_logs:
+    for parsed_log in parsed_logs.all:
         publications += parsed_log.publications
         retrievals += parsed_log.completed_retrievals()
 
@@ -78,17 +79,12 @@ def doPlotSinceTimeStarted(out_target_dir, log_file_paths):
             plt.close()
 
 
-def doPlotLatest(out_target_dir, log_file_paths):
-    print('latest : %s' % log_file_paths)
+def doPlotLatest(out_target_dir, parsed_logs: ParsedLogFiles):
+    print('latest dir : %s' % out_target_dir)
 
-    parsed_logs = load_parsed_logs(log_file_paths)
+    publications = parsed_logs.total_publications
+    retrievals = parsed_logs.total_completed_retrievals
 
-    publications: List[Publication] = []
-    retrievals: List[Retrieval] = []
-
-    for parsed_log in parsed_logs:
-        publications += parsed_log.publications
-        retrievals += parsed_log.completed_retrievals()
 
     cdf_publications.plot_total(parsed_logs)
     if out_target_dir is not None:
@@ -154,33 +150,23 @@ def doPlotLatest(out_target_dir, log_file_paths):
         plt.close()
 
     if out_target_dir is not None:
-        writeMeta(out_target_dir, parsed_logs)
+        writeMeta(out_target_dir, parsed_logs.all)
 
 
-def doPlot(out_target_dir, latest_log_file_paths, all_log_file_paths):
+def doPlot(out_target_dir, latest_parsed_log_files: ParsedLogFiles, all_parsed_log_files: ParsedLogFiles):
     if OUT_DIR is not None:
         out_target_dir = os.path.join(OUT_DIR, out_target_dir)
         Path(out_target_dir).mkdir(exist_ok=True, parents=True)
     else:
         out_target_dir = None
 
-    doPlotLatest(out_target_dir, latest_log_file_paths)
-    doPlotSinceTimeStarted(out_target_dir, all_log_file_paths)
+    doPlotLatest(out_target_dir, latest_parsed_log_files)
+    doPlotSinceTimeStarted(out_target_dir, all_parsed_log_files)
 
     if OUT_DIR is None:
         plt.show()
 
 
-def get_log_file_paths(log_dir):
-    log_file_pat = f"{log_dir}/*.log"
-    return glob.glob(log_file_pat)
-
 if __name__=='__main__':
-    logs_config = json.load(open('./log_config.json'))
-    latest_log_dir = os.path.join(logs_config['root_dir_path'], logs_config['latest_dir_name'])
-
-    all_log_file_paths = []
-    for log_dir in  os.listdir(logs_config['root_dir_path']):
-        all_log_file_paths += get_log_file_paths(os.path.join(logs_config['root_dir_path'], log_dir))
-
-    doPlot(logs_config['latest_dir_name'], get_log_file_paths(latest_log_dir), all_log_file_paths)
+    logs_config = LogsConfig('./log_config.json')
+    doPlot(logs_config.latest_dir_name, logs.load_latest_parsed_log_files(logs_config), logs.load_all_parsed_log_files(logs_config))

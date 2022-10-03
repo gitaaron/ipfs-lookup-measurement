@@ -6,9 +6,9 @@ from models.model_add_provider_query import AddProviderQuery
 from models.model_get_providers_query import GetProvidersQuery
 from models.model_peer import Peer
 from models.model_find_node_query import FindNodeQuery
+from models.model_region import Region
 
 from typing import Optional, List, Dict
-
 
 class Publication:
     class State(Enum):
@@ -20,7 +20,7 @@ class Publication:
     _state: State
 
     # The filename of the log file this publication came from
-    origin: str
+    origin: Region
     # The content identifier that node provided
     cid: str
     invalid: bool
@@ -45,7 +45,7 @@ class Publication:
     # All get provider RPCs and their outcomes
     get_provider_queries: Dict[Peer, GetProvidersQuery]
 
-    def __init__(self, origin: str, cid: str, publication_started_at: datetime) -> None:
+    def __init__(self, origin: Region, cid: str, publication_started_at: datetime) -> None:
         self.origin = origin
         self.cid = cid
         self.provide_started_at = publication_started_at

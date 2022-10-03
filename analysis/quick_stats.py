@@ -2,22 +2,15 @@ import os
 import json
 import glob
 from typing import List
-from log_parse import load_ParsedLogFiles, ParsedLogFile
+from models.model_parsed_log_file import ParsedLogFile
 from models.model_publication import Publication
 from models.model_retrieval import Retrieval
-from helpers import proximity, calc, reduce, constants
-
-def get_log_file_paths(log_dir):
-    log_file_pat = f"{log_dir}/*.log"
-    return glob.glob(log_file_pat)
-
+from helpers import proximity, calc, reduce, constants, logs
+from models.model_logs_config import LogsConfig
 
 if __name__=='__main__':
-    logs_config = json.load(open('./log_config.json'))
-    latest_log_dir = os.path.join(logs_config['root_dir_path'], logs_config['latest_dir_name'])
-    log_file_paths = get_log_file_paths(latest_log_dir)
-    parsed_logs = load_ParsedLogFiles(log_file_paths)
-
+    logs_config = LogsConfig('./log_config.json')
+    parsed_logs = logs.load_latest_parsed_log_files(logs_config)
 
     publications: List[Publication] = parsed_logs.total_publications
     completed_retrievals: List[Retrieval] = parsed_logs.total_completed_retrievals

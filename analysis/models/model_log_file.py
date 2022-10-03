@@ -5,15 +5,16 @@ from typing import List, Tuple, Dict
 from models.model_log_line import LogLine
 from models.model_retrieval import Retrieval
 from models.model_publication import Publication
+from models.model_region_log_file import RegionLogFile
 
 
 class LogFile:
 
     @staticmethod
-    def parse(file: str) -> Tuple[Dict[str, Publication], Dict[str, Retrieval], List[str]]:
-        print("Parsing", file)
+    def parse(region_log_file: RegionLogFile) -> Tuple[Dict[str, Publication], Dict[str, Retrieval], List[str]]:
+        print("Parsing: ", region_log_file.ipfs_path)
 
-        with open(file, 'r') as f:
+        with open(region_log_file.ipfs_path, 'r') as f:
             # CIDs that were not attempted to query
             unattempted_retrieval_cids: List[str] = []
 
@@ -28,7 +29,7 @@ class LogFile:
                     log = LogLine.from_dict(json.loads(line))
                     if (pll := log.is_start_providing()) is not None:
                         publications[pll.cid] = Publication(
-                            file, pll.cid, pll.timestamp)
+                            region_log_file.region, pll.cid, pll.timestamp)
                     if (pll := log.is_start_getting_closest_peers()) is not None and pll.cid in publications:
                         publications[pll.cid].getting_closest_peers_started(
                             pll.timestamp)
@@ -84,7 +85,7 @@ class LogFile:
 
                     elif (pll := log.is_start_retrieving()) is not None:
                         retrievals[pll.cid] = Retrieval(
-                            file, pll.cid, pll.timestamp)
+                            region_log_file.region, pll.cid, pll.timestamp)
                     elif (pll := log.is_start_searching_pvd()) is not None and pll.cid in retrievals:
                         retrievals[pll.cid].getting_provider_peers_started(
                             pll.timestamp)

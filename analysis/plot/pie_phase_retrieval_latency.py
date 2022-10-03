@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from log_parse import load_parsed_logs, ParsedLogFile
+from models.model_parsed_log_file import ParsedLogFile
 from typing import List
 from models.model_publication import Publication
 from models.model_retrieval import Retrieval

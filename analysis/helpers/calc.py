@@ -1,4 +1,4 @@
-from log_parse import ParsedLogFiles
+from models.model_parsed_log_file import ParsedLogFiles
 from helpers import reduce
 from typing import List
 from models.model_retrieval import Retrieval

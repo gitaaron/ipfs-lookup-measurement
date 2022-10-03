@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import List
 from models.model_retrieval import Retrieval
-from log_parse import ParsedLogFile
+from models.model_parsed_log_file import ParsedLogFiles
 from helpers.constants import RetrievalPhase
 
 
@@ -25,15 +25,15 @@ def plot_num_providers(retrievals:List[Retrieval], title: str):
     ax = DF.plot(x_compat=True, rot=90, figsize=(16, 5),)
     ax.set_title(title)
 
-def plot_duration_each_region(phase: RetrievalPhase, retrievals: List[Retrieval], parsed_logs: List[ParsedLogFile], title: str):
+def plot_duration_each_region(phase: RetrievalPhase, retrievals: List[Retrieval], parsed_logs: ParsedLogFiles, title: str):
 
     start_dates = [ret.retrieval_started_at for ret in retrievals]
     start_dates.sort()
 
     region_durations = {}
 
-    for log in parsed_logs:
-        reg = log.region()
+    for log in parsed_logs.all:
+        reg = log.region_log_file.region
         region_durations[reg] = []
         retrievals = log.completed_retrievals()
 

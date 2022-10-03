@@ -2,6 +2,7 @@ import numpy as np
 from models.model_retrieval import Retrieval
 from typing import List
 import matplotlib.pyplot as plt
+from models.model_parsed_log_file import ParsedLogFiles
 
 
 def initiated_phase(axl, retrievals: List[Retrieval]):
@@ -79,30 +80,30 @@ def total(axl, retrievals: List[Retrieval], label: str):
 
     axl.plot(bin_edges[:-1], cdf, label=label)
 
-def plot_total(parsed_logs):
+def plot_total(parsed_logs: ParsedLogFiles):
     fig, axl = plt.subplots()
 
-    for parsed_log in parsed_logs:
-        total(axl, parsed_log.completed_retrievals(), parsed_log.region())
+    for parsed_log in parsed_logs.all:
+        total(axl, parsed_log.completed_retrievals(), parsed_log.region_log_file.region)
 
     axl.set_title('Retrieval Total Latency by Region (fig. d)')
     axl.legend(loc='lower right')
 
 
-def plot_getting_closest_peers(parsed_logs):
+def plot_getting_closest_peers(parsed_logs: ParsedLogFiles):
     fig, axl = plt.subplots()
 
-    for parsed_log in parsed_logs:
-        getting_closest_peers_phase(axl, parsed_log.completed_retrievals(), parsed_log.region())
+    for parsed_log in parsed_logs.all:
+        getting_closest_peers_phase(axl, parsed_log.completed_retrievals(), parsed_log.region_log_file.region)
 
     axl.set_title('Retrieval Getting Closest Peer Latency by Region (fig. e)')
     axl.legend(loc='lower right')
 
-def plot_fetch(parsed_logs):
+def plot_fetch(parsed_logs: ParsedLogFiles):
     fig, axl = plt.subplots()
 
-    for parsed_log in parsed_logs:
-        fetching_phase(axl, parsed_log.completed_retrievals(), parsed_log.region())
+    for parsed_log in parsed_logs.all:
+        fetching_phase(axl, parsed_log.completed_retrievals(), parsed_log.region_log_file.region)
 
     axl.set_title('Retrieval Fetch Latency by Region (fig. f)')
     axl.legend(loc='lower right')
