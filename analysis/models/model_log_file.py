@@ -143,17 +143,24 @@ class LogFile:
                             retrievals[pll.cid].marked_for_removal = True
 
                 except Exception as e:
-                    print('Failed parsing line.')
+                    print('Failed parsing IPFS line.')
                     print('Line: %s' % log.line)
                     print('Reason: %s' % str(e))
 
 
         with open(region_log_file.agent_path, 'r') as f:
             for idx, line in enumerate(reversed(f.readlines())):
-                log = AgentLogLine.from_dict(json.loads(line))
-                if (pll := log.is_start_retrieving()):
-                    if pll.cid in sealed_retrievals:
-                        sealed_retrievals[pll.cid].agent_initiated(pll.file_size, pll.timestamp)
+                try:
+                    log = AgentLogLine.from_dict(json.loads(line))
+                    if (pll := log.is_start_retrieving()):
+                        if pll.cid in sealed_retrievals:
+                            sealed_retrievals[pll.cid].agent_initiated(pll.file_size, pll.timestamp)
+                except Exception as e:
+                    print('Failed parsing Agent line.')
+                    print('Line: %s' % log.line)
+                    print('Reason: %s' % str(e))
+
+
 
 
 
