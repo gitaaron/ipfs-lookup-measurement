@@ -105,11 +105,10 @@ func (exp *Experiment) doPublish(key []byte, content *[]byte, publisherNode stri
 // DoRun instructs a set of nodes to publish a random 'file' and another set of nodes to retrieve it
 // the action of the mainPlayer is either a publisher or retriever based on mainPlayerMode
 // the rest of the nodes in the nodesList will act as the other PlayerType in the scenario
-func (exp *Experiment) DoRun(key []byte, mainPlayerIndex int, mainPlayerMode PlayerType, nodesList []config.AgentNode) {
+func (exp *Experiment) DoRun(key []byte, mainPlayerIndex int, mainPlayerMode PlayerType, nodesList []config.AgentNode, size int) {
 	mainPlayer := nodesList[mainPlayerIndex].Host()
 
-	// Generate random content, 0.5 MB.
-  size := 500_000
+	// Generate random content
 	content := make([]byte, size)
 	rand.Read(content)
 
