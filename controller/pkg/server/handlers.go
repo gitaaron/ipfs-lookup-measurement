@@ -107,14 +107,13 @@ func handlePublish(data []byte) (byte, []byte, error) {
 
 // handleLookup handles lookup request.
 func handleLookup(data []byte) (byte, []byte, error) {
-  fmt.Printf("data: %v", string(data))
   var resp SendFile
   json.Unmarshal(data, &resp)
 
 	cid := resp.Cid
   size := resp.Size
 
-  log.Infof("Start retrieve for CID:%v expected content length:%v", cid, size)
+  fmt.Printf("%s: Start retrieve for CID:%v expected content length:%v\n", time.Now().Format(time.RFC3339Nano), cid, size)
 
 	// Use IPFS shell
 	sh := api.NewLocalShell()
@@ -139,7 +138,7 @@ func handleLookup(data []byte) (byte, []byte, error) {
 	if err != nil {
 		log.Errorf("error reading from retrieved content.")
 	} else {
-    log.Infof("Finished retrieve for CID:%s actual content length:%v", cid, len(retrieved))
+    fmt.Printf("%s: Finished retrieve for CID:%s actual content length:%v\n", time.Now().Format(time.RFC3339Nano), cid, len(retrieved))
 	}
 
   out, err := json.Marshal(SendFile{Cid:cid, Size:size})
