@@ -13,6 +13,7 @@ class ParsedLogLine:
     remote_peer: Optional[Peer]
     other_peer: Optional[Peer]
     closest_peers: Optional[List[Peer]]
+    file_size: Optional[int]
     error_str: Optional[str]
     count: Optional[int]
 
@@ -26,11 +27,13 @@ class ParsedLogLine:
         self.count = None
 
 
-class LogLine:
+class _LogLine:
     line: str
-
     def __init__(self, line: str, timestamp: datetime) -> None:
         self.line = line
+
+
+class IPFSLogLine(_LogLine):
 
     def is_start_providing(self) -> Optional[ParsedLogLine]:
         if "Start providing cid" not in self.line:
@@ -309,8 +312,34 @@ class LogLine:
         return parsed
 
     @staticmethod
-    def from_dict(obj: Any) -> 'LogLine':
+    def from_dict(obj: Any) -> 'IPFSLogLine':
         assert isinstance(obj, dict)
         line = obj.get("line")
         timestamp = dateutil.parser.parse(obj.get("timestamp"))
-        return LogLine(line, timestamp)
+        return IPFSLogLine(line, timestamp)
+
+class AgentLogLine(_LogLine):
+
+    def is_start_retrieving(self) -> Optional[ParsedLogLine]:
+        if "Start retrieve for CID:" not in self.line:
+            return None
+        if "expected content length:" not in self.line:
+            return None
+
+        match = re.search(
+            r"([^\s]+): Start retrieve for CID:([^\s]+) expected content length:([1-9][0-9]+)", self.line)
+
+        if match is None:
+            raise Exception("Failed to parse line: ", self.line)
+
+        parsed = ParsedLogLine(match.group(2), match.group(1))
+        parsed.file_size = int(match.group(3))
+        return parsed
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'AgentLogLine':
+        assert isinstance(obj, dict)
+        line = obj.get("line")
+        timestamp = dateutil.parser.parse(obj.get("timestamp"))
+        return AgentLogLine(line, timestamp)
+

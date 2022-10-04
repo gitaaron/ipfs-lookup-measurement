@@ -2,7 +2,7 @@ import datetime
 import json
 from typing import List, Tuple, Dict
 
-from models.model_log_line import LogLine
+from models.model_log_line import IPFSLogLine, AgentLogLine
 from models.model_retrieval import Retrieval
 from models.model_publication import Publication
 from models.model_region_log_file import RegionLogFile
@@ -14,19 +14,19 @@ class LogFile:
     def parse(region_log_file: RegionLogFile) -> Tuple[Dict[str, Publication], Dict[str, Retrieval], List[str]]:
         print("Parsing: ", region_log_file.ipfs_path)
 
+        # CIDs that were not attempted to query
+        unattempted_retrieval_cids: List[str] = []
+
+        sealed_publications: dict[str, Publication] = {}
+        sealed_retrievals: dict[str, Retrieval] = {}
+
         with open(region_log_file.ipfs_path, 'r') as f:
-            # CIDs that were not attempted to query
-            unattempted_retrieval_cids: List[str] = []
-
-            sealed_publications: dict[str, Publication] = {}
-            sealed_retrievals: dict[str, Retrieval] = {}
-
             publications: dict[str, Publication] = {}
             retrievals: dict[str, Retrieval] = {}
 
             for idx, line in enumerate(reversed(f.readlines())):
                 try:
-                    log = LogLine.from_dict(json.loads(line))
+                    log = IPFSLogLine.from_dict(json.loads(line))
                     if (pll := log.is_start_providing()) is not None:
                         publications[pll.cid] = Publication(
                             region_log_file.region, pll.cid, pll.timestamp)
@@ -148,4 +148,13 @@ class LogFile:
                     print('Reason: %s' % str(e))
 
 
-            return sealed_publications, sealed_retrievals, unattempted_retrieval_cids
+        with open(region_log_file.agent_path, 'r') as f:
+            for idx, line in enumerate(reversed(f.readlines())):
+                log = AgentLogLine.from_dict(json.loads(line))
+                if (pll := log.is_start_retrieving()):
+                    if pll.cid in sealed_retrievals:
+                        sealed_retrievals[pll.cid].agent_initiated(pll.file_size, pll.timestamp)
+
+
+
+        return sealed_publications, sealed_retrievals, unattempted_retrieval_cids

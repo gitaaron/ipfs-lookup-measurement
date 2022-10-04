@@ -31,6 +31,8 @@ class Retrieval:
     received_first_HAVE_at: Optional[datetime]
     done_retrieving_at: Optional[datetime]
     finished_searching_providers_at: Optional[datetime]
+    agent_initiated_at: Optional[datetime]
+    file_size: Optional[int]
 
     provider_peers: Set[Peer]
     first_provider_peer: Peer
@@ -45,6 +47,7 @@ class Retrieval:
     def __init__(self, origin: Region, cid: str, retrieval_started_at: datetime) -> None:
         self.origin = origin
         self.cid = cid
+        self.file_size = None
         self.retrieval_started_at = retrieval_started_at
         self._state = Retrieval.State.INITIATED
         self.get_providers_queries = {}
@@ -63,6 +66,7 @@ class Retrieval:
         self.finished_searching_providers_at = None
         self.done_retrieving_error = None
         self.finish_searching_providers_ctx_error = None
+        self.agent_initiated_at = None
 
     @property
     def state(self):
@@ -188,3 +192,7 @@ class Retrieval:
                 self.state = Retrieval.State.DONE_WITHOUT_ASKING_PEERS
             else:
                 self.marked_as_incomplete = True
+
+    def agent_initiated(self, file_size: int, timestamp: datetime):
+        self.agent_initated_at = timestamp
+        self.file_size = file_size

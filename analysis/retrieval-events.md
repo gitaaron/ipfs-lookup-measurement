@@ -56,6 +56,7 @@ The following is an ordered sequence of events for retrieval.
 
 ```
 {
+  agent_initiated_at: "${TIMESTAMP}: Start retrieve for CID:${CID} expected content length:${CONTENT_LENGTH}"
   retrieval_started_at: "${TIMESTAMP}: Start retrieving content for ${CID}",
   get_providers_queries_started_at: "${TIMESTAMP}: Start searching providers for cid ${CID}",
   found_first_provider_at: "${TIMESTAMP}: Found provider ${PROVIDER_PEER_ID} for cid ${CID} from ${REMOTE_PEER_ID}(${REMOTE_PEER_AGENT})",
@@ -72,6 +73,10 @@ The following is an ordered sequence of events for retrieval.
 
 ```
 {
+
+  ([^\s]+): Start retrieve for CID:([^\s]+) expected content length:([1-9][0-9]+) :
+  ${TIMESTAMP}: Start retrieve for CID:${CID} expected content length:${CONTENT_LENGTH},
+
   ([^\s]+): Start retrieving content for ([^\s]+) :
   ${TIMESTAMP}: Start retrieving content for ${CID},
 

@@ -40,6 +40,7 @@ if __name__=='__main__':
 
     stats = {}
     stats['num_retrievals'] = len(completed_retrievals)
+    stats['has_file_size'] = len(reduce.by_has_file_size(completed_retrievals))
     stats[f"slow_retrievals (>{constants.SLOW_THRESHOLD} sec.)"] = len(slow)
     stats['percent_retrievals_are_slow'] = f"{round(len(slow)/len(completed_retrievals)*100,3)}%"
     stats['many_providers_count'] = many_providers_count
