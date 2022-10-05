@@ -1,5 +1,4 @@
-import datetime
-import json
+import os, datetime, json
 from typing import List, Tuple, Dict
 
 from models.model_log_line import IPFSLogLine, AgentLogLine
@@ -148,17 +147,20 @@ class LogFile:
                     print('Reason: %s' % str(e))
 
 
-        with open(region_log_file.agent_path, 'r') as f:
-            for idx, line in enumerate(reversed(f.readlines())):
-                try:
-                    log = AgentLogLine.from_dict(json.loads(line))
-                    if (pll := log.is_start_retrieving()):
-                        if pll.cid in sealed_retrievals:
-                            sealed_retrievals[pll.cid].agent_initiated(pll.file_size, pll.timestamp)
-                except Exception as e:
-                    print('Failed parsing Agent line.')
-                    print('Line: %s' % log.line)
-                    print('Reason: %s' % str(e))
+        if os.path.exists(region_log_file.agent_path):
+            with open(region_log_file.agent_path, 'r') as f:
+                for idx, line in enumerate(reversed(f.readlines())):
+                    try:
+                        log = AgentLogLine.from_dict(json.loads(line))
+                        if (pll := log.is_start_retrieving()):
+                            if pll.cid in sealed_retrievals:
+                                sealed_retrievals[pll.cid].agent_initiated(pll.file_size, pll.timestamp)
+                    except Exception as e:
+                        print('Failed parsing Agent line.')
+                        print('Line: %s' % log.line)
+                        print('Reason: %s' % str(e))
+        else:
+            print('Skipping parse of agent as it does not exist: ', region_log_file.agent_path)
 
 
 

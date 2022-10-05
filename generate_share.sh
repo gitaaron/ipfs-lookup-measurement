@@ -4,7 +4,7 @@ echo "start download_logs..."
 sh download_logs.sh
 cd analysis
 echo "parse log..."
-python log_parse.py
+python log_parse.py -b LATEST
 echo "plot_all..."
 python plot_all.py
 cd ../share
