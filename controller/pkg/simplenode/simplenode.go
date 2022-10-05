@@ -4,6 +4,7 @@ package simplenode
 import (
 	"crypto/rand"
 	"errors"
+	"fmt"
 	"sync"
 	"time"
 
@@ -38,8 +39,7 @@ func (exp Experiment) doRetrieve(key []byte, cid string, fileSize int, retriever
 	log.Infof("Response of disconnection from %v is: %v", retrieverNode, out)
 	log.Infof("Start lookup %v from %v", cid, retrieverNode)
 
-
-  err = server.RequestLookup(retrieverNode, key, server.SendFile{Cid:cid, Size:fileSize})
+	err = server.RequestLookup(retrieverNode, key, server.SendFile{Cid: cid, Size: fileSize})
 
 	if err != nil {
 		log.Errorf("Error requesting lookup to %v: %v", retrieverNode, err.Error())
@@ -102,10 +102,7 @@ func (exp *Experiment) doPublish(key []byte, content *[]byte, publisherNode stri
 	return cid, nil
 }
 
-// DoRun instructs a set of nodes to publish a random 'file' and another set of nodes to retrieve it
-// the action of the mainPlayer is either a publisher or retriever based on mainPlayerMode
-// the rest of the nodes in the nodesList will act as the other PlayerType in the scenario
-func (exp *Experiment) DoRun(key []byte, mainPlayerIndex int, mainPlayerMode PlayerType, nodesList []config.AgentNode, size int) {
+func (exp *Experiment) DoFirstPartOfRun(key []byte, mainPlayerIndex int, mainPlayerMode PlayerType, nodesList []config.AgentNode, size int) (string, error) {
 	mainPlayer := nodesList[mainPlayerIndex].Host()
 
 	// Generate random content
@@ -116,28 +113,16 @@ func (exp *Experiment) DoRun(key []byte, mainPlayerIndex int, mainPlayerMode Pla
 	var err error
 	var wg sync.WaitGroup
 
+	if mainPlayerMode != Publisher && mainPlayerMode != Retriever {
+		return "", fmt.Errorf("Invalid mainPlayerMode %s", mainPlayerMode)
+	}
+
 	// Start publish to appropriate nodes
 	if mainPlayerMode == Publisher {
 		cid, err = exp.doPublish(key, &content, mainPlayer)
 		if err != nil {
-			log.Errorf("Error in performing 'doPublish' from %v: %v", mainPlayer, err.Error())
-			return
+			return "", fmt.Errorf("Error in performing 'doPublish' from %v: %v", mainPlayer, err.Error())
 		}
-
-		// Start lookup from appropriate nodes
-		for i, retriever := range nodesList {
-			if i == mainPlayerIndex {
-				continue
-			}
-			wg.Add(1)
-			go func(wg *sync.WaitGroup, retriever string) {
-				defer wg.Done()
-				exp.doRetrieve(key, cid, size, retriever)
-			}(&wg, retriever.Host())
-		}
-		wg.Wait()
-		log.Infof("all retrieves are done")
-
 	} else if mainPlayerMode == Retriever {
 		// experiment should continue only if two or more nodes succeeded in publishing the 'file'
 		publishSuccessCount := 0
@@ -158,15 +143,37 @@ func (exp *Experiment) DoRun(key []byte, mainPlayerIndex int, mainPlayerMode Pla
 			}(&wg, publisher.Host())
 		}
 		wg.Wait()
+
 		if publishSuccessCount < 2 {
-			log.Error("Discontinuing experiment because less than two nodes published the 'file' successfully")
-			return
+			return "", fmt.Errorf("Discontinuing experiment because less than two nodes published the 'file' successfully")
 		}
 
-		exp.doRetrieve(key, cid, size, mainPlayer)
+	}
 
-	} else {
-		log.Errorf("Invalid mainPlayerMode %s", mainPlayerMode)
+	return cid, nil
+
+}
+
+func (exp *Experiment) DoSecondPartOfRun(cid string, key []byte, mainPlayerIndex int, mainPlayerMode PlayerType, nodesList []config.AgentNode, size int) {
+	mainPlayer := nodesList[mainPlayerIndex].Host()
+	var wg sync.WaitGroup
+
+	// Start lookup from appropriate nodes
+	if mainPlayerMode == Publisher {
+		for i, retriever := range nodesList {
+			if i == mainPlayerIndex {
+				continue
+			}
+			wg.Add(1)
+			go func(wg *sync.WaitGroup, retriever string) {
+				defer wg.Done()
+				exp.doRetrieve(key, cid, size, retriever)
+			}(&wg, retriever.Host())
+		}
+		wg.Wait()
+		log.Infof("all retrieves are done")
+	} else if mainPlayerMode == Retriever {
+		exp.doRetrieve(key, cid, size, mainPlayer)
 	}
 
 	// Clean
@@ -184,4 +191,20 @@ func (exp *Experiment) DoRun(key []byte, mainPlayerIndex int, mainPlayerMode Pla
 	}
 	wg.Wait()
 	log.Infof("clean is done")
+}
+
+// DoRun instructs a set of nodes to publish a random 'file' and another set of nodes to retrieve it
+// the action of the mainPlayer is either a publisher or retriever based on mainPlayerMode
+// the rest of the nodes in the nodesList will act as the other PlayerType in the scenario
+func (exp *Experiment) DoRun(key []byte, mainPlayerIndex int, mainPlayerMode PlayerType, nodesList []config.AgentNode, size int) {
+
+	cid, err := exp.DoFirstPartOfRun(key, mainPlayerIndex, mainPlayerMode, nodesList, size)
+
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	exp.DoSecondPartOfRun(cid, key, mainPlayerIndex, mainPlayerMode, nodesList, size)
+
 }

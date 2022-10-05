@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"time"
-  "math"
 
 	"github.com/gitaaron/ipfs-lookup-measurement/controller/pkg/config"
 	"github.com/gitaaron/ipfs-lookup-measurement/controller/pkg/server"
@@ -63,75 +63,142 @@ func main() {
 		fmt.Printf("Got response for setting id for node %v: %v\n", node, out)
 	}
 
-	// Start the experiment.
+	// Initialize some file sizes at different orders of magnitude
+	// 0.05 MB
+	EXTRA_SMALL_SIZE := int(math.Round(0.05 * 1024 * 1024))
+	// ~0.5 MB
+	SMALL_SIZE := EXTRA_SMALL_SIZE * 10
+	// ~5 MB
+	MED_SIZE := SMALL_SIZE * 10
+	// ~50 MB
+	LARGE_SIZE := MED_SIZE * 10
 
+	// Initialize vars for delayed run tracking
+	var mainDelayedPlayer int = 0
+	var LAST_PLAYER int = len(nodesList) - 1
+	var delayedCid string
+	delayedInProgress := false
+	currentDelayedRun := 0
+	currentDelayedSkip := 0
+	const MAX_SKIPS int = 30
+	var DELAYED_FILE_SIZE int = EXTRA_SMALL_SIZE
+
+	// Start the experiment.
 	for {
+		performedFirstPart := false
+		performedSecondPart := false
 
 		e := simplenode.NewExperiment()
 
-    // 0.05 MB
-    extra_small_size := int(math.Round(0.05*1024*1024))
-    // ~0.5 MB
-    small_size := extra_small_size*10
-    // ~5 MB
-    med_size := small_size*10
-    // ~50 MB
-    large_size := med_size*10
+		performExtraSmallOnlyRun := func() {
 
-    performExtraSmallOnlyRun := func() {
+			for mainPlayer := 0; mainPlayer < len(nodesList); mainPlayer++ {
 
-      for mainPlayer := 0; mainPlayer < len(nodesList); mainPlayer++ {
+				log.Println("start mainPlayer retriever run file_size: ", EXTRA_SMALL_SIZE)
+				e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList, EXTRA_SMALL_SIZE)
 
-        log.Println("start mainPlayer retriever run file_size: ", extra_small_size)
-        e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList, extra_small_size)
+				log.Println("start mainPlayer publisher run file_size: ", EXTRA_SMALL_SIZE)
+				e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList, EXTRA_SMALL_SIZE)
 
-        log.Println("start mainPlayer publisher run file_size: ", extra_small_size)
-        e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList, extra_small_size)
+				log.Println("one retrieval and publish run is done for node: ", mainPlayer)
 
-        log.Println("one retrieval and publish run is done for node: ", mainPlayer)
+			}
 
-      }
+		}
 
-    }
+		performOtherSizesRun := func() {
 
-    performOtherSizesRun := func() {
+			for mainPlayer := 0; mainPlayer < len(nodesList); mainPlayer++ {
 
-      for mainPlayer := 0; mainPlayer < len(nodesList); mainPlayer++ {
+				log.Println("start mainPlayer retriever run file_size: ", SMALL_SIZE)
+				e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList, SMALL_SIZE)
 
-        log.Println("start mainPlayer retriever run file_size: ", small_size)
-        e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList, small_size)
+				log.Println("start mainPlayer retriever run file_size: ", MED_SIZE)
+				e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList, MED_SIZE)
 
-        log.Println("start mainPlayer retriever run file_size: ", med_size)
-        e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList, med_size)
+				log.Println("start mainPlayer retriever run file_size: ", LARGE_SIZE)
+				e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList, LARGE_SIZE)
 
-        log.Println("start mainPlayer retriever run file_size: ", large_size)
-        e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList, large_size)
+				log.Println("start mainPlayer publisher run file_size: ", SMALL_SIZE)
+				e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList, SMALL_SIZE)
 
-        log.Println("start mainPlayer publisher run file_size: ", small_size)
-        e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList, small_size)
+				log.Println("start mainPlayer publisher run file_size: ", MED_SIZE)
+				e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList, MED_SIZE)
 
-        log.Println("start mainPlayer publisher run file_size: ", med_size)
-        e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList, med_size)
+				log.Println("start mainPlayer publisher run file_size: ", LARGE_SIZE)
+				e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList, LARGE_SIZE)
 
-        log.Println("start mainPlayer publisher run file_size: ", large_size)
-        e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList, large_size)
+				log.Println("one retrieval and publish experiment is done for node:", mainPlayer)
 
-        log.Println("one retrieval and publish experiment is done for node:", mainPlayer)
+			}
 
-      }
+		}
 
-    }
+		performFirstPartOfDelayed := func() (string, error) {
+			log.Println("start delayed first part of run file_size: ", EXTRA_SMALL_SIZE)
+			return e.DoFirstPartOfRun(key, mainDelayedPlayer, simplenode.Publisher, nodesList, DELAYED_FILE_SIZE)
+		}
 
-    for i := 0; i < 6; i++ {
-      performExtraSmallOnlyRun()
-    }
+		performSecondPartOfDelayed := func(currentCid string) {
+			log.Println("start delayed second part of cid: ", currentCid)
+			e.DoSecondPartOfRun(currentCid, key, mainDelayedPlayer, simplenode.Publisher, nodesList, DELAYED_FILE_SIZE)
+			log.Printf("first part of delayed run is done for cid:%s node:%d \n", currentCid, mainDelayedPlayer)
+		}
 
-    performOtherSizesRun()
+		shouldPerformFirstDelayedPart := func() bool {
+			return delayedInProgress == false && currentDelayedRun == 0
+		}
+
+		shouldPerformSecondDelayedPart := func() bool {
+			return delayedInProgress == true && currentDelayedRun == currentDelayedSkip
+		}
+
+		if shouldPerformFirstDelayedPart() {
+			delayedInProgress = true
+			delayedCid, err = performFirstPartOfDelayed()
+			performedFirstPart = true
+			if err != nil {
+				log.Println("Error performing first part: ", err)
+				delayedInProgress = false
+				delayedCid = ""
+			} else {
+				log.Printf("first part of delayed run is done for cid:%s node:%d \n", delayedCid, mainDelayedPlayer)
+			}
+
+		}
+
+		if shouldPerformSecondDelayedPart() {
+			performSecondPartOfDelayed(delayedCid)
+			delayedInProgress = false
+			performedSecondPart = true
+			delayedCid = ""
+		}
+
+		for i := 0; i < 6; i++ {
+			performExtraSmallOnlyRun()
+		}
+
+		performOtherSizesRun()
 
 		log.Println("one round of experiments is done")
+		log.Printf("performedFirstPart:%t performedSecondPart:%t currentDelayedRun:%d, currentDelayedSkip:%d delayedInProgress:%t mainDelayedPlayer:%d delayedCid:%s\n",
+			performedFirstPart, performedSecondPart, currentDelayedRun, currentDelayedSkip, delayedInProgress, mainDelayedPlayer, delayedCid)
 
 		if *intervalSeconds == 0 {
 			break
+		}
+
+		currentDelayedRun++
+		if performedSecondPart {
+			currentDelayedRun = 0
+			currentDelayedSkip += 5
+			if currentDelayedSkip > MAX_SKIPS {
+				currentDelayedSkip = 0
+			}
+			mainDelayedPlayer++
+			if mainDelayedPlayer > LAST_PLAYER {
+				mainDelayedPlayer = 0
+			}
 		}
 
 		time.Sleep(time.Duration(*intervalSeconds) * time.Second)
