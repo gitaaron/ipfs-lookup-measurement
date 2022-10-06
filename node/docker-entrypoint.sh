@@ -37,4 +37,6 @@ IPFS=/app/kubo/cmd/ipfs/ipfs IPFS_LOGGING=INFO ./agent -host=$AGENT_HOST -port=$
   \"/ip6/::/udp/$P2P_PORT/quic\"\
 ]"
 
-./kubo/cmd/ipfs/ipfs daemon | tee /app/all.log
+./kubo/cmd/ipfs/ipfs daemon | tee /app/all.log &
+
+sleep infinity
