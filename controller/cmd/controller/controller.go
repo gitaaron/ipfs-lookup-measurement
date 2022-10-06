@@ -2,11 +2,13 @@ package main
 
 import (
 	"encoding/base64"
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"math"
+	"sync"
 	"time"
 
 	"github.com/gitaaron/ipfs-lookup-measurement/controller/pkg/config"
@@ -40,18 +42,44 @@ func main() {
 		fmt.Printf("Wrong key size, expect 32, got: %v\n", len(key))
 		return
 	}
+
 	// At start up, ask for list of node IDs.
+	// If node ID is not provided then it is probably because IPFS
+	// up yet so wait and try again until all are given
 	ids := make([]string, 0)
+	var wg sync.WaitGroup
+
 	for _, node := range nodesList {
 		fmt.Printf("Start asking for node id from %v\n", node)
-		id, err := server.RequestGetID(node.Host(), key)
-		if err != nil {
-			fmt.Printf("error getting node id for %v: %v\n", node, err.Error())
-			return
-		}
-		fmt.Printf("Got node id for %v: %v\n", node, id)
-		ids = append(ids, id)
+		wg.Add(1)
+
+		go func(wg *sync.WaitGroup, node config.AgentNode) {
+			defer wg.Done()
+			for i := 0; i < 20; i++ {
+
+				if i == 19 {
+					panic(errors.New("Timing out on IPFS ID retrieval."))
+				}
+
+				id, err := server.RequestGetID(node.Host(), key)
+
+				if err != nil {
+					fmt.Printf("error getting node id for %v: %v\n", node, err.Error())
+					time.Sleep(1 * time.Second)
+					continue
+				}
+
+				if len(id) > 0 {
+					fmt.Printf("Got node id for %v: %v\n", node, id)
+					ids = append(ids, id)
+					break
+				}
+
+			}
+		}(&wg, node)
+
 	}
+	wg.Wait()
 	// Ask every node to set IDs.
 	for _, node := range nodesList {
 		fmt.Printf("Start asking node %v to set up ids\n", node)

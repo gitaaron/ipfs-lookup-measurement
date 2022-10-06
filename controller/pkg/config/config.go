@@ -12,7 +12,7 @@ import (
 
 type AgentNode struct {
 	Public_ip  string
-  Port string
+	Port       string
 	Region_key string
 	Node_num   int
 	Peer_ID    string
@@ -47,7 +47,7 @@ func GetNodesList(nodesListFile string) ([]AgentNode, error) {
 				str_node_num := key_parts[1]
 				node_num, err := strconv.Atoi(str_node_num)
 				if err != nil {
-					log.Println("node_num is not a number %s", node_num)
+					log.Printf("node_num is not a number %s\n", str_node_num)
 					continue
 				}
 				key_type := key_parts[2]
@@ -61,8 +61,8 @@ func GetNodesList(nodesListFile string) ([]AgentNode, error) {
 				} else if key_type == "arn" {
 					node_nums_val_map[node_num]["arn"] = value
 				} else if key_type == "port" {
-          node_nums_val_map[node_num]["port"] = value
-        } else {
+					node_nums_val_map[node_num]["port"] = value
+				} else {
 					log.Printf("unknown key type: (%v)\n", key_type)
 					continue
 				}
@@ -75,7 +75,7 @@ func GetNodesList(nodesListFile string) ([]AgentNode, error) {
 		}
 	}
 
-  agent_nodes := []AgentNode{}
+	agent_nodes := []AgentNode{}
 
 	for node_num, node := range node_nums_val_map {
 
@@ -89,15 +89,15 @@ func GetNodesList(nodesListFile string) ([]AgentNode, error) {
 			continue
 		}
 
-    if node["port"] == "" {
-      node["port"] = "3030"
-    }
+		if node["port"] == "" {
+			node["port"] = "3030"
+		}
 
 		region_key := strings.ReplaceAll(strings.Split(node["arn"], ":")[3], "-", "_")
 
 		an := AgentNode{
 			Public_ip:  node["ip"],
-      Port: node["port"],
+			Port:       node["port"],
 			Region_key: region_key,
 			Node_num:   node_num}
 

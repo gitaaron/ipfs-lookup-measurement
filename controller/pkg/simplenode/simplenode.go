@@ -114,7 +114,7 @@ func (exp *Experiment) DoFirstPartOfRun(key []byte, mainPlayerIndex int, mainPla
 	var wg sync.WaitGroup
 
 	if mainPlayerMode != Publisher && mainPlayerMode != Retriever {
-		return "", fmt.Errorf("Invalid mainPlayerMode %s", mainPlayerMode)
+		return "", fmt.Errorf("Invalid mainPlayerMode %v", mainPlayerMode)
 	}
 
 	// Start publish to appropriate nodes
