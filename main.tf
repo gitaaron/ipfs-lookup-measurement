@@ -147,6 +147,21 @@ module "testing_node_5" {
   }
 }
 
+module "testing_node_6" {
+  source = "./testing_node"
+
+  monitoring_ip = aws_instance.ipfs_testing_monitor.public_ip
+  key           = var.KEY
+  ami           = "ami-0e66f5495b4efdd0f"
+  num           = 6
+  default_tags  = local.default_tags
+
+  providers = {
+    aws = aws.sa_east_1
+  }
+}
+
+
 resource "aws_instance" "ipfs_testing_monitor" {
   ami           = "ami-0a49b025fffbbdac6"
   provider      = aws.eu_central_1

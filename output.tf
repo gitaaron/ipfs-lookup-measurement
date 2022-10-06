@@ -33,6 +33,11 @@ output "node_5_ip" {
   value       = module.testing_node_5.public_ip
 }
 
+output "node_6_ip" {
+  description = "Public IP address of node 6"
+  value       = module.testing_node_6.public_ip
+}
+
 output "node_0_arn" {
   description = "Public IP address of node 0"
   value       = module.testing_node_0.arn
@@ -61,4 +66,9 @@ output "node_4_arn" {
 output "node_5_arn" {
   description = "Public IP address of node 5"
   value       = module.testing_node_5.arn
+}
+
+output "node_6_arn" {
+  description = "Public IP address of node 6"
+  value       = module.testing_node_6.arn
 }

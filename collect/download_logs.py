@@ -11,7 +11,8 @@ DEFAULT_NODES = {
     2: 'af_south_1',
     3: 'us_west_1',
     4: 'eu_central_1',
-    5: 'sa_east_1'
+    5: 'sa_east_1',
+    6: 'sa_east_1'
 }
 
 def getContainerDir(download_dir):
