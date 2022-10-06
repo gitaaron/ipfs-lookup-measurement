@@ -3,6 +3,7 @@ module github.com/gitaaron/ipfs-lookup-measurement/controller
 go 1.18
 
 require (
+	github.com/c9s/goprocinfo v0.0.0-20210130143923-c95fcf8c64a8
 	github.com/ipfs/go-ipfs-api v0.3.0
 	github.com/ipfs/go-log v1.0.5
 	github.com/stretchr/testify v1.8.0

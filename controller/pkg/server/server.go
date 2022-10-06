@@ -31,13 +31,13 @@ type agent struct {
 }
 
 var handlerNames = map[byte]string{
-  1: "GetID",
-  2: "SetID",
-  3: "Check",
-  4: "Publish",
-  5: "Lookup",
-  6: "Clean",
-  7: "Disconnect",
+	1: "GetID",
+	2: "SetID",
+	3: "Check",
+	4: "Publish",
+	5: "Lookup",
+	6: "Clean",
+	7: "Disconnect",
 }
 
 const (
@@ -50,11 +50,10 @@ const (
 	Disconnect = 7
 )
 
-
-
 // NewServer creates a new server.
 func NewServer(ctx context.Context, listenAddr string, keyStr string) error {
 	log.Debugf("key : %s", keyStr)
+	LogHealthPeriodically()
 	key, err := base64.StdEncoding.DecodeString(keyStr)
 	if err != nil {
 		log.Errorf("error in creating the key: %v\n", err.Error())
@@ -90,7 +89,7 @@ func NewServer(ctx context.Context, listenAddr string, keyStr string) error {
 	a.handlers[Disconnect] = a.handleDisonnect
 	// 	Start server
 	log.Infof("Start listening at %v", listenAddr)
-  if err = a.server.ListenAndServe(); err != nil {
+	if err = a.server.ListenAndServe(); err != nil {
 		return err
 	}
 	return nil
@@ -120,7 +119,7 @@ func (a *agent) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	msgType := plain[0]
-  log.Debugf("handle : %s", handlerNames[msgType])
+	log.Debugf("handle : %s", handlerNames[msgType])
 	msgData := plain[1:]
 	handler, ok := a.handlers[msgType]
 

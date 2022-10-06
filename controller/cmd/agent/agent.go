@@ -22,10 +22,9 @@ func main() {
 		return
 	}
 
-
-  hostStr := flag.String("host", "", "host")
-  portNumStr := flag.String("port", "3030", "port number")
-  flag.Parse()
+	hostStr := flag.String("host", "", "host")
+	portNumStr := flag.String("port", "3030", "port number")
+	flag.Parse()
 	key, err := ioutil.ReadFile(".key")
 	if err != nil {
 		fmt.Printf("error in getting the key: %v\n", err.Error())
