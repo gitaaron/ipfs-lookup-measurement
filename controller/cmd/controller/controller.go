@@ -55,9 +55,9 @@ func main() {
 
 		go func(wg *sync.WaitGroup, node config.AgentNode) {
 			defer wg.Done()
-			for i := 0; i < 20; i++ {
+			for i := 0; i < 120; i++ {
 
-				if i == 19 {
+				if i ==  119 { // giving up after 2 min.
 					panic(errors.New("Timing out on IPFS ID retrieval."))
 				}
 
@@ -65,7 +65,7 @@ func main() {
 
 				if err != nil {
 					fmt.Printf("error getting node id for %v: %v\n", node, err.Error())
-					time.Sleep(1 * time.Second)
+					time.Sleep(5 * time.Second)
 					continue
 				}
 
