@@ -1,0 +1,2 @@
+#!/bin/bash
+echo "restart_agents called..."

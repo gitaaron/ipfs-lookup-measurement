@@ -12,4 +12,6 @@ docker-agent:
 	rm -f controller/agent; docker build -t ipfs-node -f ./node/Dockerfile .
 
 docker-controller:
-	rm -f controller/controller; docker build -t controller-node -f ./controller/Dockerfile .
+	rm -f controller/controller
+	rm -f controller/info
+	docker build -t controller-node -f ./controller/Dockerfile .
