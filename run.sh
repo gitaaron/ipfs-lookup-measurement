@@ -1,8 +1,6 @@
 #!/bin/sh
 RESTART_AGENTS=./restart_agents.cmd
 STOP_EXPERIMENT=./stop_experiment.cmd
-./controller/info
-mv agent_info.json ./analysis/agent_info.json
 counter=0
 while true
 do

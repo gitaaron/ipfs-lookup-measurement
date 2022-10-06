@@ -35,6 +35,9 @@ func handleGetID(data []byte) (byte, []byte, error) {
 	if err != nil {
 		return 0, nil, err
 	}
+
+	fmt.Printf("%s: Get PeerID:%s\n", time.Now().Format(time.RFC3339Nano), id.ID)
+
 	return GetID, []byte(id.ID), nil
 }
 
