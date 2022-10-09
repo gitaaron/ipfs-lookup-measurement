@@ -1,8 +1,8 @@
 import numpy as np
-from models.model_publication import Publication
+from pickled.model_publication import Publication
 from typing import List
 import matplotlib.pyplot as plt
-from models.model_parsed_log_file import ParsedLogFiles
+from models.model_data_set import DataSet
 
 
 
@@ -43,29 +43,29 @@ def total_add_provider_phase(axl, publications: List[Publication], label: str):
 
     axl.plot(bin_edges[:-1], cdf, label=label)
 
-def plot_total(parsed_logs: ParsedLogFiles):
+def plot_total(data_set: DataSet):
     fig, axl = plt.subplots()
 
-    for parsed_log in parsed_logs.all:
-        total(axl, parsed_log.publications, parsed_log.region_log_file.region)
+    for agent,agent_events in data_set.agent_events_map.items():
+        total(axl, agent_events.publications, agent.region)
 
     axl.set_title('Publish Total Latency by Region (fig. a)')
     axl.legend(loc='lower right')
 
-def plot_getting_closest_peers(parsed_logs: ParsedLogFiles):
+def plot_getting_closest_peers(data_set: DataSet):
     fig, axl = plt.subplots()
 
-    for parsed_log in parsed_logs.all:
-        getting_closest_peers_phase(axl, parsed_log.publications, parsed_log.region_log_file.region)
+    for agent,agent_events in data_set.agent_events_map.items():
+        getting_closest_peers_phase(axl, agent_events.publications, agent.region)
 
     axl.set_title('Publish Getting Closest Peer Latency by Region (fig. b)')
     axl.legend(loc='lower right')
 
-def plot_total_add_provider(parsed_logs: ParsedLogFiles):
+def plot_total_add_provider(data_set: DataSet):
     fig, axl = plt.subplots()
 
-    for parsed_log in parsed_logs.all:
-        total_add_provider_phase(axl, parsed_log.publications, parsed_log.region_log_file.region)
+    for agent,agent_events in data_set.agent_events_map.items():
+        total_add_provider_phase(axl, agent_events.publications, agent.region)
 
     axl.set_title('Publish Total Add Provider Latency by Region (fig. c)')
     axl.legend(loc='lower right')

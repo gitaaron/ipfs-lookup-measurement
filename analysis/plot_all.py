@@ -1,117 +1,78 @@
 import os
-import json
 import pickle
-import glob
 from typing import List
 import matplotlib.pyplot as plt
 from pathlib import Path
 from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency, pie_phase_retrieval_latency, timeseries_retrievals
-from models.model_parsed_log_file import ParsedLogFile, ParsedLogFiles
-from models.model_publication import Publication
-from models.model_retrieval import Retrieval
+from pickled.model_publication import Publication
+from pickled.model_retrieval import Retrieval
 from helpers.constants import RetrievalPhase
-from helpers import logs
-from models.model_logs_config import LogsConfig
+from logs.model_logs_config import LogsConfig
+from logs import load
+from models.model_data_set import DataSet
 
 # Set OUT_DIR to `None` to display the graphs with the GUI
-#OUT_DIR = None
-OUT_DIR = './figs'
-
-def dateStarted(parsed_logs: List[ParsedLogFile]):
-    started_at = None
-
-    for parsed_log in parsed_logs:
-
-        for pub in parsed_log.publications:
-            if(started_at is None or pub.provide_started_at < started_at):
-                started_at = pub.provide_started_at
-
-        for ret in parsed_log.retrievals:
-            if(started_at is None or ret.retrieval_started_at < started_at):
-                started_at = ret.retrieval_started_at
-    print(f"started_at: {started_at}")
-    return started_at
-
-def dateEnded(parsed_logs: List[ParsedLogFile]):
-    ended_at = None
-
-    for parsed_log in parsed_logs:
-
-        for pub in parsed_log.publications:
-            if(ended_at is None or pub.provide_ended_at > ended_at):
-                ended_at = pub.provide_ended_at
-
-        for ret in parsed_log.completed_retrievals():
-            if(ended_at is None or ret.done_retrieving_at > ended_at):
-                ended_at = ret.done_retrieving_at
-
-    print(f"ended_at: {ended_at}")
-    return ended_at
+OUT_DIR = None
+#OUT_DIR = './figs'
 
 
-def writeMeta(out_target_dir: str, parsed_logs: List[ParsedLogFile]):
+def writeMeta(out_target_dir: str, data_set: DataSet):
     fpt = open(f"{out_target_dir}/meta.p", 'wb')
+    started_at, ended_at = data_set.started_ended_at
     meta = {
-        'started_at': dateStarted(parsed_logs),
-        'ended_at': dateEnded(parsed_logs)
+        'started_at': started_at,
+        'ended_at': ended_at
     }
     pickle.dump(meta, fpt)
     fpt.close()
 
-def doPlotSinceTimeStarted(out_target_dir, parsed_logs: ParsedLogFiles):
+def doPlotSinceTimeStarted(out_target_dir, data_set: DataSet):
 
-    publications: List[Publication] = []
-    retrievals: List[Retrieval] = []
-
-    for parsed_log in parsed_logs.all:
-        publications += parsed_log.publications
-        retrievals += parsed_log.completed_retrievals()
-
-    timeseries_retrievals.plot_each_phase_all_regions(retrievals, 'Retrieval Duration by Phase (since beginning)')
+    timeseries_retrievals.plot_each_phase_all_regions(data_set.total_completed_retrievals, 'Retrieval Duration by Phase (since beginning)')
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'trend_ret_phase_breakdown_all_time.png'))
         plt.close()
 
     for phase in RetrievalPhase:
-        timeseries_retrievals.plot_duration_each_region(phase, retrievals, parsed_logs, f"Retrieval {phase.name} Duration by Region (since beginning)")
+        timeseries_retrievals.plot_duration_each_region(phase, data_set, f"Retrieval {phase.name} Duration by Region (since beginning)")
         if out_target_dir is not None:
             plt.savefig(os.path.join(out_target_dir, f"trend_ret_{phase.name}_region_breakdown_all_time.png"))
             plt.close()
 
 
-def doPlotLatest(out_target_dir, parsed_logs: ParsedLogFiles):
+def doPlotLatest(out_target_dir, data_set: DataSet):
     print('latest dir : %s' % out_target_dir)
 
-    publications = parsed_logs.total_publications
-    retrievals = parsed_logs.total_completed_retrievals
+    publications = data_set.total_publications
+    retrievals = data_set.total_completed_retrievals
 
 
-    cdf_publications.plot_total(parsed_logs)
+    cdf_publications.plot_total(data_set)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'pvd_total.png'))
         plt.close()
 
-    cdf_publications.plot_getting_closest_peers(parsed_logs)
+    cdf_publications.plot_getting_closest_peers(data_set)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'pvd_getting_closest_peers.png'))
         plt.close()
 
-    cdf_publications.plot_total_add_provider(parsed_logs)
+    cdf_publications.plot_total_add_provider(data_set)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'pvd_total_add_provider.png'))
         plt.close()
 
-    cdf_retrievals.plot_total(parsed_logs)
+    cdf_retrievals.plot_total(data_set)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_total.png'))
         plt.close()
 
-    cdf_retrievals.plot_getting_closest_peers(parsed_logs)
+    cdf_retrievals.plot_getting_closest_peers(data_set)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_getting_closest_peers.png'))
         plt.close()
 
-    cdf_retrievals.plot_fetch(parsed_logs)
+    cdf_retrievals.plot_fetch(data_set)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_fetch.png'))
         plt.close()
@@ -126,20 +87,21 @@ def doPlotLatest(out_target_dir, parsed_logs: ParsedLogFiles):
         plt.savefig(os.path.join(out_target_dir, 'ret_phase_comparison_pie.png'))
         plt.close()
 
-    bar_region_retrieval_latency.plot(parsed_logs)
+    bar_region_retrieval_latency.plot(data_set)
 
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_region_comparison_bar.png'))
         plt.close()
 
 
-    timeseries_retrievals.plot_each_phase_all_regions(retrievals, 'Retrieval Duration by Phase (last 4 hours)')
+    timeseries_retrievals.plot_each_phase_all_regions(data_set.total_completed_retrievals, 'Retrieval Duration by Phase (last 4 hours)')
+
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'trend_ret_phase_breakdown_recent.png'))
         plt.close()
 
     for phase in RetrievalPhase:
-        timeseries_retrievals.plot_duration_each_region(phase, retrievals, parsed_logs, f"Retrieval {phase.name} Duration by Region (last 4 hours)")
+        timeseries_retrievals.plot_duration_each_region(phase, data_set, f"Retrieval {phase.name} Duration by Region (last 4 hours)")
         if out_target_dir is not None:
             plt.savefig(os.path.join(out_target_dir, f"trend_ret_{phase.name}_region_breakdown_recent.png"))
             plt.close()
@@ -150,18 +112,19 @@ def doPlotLatest(out_target_dir, parsed_logs: ParsedLogFiles):
         plt.close()
 
     if out_target_dir is not None:
-        writeMeta(out_target_dir, parsed_logs.all)
+        writeMeta(out_target_dir, data_set)
 
 
-def doPlot(out_target_dir, latest_parsed_log_files: ParsedLogFiles, all_parsed_log_files: ParsedLogFiles):
+
+def doPlot(out_target_dir, logs_config: LogsConfig):
     if OUT_DIR is not None:
         out_target_dir = os.path.join(OUT_DIR, out_target_dir)
         Path(out_target_dir).mkdir(exist_ok=True, parents=True)
     else:
         out_target_dir = None
 
-    doPlotLatest(out_target_dir, latest_parsed_log_files)
-    doPlotSinceTimeStarted(out_target_dir, all_parsed_log_files)
+    doPlotLatest(out_target_dir, load.latest_data_set(logs_config))
+    doPlotSinceTimeStarted(out_target_dir, load.complete_data_set(logs_config))
 
     if OUT_DIR is None:
         plt.show()
@@ -169,4 +132,4 @@ def doPlot(out_target_dir, latest_parsed_log_files: ParsedLogFiles, all_parsed_l
 
 if __name__=='__main__':
     logs_config = LogsConfig('./log_config.json')
-    doPlot(logs_config.latest_dir_name, logs.load_latest_parsed_log_files(logs_config), logs.load_all_parsed_log_files(logs_config))
+    doPlot(logs_config.latest_dir_name, logs_config)

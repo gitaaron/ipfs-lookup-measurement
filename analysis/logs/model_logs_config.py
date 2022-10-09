@@ -1,5 +1,4 @@
-import json
-import os
+import json, os
 
 class LogsConfig:
     latest_dir_name: str
@@ -10,5 +9,9 @@ class LogsConfig:
         self.root_dir_path = config['root_dir_path']
 
     @property
-    def latest_log_dir(self):
+    def all_dir_paths(self) -> list[str]:
+        return [os.path.join(self.root_dir_path, dir_name) for dir_name in os.listdir(self.root_dir_path)]
+
+    @property
+    def latest_dir_path(self) -> str:
         return os.path.join(self.root_dir_path, self.latest_dir_name)

@@ -2,13 +2,14 @@ import durationpy
 from enum import Enum
 from datetime import datetime, timedelta
 
-from models.model_add_provider_query import AddProviderQuery
-from models.model_get_providers_query import GetProvidersQuery
-from models.model_peer import Peer
-from models.model_find_node_query import FindNodeQuery
+from pickled.model_add_provider_query import AddProviderQuery
+from pickled.model_get_providers_query import GetProvidersQuery
+from pickled.model_peer import Peer
+from pickled.model_find_node_query import FindNodeQuery
 from models.model_region import Region
 
-from typing import Optional, List, Dict
+
+from typing import Optional
 
 class Publication:
     class State(Enum):
@@ -36,17 +37,18 @@ class Publication:
     # When did the checks for stored provider records end at
     get_providers_ended_at: Optional[datetime]
 
-    closest_peers: Optional[List[Peer]]
+    closest_peers: Optional[list[Peer]]
 
     # All performed queries for the closest peers
-    find_node_queries: List[FindNodeQuery]
+    find_node_queries: list[FindNodeQuery]
     # All add provider RPCs and their outcomes
-    add_provider_queries: Dict[Peer, AddProviderQuery]
+    add_provider_queries: dict[Peer, AddProviderQuery]
     # All get provider RPCs and their outcomes
-    get_provider_queries: Dict[Peer, GetProvidersQuery]
+    get_provider_queries: dict[Peer, GetProvidersQuery]
 
     def __init__(self, origin: Region, cid: str, publication_started_at: datetime) -> None:
         self.origin = origin
+
         self.cid = cid
         self.provide_started_at = publication_started_at
         self._state = Publication.State.INITIATED
@@ -71,9 +73,9 @@ class Publication:
         # The duration to perform all ADD_PROVIDER RPCs regardless of errors
         return self.provide_ended_at - self.dht_walk_ended_at
 
-    def durations_add_provider_success(self) -> List[timedelta]:
+    def durations_add_provider_success(self) -> list[timedelta]:
         # The latencies it took to perform the ADD_PROVIDER RPC in case it succeeded
-        latencies: List[timedelta] = []
+        latencies: list[timedelta] = []
         for query in self.add_provider_queries.values():
             if not query.success:
                 continue
@@ -81,9 +83,9 @@ class Publication:
                 query.time_taken).total_seconds())
         return latencies
 
-    def durations_add_provider_error(self) -> List[timedelta]:
+    def durations_add_provider_error(self) -> list[timedelta]:
         # The latencies it took to perform the ADD_PROVIDER RPC in case it failed
-        latencies: List[timedelta] = []
+        latencies: list[timedelta] = []
         for query in self.add_provider_queries.values():
             if query.success:
                 continue
@@ -117,7 +119,7 @@ class Publication:
         self.find_node_queries += [FindNodeQuery(
             target_peer, self.cid, timestamp)]
 
-    def find_node_query_ended(self, target_peer: Peer, timestamp: datetime, closest_peers: Optional[List[Peer]],
+    def find_node_query_ended(self, target_peer: Peer, timestamp: datetime, closest_peers: Optional[list[Peer]],
                               error_str: Optional[str] = None):
         if self.invalid:
             return
@@ -132,7 +134,7 @@ class Publication:
             f"Unstarted query ended CID: {self.cid} target peer: {target_peer.id}")
         self.invalid = True
 
-    def dht_walk_ended(self, timestamp: datetime, closest_peers: List[Peer]):
+    def dht_walk_ended(self, timestamp: datetime, closest_peers: list[Peer]):
         self.state = Publication.State.PUTTING_GETTING_PROVIDER_RECORDS
         self.dht_walk_ended_at = timestamp
 

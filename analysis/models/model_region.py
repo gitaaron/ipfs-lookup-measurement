@@ -15,6 +15,7 @@ name_coords_map = {
     'sa_east_1': (-23.497812701529366, -46.679286631987864), # Sao Paulo
 }
 
+
 class Region:
     name: str
     latitude: float
@@ -39,3 +40,12 @@ class Region:
 
     def __repr__(self):
         return self.name
+
+_cached_regions = {}
+
+def from_name(name):
+    if name not in _cached_regions:
+        print('creating new region: %s' % name)
+        _cached_regions[name] = Region(name)
+
+    return _cached_regions[name]

@@ -1,8 +1,8 @@
 import numpy as np
-from models.model_retrieval import Retrieval
+from pickled.model_retrieval import Retrieval
 from typing import List
 import matplotlib.pyplot as plt
-from models.model_parsed_log_file import ParsedLogFiles
+from models.model_data_set import DataSet
 
 
 def initiated_phase(axl, retrievals: List[Retrieval]):
@@ -80,34 +80,33 @@ def total(axl, retrievals: List[Retrieval], label: str):
 
     axl.plot(bin_edges[:-1], cdf, label=label)
 
-def plot_total(parsed_logs: ParsedLogFiles):
+def plot_total(data_set: DataSet):
     fig, axl = plt.subplots()
 
-    for parsed_log in parsed_logs.all:
-        total(axl, parsed_log.completed_retrievals(), parsed_log.region_log_file.region)
+    for agent,agent_events in data_set.agent_events_map.items():
+        total(axl, agent_events.completed_retrievals, agent.region)
 
     axl.set_title('Retrieval Total Latency by Region (fig. d)')
     axl.legend(loc='lower right')
 
 
-def plot_getting_closest_peers(parsed_logs: ParsedLogFiles):
+def plot_getting_closest_peers(data_set: DataSet):
     fig, axl = plt.subplots()
 
-    for parsed_log in parsed_logs.all:
-        getting_closest_peers_phase(axl, parsed_log.completed_retrievals(), parsed_log.region_log_file.region)
+    for agent,agent_events in data_set.agent_events_map.items():
+        getting_closest_peers_phase(axl, agent_events.completed_retrievals, agent.region)
 
     axl.set_title('Retrieval Getting Closest Peer Latency by Region (fig. e)')
     axl.legend(loc='lower right')
 
-def plot_fetch(parsed_logs: ParsedLogFiles):
+def plot_fetch(data_set: DataSet):
     fig, axl = plt.subplots()
 
-    for parsed_log in parsed_logs.all:
-        fetching_phase(axl, parsed_log.completed_retrievals(), parsed_log.region_log_file.region)
+    for agent,agent_events in data_set.agent_events_map.items():
+        fetching_phase(axl, agent_events.completed_retrievals, agent.region)
 
     axl.set_title('Retrieval Fetch Latency by Region (fig. f)')
     axl.legend(loc='lower right')
-
 
 
 def plot_phase_comparison(retrievals):
@@ -119,5 +118,3 @@ def plot_phase_comparison(retrievals):
     fetching_phase(axl, retrievals, 'fetch')
     axl.set_title('Retrieval Phase Latency Distribution')
     axl.legend(loc='lower right')
-
-

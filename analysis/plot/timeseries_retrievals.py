@@ -2,9 +2,10 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import List
-from models.model_retrieval import Retrieval
-from models.model_parsed_log_file import ParsedLogFiles
+from pickled.model_retrieval import Retrieval
 from helpers.constants import RetrievalPhase
+from models.model_region import Region
+from models.model_data_set import DataSet
 
 
 def plot_num_providers(retrievals:List[Retrieval], title: str):
@@ -25,25 +26,21 @@ def plot_num_providers(retrievals:List[Retrieval], title: str):
     ax = DF.plot(x_compat=True, rot=90, figsize=(16, 5),)
     ax.set_title(title)
 
-def plot_duration_each_region(phase: RetrievalPhase, retrievals: List[Retrieval], parsed_logs: ParsedLogFiles, title: str):
+def plot_duration_each_region(phase: RetrievalPhase, data_set: DataSet, title: str):
 
-    start_dates = [ret.retrieval_started_at for ret in retrievals]
+    start_dates = [ret.retrieval_started_at for ret in data_set.total_completed_retrievals]
     start_dates.sort()
 
     region_durations = {}
 
-    for log in parsed_logs.all:
-        reg = log.region_log_file.region
-        region_durations[reg] = []
-        retrievals = log.completed_retrievals()
-
+    for agent,agent_events in data_set.agent_events_map.items():
+        region_durations[agent.region] = []
         for start_date in start_dates:
-            region_durations[reg].append(np.nan)
+            region_durations[agent.region].append(np.nan)
 
-        for ret in retrievals:
+        for ret in agent_events.completed_retrievals:
             start_index = start_dates.index(ret.retrieval_started_at)
-            region_durations[reg][start_index] = (ret.duration(phase)).total_seconds()
-
+            region_durations[agent.region][start_index] = (ret.duration(phase)).total_seconds()
 
 
     DF = pd.DataFrame(region_durations, index=start_dates).bfill()

@@ -1,6 +1,7 @@
 import sys, getopt
-from models.model_logs_config import LogsConfig
-from helpers import logs
+from logs import parse
+from logs.model_logs_config import LogsConfig
+
 
 def main(argv):
     bucket_mode = ''
@@ -12,18 +13,15 @@ def main(argv):
         sys.exit(2)
 
     for opt, arg in opts:
-        print(opt)
         if opt in ("-b", "--buckets"):
-            print(arg)
             bucket_mode = arg
 
+    logs_config = LogsConfig('./log_config.json')
 
     if bucket_mode == 'ALL':
-        logs_config = LogsConfig('./log_config.json')
-        logs.generate_all_parsed_log_files_since_beginning(logs_config)
+        parse.all(logs_config)
     elif bucket_mode == 'LATEST':
-        logs_config = LogsConfig('./log_config.json')
-        logs.generate_latest_parsed_log_files(logs_config)
+        parse.latest(logs_config)
     else:
         print('log_parse.py -b ALL|LATEST')
         sys.exit(2)

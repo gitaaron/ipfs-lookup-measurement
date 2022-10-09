@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, List
 
-from models.model_peer import Peer
+from pickled.model_peer import Peer
 
 
 class FindNodeQuery:

@@ -4,12 +4,13 @@ from datetime import datetime
 from dateutil.parser import isoparse
 from typing import Any, Optional, List
 
-from models.model_peer import Peer
+from pickled.model_peer import Peer
 
 
 class ParsedLogLine:
     cid: str
     timestamp: datetime
+    peer: Optional[Peer]
     remote_peer: Optional[Peer]
     other_peer: Optional[Peer]
     closest_peers: Optional[List[Peer]]
@@ -334,6 +335,18 @@ class AgentLogLine(_LogLine):
 
         parsed = ParsedLogLine(match.group(2), match.group(1))
         parsed.file_size = int(match.group(3))
+        return parsed
+
+    def is_get_id(self) -> Optional[ParsedLogLine]:
+        if "Get PeerID:" not in self.line:
+            return None
+        match = re.search(
+            r"([^\s]+): Get PeerID:([^\s]+)", self.line
+        )
+        if match is None:
+            raise Exception("Failed to parse line: ", self.line)
+        parsed = ParsedLogLine(None, match.group(1))
+        parsed.peer = Peer(match.group(2), "n.a.")
         return parsed
 
     @staticmethod

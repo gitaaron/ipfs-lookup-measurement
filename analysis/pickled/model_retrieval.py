@@ -1,7 +1,7 @@
 from enum import Enum
 from datetime import datetime, timedelta
-from models.model_get_providers_query import GetProvidersQuery
-from models.model_peer import Peer
+from pickled.model_get_providers_query import GetProvidersQuery
+from pickled.model_peer import Peer
 from models.model_region import Region
 from typing import Optional, List, Dict, Set
 from helpers.constants import RetrievalPhase
