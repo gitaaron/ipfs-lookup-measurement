@@ -2,6 +2,7 @@ from models.model_data_set import DataSet
 from helpers import reduce
 from pickled.model_retrieval import Retrieval
 from helpers.constants import RetrievalPhase
+from models.model_duration import Duration
 
 
 def _avg_duration(retrievals: list[Retrieval]):
@@ -11,6 +12,24 @@ def _avg_duration(retrievals: list[Retrieval]):
         _total_duration += ret.duration(RetrievalPhase.TOTAL).total_seconds()
 
     return _total_duration / num
+
+def avg_duration_from_breakdown(breakdown: dict[str, float]):
+    avg_duration = {}
+    avg_duration['count'] = breakdown['count']
+    for d_key,d_val in breakdown['durations'].items():
+        avg_duration[d_key] = Duration(d_val / breakdown['count'])
+
+    return avg_duration
+
+
+def avg_duration_from_breakdowns(breakdowns: dict[int,  dict[str, float]]):
+    avg_durations = {}
+    for b_key, b_val in breakdowns.items():
+        avg_durations[b_key] = avg_duration_from_breakdown(b_val)
+
+    return avg_durations
+
+
 
 def avg_duration_non_first_provider_nearest(data_set: DataSet) -> float:
     non_fpn_retrievals = data_set.non_first_provider_nearest_retrievals

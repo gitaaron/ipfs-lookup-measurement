@@ -10,7 +10,8 @@ from helpers import calc, reduce, constants
 
 if __name__=='__main__':
     logs_config = LogsConfig('./log_config.json')
-    data_set: DataSet = load.latest_data_set(logs_config)
+    #data_set: DataSet = load.latest_data_set(logs_config)
+    data_set: DataSet = load.complete_data_set(logs_config)
 
     publications: list[Publication] = data_set.total_publications
     completed_retrievals: list[Retrieval] = data_set.total_completed_retrievals
@@ -22,7 +23,6 @@ if __name__=='__main__':
     slow = reduce.by_slow_retrievals(completed_retrievals)
     hfs = reduce.by_has_file_size(completed_retrievals)
     num_slow_many_providers, num_slow_one_provider,_ = calc.provider_count(slow)
-
 
     stats = {}
     stats['num_retrievals'] = len(completed_retrievals)
@@ -42,7 +42,8 @@ if __name__=='__main__':
     stats['avg_duration_non_fpn'] = f"{round(calc.avg_duration_non_first_provider_nearest(data_set),3)} sec."
     stats['fpn_slow_likelihood'] = f"{round(calc.percent_fpn_slow(data_set),3)}%"
     stats['non_fpn_slow_likelihood'] = f"{round(calc.percent_non_fpn_slow(data_set),3)}%"
+    stats['phase_avg_duration'] = calc.avg_duration_from_breakdown({'count': len(data_set.total_completed_retrievals), 'durations':data_set.phase_durations})
+    stats['file_size_avg_duration'] = calc.avg_duration_from_breakdowns(data_set.unique_file_sizes)
 
 
-
-    print(json.dumps(stats, indent=4))
+    print(json.dumps(stats, indent=4, default=str))

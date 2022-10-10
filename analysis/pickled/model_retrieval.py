@@ -102,6 +102,13 @@ class Retrieval:
         else:
             raise Exception(f"Failed to calculate duration: {phase.name} is not recognized")
 
+    @property
+    def all_durations(self) -> dict[RetrievalPhase, timedelta]:
+        r = {}
+        for phase in RetrievalPhase:
+            r[phase] = self.duration(phase).total_seconds()
+
+        return r
 
     def getting_provider_peers_started(self, timestamp: datetime):
         try:

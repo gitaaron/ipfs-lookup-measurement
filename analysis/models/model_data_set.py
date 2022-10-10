@@ -2,7 +2,7 @@ from pickled.model_log_file import LogFile
 from pickled.model_retrieval import Retrieval
 from pickled.model_publication import Publication
 from models.model_region import Region
-from helpers import proximity, chronologist
+from helpers import proximity, chronologist, map, constants
 from pickled.model_agent import Agent
 from pickled.model_peer import Peer
 from datetime import datetime
@@ -18,6 +18,7 @@ class DataSet:
     _total_publications: list[Publication]
     _peer_agent_map: dict[Peer,Agent]
     _agent_events_map: dict[Agent, AgentEvents] = {}
+    _unique_file_sizes: dict[int, int] = None
 
     def __init__(self, logs: list[LogFile]):
         self._total_retrievals = None
@@ -80,6 +81,34 @@ class DataSet:
                     filter(lambda ret: ret.first_provider_peer is not None, self.total_completed_retrievals))
 
         return self._has_first_provider_retrievals
+
+    def _set_completed_stats(self):
+
+        if self._unique_file_sizes is None or self._phase_durations is None:
+            self._unique_file_sizes = {}
+            self._phase_durations = {}
+            for phase in constants.RetrievalPhase:
+                self._phase_durations[phase] = 0
+        
+            for ret in self.total_completed_retrievals:
+                if ret.file_size not in self._unique_file_sizes:
+                    self._unique_file_sizes[ret.file_size] = { 'count' : 1, 'durations': ret.all_durations}
+                else:
+                    self._unique_file_sizes[ret.file_size]['count'] += 1
+                    self._unique_file_sizes[ret.file_size]['durations'] = map.add_keys(self._unique_file_sizes[ret.file_size]['durations'], ret.all_durations)
+
+                self._phase_durations = map.add_keys(self._phase_durations, ret.all_durations)
+
+    @property
+    def phase_durations(self):
+        self._set_completed_stats()
+        return self._phase_durations
+
+
+    @property
+    def unique_file_sizes(self):
+        self._set_completed_stats()
+        return self._unique_file_sizes
 
     def _set_fpns(self):
         if(self._first_provider_nearest_retrievals is None or self._non_first_provider_nearest_retrievals is None):
