@@ -11,6 +11,7 @@ from models.model_duration import Duration
 import numpy as np
 
 class DataSet:
+    _logs: list[LogFile]
     _agents: list[Agent] = []
     _total_retrievals: list[Retrieval]
     _total_completed_retrievals: list[Retrieval]
@@ -26,6 +27,7 @@ class DataSet:
     _uptime_durations: dict = None
 
     def __init__(self, logs: list[LogFile]):
+        self._logs = logs
         self._total_retrievals = None
         self._total_completed_retrievals = None
         self._total_publications = None
