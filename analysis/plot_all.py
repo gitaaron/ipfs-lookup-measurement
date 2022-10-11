@@ -26,22 +26,8 @@ def writeMeta(out_target_dir: str, data_set: DataSet):
     pickle.dump(meta, fpt)
     fpt.close()
 
-def doPlotSinceTimeStarted(out_target_dir, data_set: DataSet):
 
-    timeseries_retrievals.plot_each_phase_all_regions(data_set.total_completed_retrievals, 'Retrieval Duration by Phase (since beginning)')
-    if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'trend_ret_phase_breakdown_all_time.png'))
-        plt.close()
-
-    for phase in RetrievalPhase:
-        timeseries_retrievals.plot_duration_each_region(phase, data_set, f"Retrieval {phase.name} Duration by Region (since beginning)")
-        if out_target_dir is not None:
-            plt.savefig(os.path.join(out_target_dir, f"trend_ret_{phase.name}_region_breakdown_all_time.png"))
-            plt.close()
-
-
-def doPlotLatest(out_target_dir, data_set: DataSet):
-    print('latest dir : %s' % out_target_dir)
+def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     publications = data_set.total_publications
     retrievals = data_set.total_completed_retrievals
@@ -99,21 +85,21 @@ def doPlotLatest(out_target_dir, data_set: DataSet):
         plt.close()
 
 
-    timeseries_retrievals.plot_each_phase_all_regions(data_set.total_completed_retrievals, 'Retrieval Duration by Phase (last 4 hours)')
+    timeseries_retrievals.plot_each_phase_all_regions(data_set.total_completed_retrievals, 'Retrieval Duration by Phase')
 
     if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'trend_ret_phase_breakdown_recent.png'))
+        plt.savefig(os.path.join(out_target_dir, 'trend_ret_phase_breakdown.png'))
         plt.close()
 
     for phase in RetrievalPhase:
-        timeseries_retrievals.plot_duration_each_region(phase, data_set, f"Retrieval {phase.name} Duration by Region (last 4 hours)")
+        timeseries_retrievals.plot_duration_each_region(phase, data_set, f"Retrieval {phase.name} Duration by Region")
         if out_target_dir is not None:
-            plt.savefig(os.path.join(out_target_dir, f"trend_ret_{phase.name}_region_breakdown_recent.png"))
+            plt.savefig(os.path.join(out_target_dir, f"trend_ret_{phase.name}_region_breakdown.png"))
             plt.close()
 
-    timeseries_retrievals.plot_num_providers(retrievals, 'Retrieval Number Providers (last 4 hours)')
+    timeseries_retrievals.plot_num_providers(retrievals, 'Retrieval Number Providers')
     if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'ret_num_providers_recent.png'))
+        plt.savefig(os.path.join(out_target_dir, 'ret_num_providers.png'))
         plt.close()
 
     if out_target_dir is not None:
@@ -127,8 +113,8 @@ def doPlotFromConfig(out_target_dir, logs_config: LogsConfig):
     else:
         out_target_dir = None
 
-    doPlotLatest(out_target_dir, load.latest_data_set(logs_config))
-    doPlotSinceTimeStarted(out_target_dir, load.complete_data_set(logs_config))
+    #doPlotFromDataSet(out_target_dir, load.latest_data_set(logs_config))
+    doPlotFromDataSet(out_target_dir, load.complete_data_set(logs_config))
 
     if OUT_DIR is None:
         plt.show()
