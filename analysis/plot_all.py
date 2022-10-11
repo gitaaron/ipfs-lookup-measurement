@@ -3,7 +3,7 @@ import pickle
 from typing import List
 import matplotlib.pyplot as plt
 from pathlib import Path
-from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency, pie_phase_retrieval_latency, timeseries_retrievals
+from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency, pie_phase_retrieval_latency, timeseries_retrievals, histo_agent_uptime
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
 from helpers.constants import RetrievalPhase
@@ -45,6 +45,11 @@ def doPlotLatest(out_target_dir, data_set: DataSet):
 
     publications = data_set.total_publications
     retrievals = data_set.total_completed_retrievals
+
+    histo_agent_uptime.plot(data_set)
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, 'agent_uptime_comp_bar.png'))
+        plt.close()
 
 
     cdf_publications.plot_total(data_set)
@@ -115,8 +120,7 @@ def doPlotLatest(out_target_dir, data_set: DataSet):
         writeMeta(out_target_dir, data_set)
 
 
-
-def doPlot(out_target_dir, logs_config: LogsConfig):
+def doPlotFromConfig(out_target_dir, logs_config: LogsConfig):
     if OUT_DIR is not None:
         out_target_dir = os.path.join(OUT_DIR, out_target_dir)
         Path(out_target_dir).mkdir(exist_ok=True, parents=True)
@@ -132,4 +136,4 @@ def doPlot(out_target_dir, logs_config: LogsConfig):
 
 if __name__=='__main__':
     logs_config = LogsConfig('./log_config.json')
-    doPlot(logs_config.latest_dir_name, logs_config)
+    doPlotFromConfig(logs_config.latest_dir_name, logs_config)

@@ -44,6 +44,7 @@ if __name__=='__main__':
     stats['non_fpn_slow_likelihood'] = f"{round(calc.percent_non_fpn_slow(data_set),3)}%"
     stats['phase_avg_duration'] = calc.avg_duration_from_breakdown({'count': len(data_set.total_completed_retrievals), 'durations':data_set.phase_durations})
     stats['file_size_avg_duration'] = calc.avg_duration_from_breakdowns(data_set.unique_file_sizes)
+    stats['uptime'] = data_set.agent_uptime_durations
 
 
     print(json.dumps(stats, indent=4, default=str))

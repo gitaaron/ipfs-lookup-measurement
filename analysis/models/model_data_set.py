@@ -5,8 +5,10 @@ from models.model_region import Region
 from helpers import proximity, chronologist, map, constants
 from pickled.model_agent import Agent
 from pickled.model_peer import Peer
-from datetime import datetime
+from datetime import datetime, timedelta
 from models.model_agent_events import AgentEvents
+from models.model_duration import Duration
+import numpy as np
 
 class DataSet:
     _agents: list[Agent] = []
@@ -15,10 +17,13 @@ class DataSet:
     _has_first_provider_retrievals: list[Retrieval]
     _first_provider_nearest_retrievals: list[Retrieval]
     _non_first_provider_nearest_retrievals: list[Retrieval]
+    _retrievals_has_uptime: list[Retrieval]
     _total_publications: list[Publication]
     _peer_agent_map: dict[Peer,Agent]
     _agent_events_map: dict[Agent, AgentEvents] = {}
     _unique_file_sizes: dict[int, int] = None
+    _phase_durations: dict = None
+    _uptime_durations: dict = None
 
     def __init__(self, logs: list[LogFile]):
         self._total_retrievals = None
@@ -27,6 +32,7 @@ class DataSet:
         self._has_first_provider_retrievals = None
         self._first_provider_nearest_retrievals = None
         self._non_first_provider_nearest_retrievals = None
+        self._retrievals_has_uptime = None
 
         self.regions = []
         self._peer_agent_map = {}
@@ -84,9 +90,10 @@ class DataSet:
 
     def _set_completed_stats(self):
 
-        if self._unique_file_sizes is None or self._phase_durations is None:
+        if self._unique_file_sizes is None or self._phase_durations is None or self._uptime_durations:
             self._unique_file_sizes = {}
             self._phase_durations = {}
+            self._uptime_durations = { 'count': 0, 'total': 0 }
             for phase in constants.RetrievalPhase:
                 self._phase_durations[phase] = 0
         
@@ -99,6 +106,26 @@ class DataSet:
 
                 self._phase_durations = map.add_keys(self._phase_durations, ret.all_durations)
 
+                if ret.agent_uptime is not None:
+                    self._uptime_durations['count'] += 1
+                    if('max' not in self._uptime_durations or self._uptime_durations['max'] < ret.agent_uptime):
+                        self._uptime_durations['max'] = ret.agent_uptime
+                    if('min' not in self._uptime_durations or self._uptime_durations['min'] > ret.agent_uptime):
+                        self._uptime_durations['min'] = ret.agent_uptime
+                    self._uptime_durations['total'] += ret.agent_uptime.total_seconds()
+
+
+            if self._uptime_durations['count'] > 0:
+                self._uptime_durations['max'] = Duration(self._uptime_durations['max'].total_seconds())
+                self._uptime_durations['min'] = Duration(self._uptime_durations['min'].total_seconds())
+                self._uptime_durations['avg_uptime'] = Duration(self._uptime_durations['total'] / self._uptime_durations['count'])
+
+
+    @property
+    def agent_uptime_durations(self) -> dict[str, timedelta]:
+        self._set_completed_stats()
+        return self._uptime_durations
+
     @property
     def phase_durations(self):
         self._set_completed_stats()
@@ -110,12 +137,21 @@ class DataSet:
         self._set_completed_stats()
         return self._unique_file_sizes
 
+    @property
+
+    def retrievals_has_uptime(self):
+        if self._retrievals_has_uptime is None:
+            self._retrievals_has_uptime = list(filter(lambda ret: ret.agent_uptime is not None, self.total_completed_retrievals))
+
+        return self._retrievals_has_uptime
+
+
+
     def _set_fpns(self):
         if(self._first_provider_nearest_retrievals is None or self._non_first_provider_nearest_retrievals is None):
             self._first_provider_nearest_retrievals = []
             self._non_first_provider_nearest_retrievals = []
 
-            print('num has_first: %s' % len(self.has_first_provider_retrievals))
             for ret in self.has_first_provider_retrievals:
                 try:
                     first_provider_region = self.agent_from_peer_id(ret.first_provider_peer).region

@@ -148,18 +148,8 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
                 print('Line: %s' % log.line)
                 print('Reason: %s' % str(e))
 
-    publications = []
-    for _,publication in sealed_publications.items():
-        started_at, ended_at = chronologist.get_start_end(started_at, ended_at, publication.provide_started_at, publication.provide_ended_at)
-        publications.append(publication)
 
-    retrievals = []
-    for _,retrieval in sealed_retrievals.items():
-        started_at, ended_at = chronologist.get_start_end(started_at, ended_at, retrieval.retrieval_started_at, retrieval.done_retrieving_at)
-        retrievals.append(retrieval)
-
-
-    agent: Agent = None
+    agent: Agent = Agent(lookup.node_num_from_region(log_file_spec.region), log_file_spec.region)
 
     if log_file_spec.has_agent_log:
         print("Parsing: ", log_file_spec.agent_path)
@@ -170,11 +160,10 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
                     if (pll := log.is_start_retrieving()):
                         if pll.cid in sealed_retrievals:
                             sealed_retrievals[pll.cid].agent_initiated(pll.file_size, pll.timestamp)
-                    if (pll := log.is_get_id()):
-                        if agent is None:
-                            agent = Agent(lookup.node_num_from_region(log_file_spec.region), log_file_spec.region, pll.peer)
-                        else:
-                            agent.add_peer(pll.peer)
+                    elif (pll := log.is_get_id()):
+                        agent.add_peer(pll.peer)
+                    elif (pll := log.is_start_listening()):
+                        agent.add_start_time(pll.timestamp)
 
                 except Exception as e:
                     print('Failed parsing Agent line.')
@@ -183,7 +172,19 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
     else:
         print('Skipping parse of agent as it does not exist: ', log_file_spec.agent_path)
 
-    if agent is None:
-        agent = Agent(lookup.node_num_from_region(log_file_spec.region), log_file_spec.region, None)
+    publications = []
+    for _,publication in sealed_publications.items():
+        started_at, ended_at = chronologist.get_start_end(started_at, ended_at, publication.provide_started_at, publication.provide_ended_at)
+        publications.append(publication)
+
+    retrievals = []
+    for _,retrieval in sealed_retrievals.items():
+        started_at, ended_at = chronologist.get_start_end(started_at, ended_at, retrieval.retrieval_started_at, retrieval.done_retrieving_at)
+        most_recent = agent.most_recent_start_time(retrieval.retrieval_started_at)
+        if most_recent is not None:
+            retrieval.agent_started_at = most_recent
+
+        retrievals.append(retrieval)
+
 
     return LogFile(started_at, ended_at, publications, retrievals, unattempted_retrieval_cids, agent)

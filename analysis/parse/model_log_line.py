@@ -349,6 +349,19 @@ class AgentLogLine(_LogLine):
         parsed.peer = Peer(match.group(2), "n.a.")
         return parsed
 
+    def is_start_listening(self) -> Optional[ParsedLogLine]:
+        if "Start listening at" not in self.line:
+            return None
+        match = re.search(
+                r"([^\s]+Z).*Start listening at.*", self.line
+        )
+        if match is None:
+            raise Exception("Failed to parse line: ", self.line)
+
+        parsed = ParsedLogLine(None, match.group(1))
+        return parsed
+
+
     @staticmethod
     def from_dict(obj: Any) -> 'AgentLogLine':
         assert isinstance(obj, dict)
