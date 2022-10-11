@@ -86,7 +86,7 @@ def plot_total(data_set: DataSet):
     for agent,agent_events in data_set.agent_events_map.items():
         total(axl, agent_events.completed_retrievals, agent.region)
 
-    axl.set_title('Retrieval Total Latency by Region (fig. d)')
+    axl.set_title('Retrieval Total Duration by Region')
     axl.legend(loc='lower right')
 
 
@@ -96,7 +96,7 @@ def plot_getting_closest_peers(data_set: DataSet):
     for agent,agent_events in data_set.agent_events_map.items():
         getting_closest_peers_phase(axl, agent_events.completed_retrievals, agent.region)
 
-    axl.set_title('Retrieval Getting Closest Peer Latency by Region (fig. e)')
+    axl.set_title('Retrieval Getting Closest Peer Duration by Region')
     axl.legend(loc='lower right')
 
 def plot_fetch(data_set: DataSet):
@@ -105,7 +105,7 @@ def plot_fetch(data_set: DataSet):
     for agent,agent_events in data_set.agent_events_map.items():
         fetching_phase(axl, agent_events.completed_retrievals, agent.region)
 
-    axl.set_title('Retrieval Fetch Latency by Region (fig. f)')
+    axl.set_title('Retrieval Fetch Duration by Region')
     axl.legend(loc='lower right')
 
 
@@ -116,5 +116,5 @@ def plot_phase_comparison(retrievals):
     getting_closest_peers_phase(axl, retrievals, 'getting_closest_peers')
     dialing_phase(axl, retrievals)
     fetching_phase(axl, retrievals, 'fetch')
-    axl.set_title('Retrieval Phase Latency Distribution')
+    axl.set_title('Retrieval Phase Duration Distribution')
     axl.legend(loc='lower right')

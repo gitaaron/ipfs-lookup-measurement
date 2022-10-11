@@ -24,6 +24,7 @@ def plot_num_providers(retrievals:List[Retrieval], title: str):
             }, index=start_dates)
 
     ax = DF.plot(x_compat=True, rot=90, figsize=(16, 5),)
+    ax.set_ylabel('Number Providers found during Retrieval')
     ax.set_title(title)
 
 def plot_duration_each_region(phase: RetrievalPhase, data_set: DataSet, title: str):
@@ -45,6 +46,7 @@ def plot_duration_each_region(phase: RetrievalPhase, data_set: DataSet, title: s
 
     DF = pd.DataFrame(region_durations, index=start_dates).bfill()
     ax = DF.plot(x_compat=True, rot=90, figsize=(16, 5),)
+    ax.set_ylabel('Duration (sec.)')
     ax.set_title(title)
 
 def plot_each_phase_all_regions(retrievals:List[Retrieval], title: str):
@@ -83,4 +85,5 @@ def plot_each_phase_all_regions(retrievals:List[Retrieval], title: str):
             }, index=start_dates)
 
     ax = DF.plot(x_compat=True, rot=90, figsize=(16, 5),)
+    ax.set_ylabel('Duration (sec.)')
     ax.set_title(title)

@@ -22,4 +22,4 @@ def plot(retrievals: List[Retrieval]):
     fig1, ax1 = plt.subplots()
     ax1.pie(phases, labels=labels, autopct='%1.1f%%')
     ax1.axis('equal')
-    ax1.set_title('Retrieval Phase Latency Comparison')
+    ax1.set_title('Retrieval Phase Average Duration Comparison')

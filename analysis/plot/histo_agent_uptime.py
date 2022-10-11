@@ -31,7 +31,7 @@ def plot(data_set: DataSet):
         width=bins[1] - bins[0], align='edge')
     plt.xticks(bins)
     ax1.set_xlabel('Agent Uptime (sec.)')
-    ax1.set_ylabel('Average of Total Retrieval Duration (sec.)')
-    ax1.set_title('Retrieval Latency by Agent Uptime')
+    ax1.set_ylabel('Average Duration (sec.)')
+    ax1.set_title('Retrieval Total Duration by Agent Uptime')
 
     plt.show() 
