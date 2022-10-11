@@ -26,7 +26,7 @@ def plot(data_set: DataSet):
     ax1.set_xticks(x_pos, labels=region_labels)
 
     ax1.set_xlabel('Regions')
-    ax1.set_ylabel('Duration (sec.)')
+    ax1.set_ylabel('Average Duration (sec.)')
     ax1.set_title('Retrieval Duration by Region')
 
 

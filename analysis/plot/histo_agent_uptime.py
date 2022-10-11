@@ -26,12 +26,12 @@ def plot(data_set: DataSet):
 
     sorted_avgs = [bucket_avgs.get(i, 0) for i in range(1, len(bins))]
 
-    fig1, ax1 = plt.subplots()
+    fig1, ax1 = plt.subplots(figsize=(12,6), dpi=80)
+
+    width=(bins[1] - bins[0])*0.9
     ax1.bar(bins[:-1], height=sorted_avgs, 
-        width=bins[1] - bins[0], align='edge')
+        width=width, align='edge')
     plt.xticks(bins)
     ax1.set_xlabel('Agent Uptime (sec.)')
     ax1.set_ylabel('Average Duration (sec.)')
     ax1.set_title('Retrieval Total Duration by Agent Uptime')
-
-    plt.show() 
