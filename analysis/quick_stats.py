@@ -50,10 +50,11 @@ def execute(logs_config: LogsConfig) -> dict:
         stats[f"slow_retrievals (>{constants.SLOW_THRESHOLD} sec.)"] = len(slow)
         stats['slow_many_providers'] = f"{round(num_slow_many_providers/len(slow),3)*100}%"
         stats['slow_one_provider'] = f"{round(num_slow_one_provider/len(slow),3)*100}%"
-        stats['many_providers_slow_likelihood'] = f"{round(num_slow_many_providers/many_providers_count,3)*100}%"
-        stats['one_provider_slow_likelihood'] = f"{round(num_slow_one_provider/single_provider_count,3)*100}%"
-        stats['fpn_slow_likelihood'] = f"{round(calc.percent_fpn_slow(data_set),3)}%"
-        stats['non_fpn_slow_likelihood'] = f"{round(calc.percent_non_fpn_slow(data_set),3)}%"
+        if many_providers_count > 0:
+            stats['many_providers_slow_likelihood'] = f"{round(num_slow_many_providers/many_providers_count,3)*100}%"
+            stats['one_provider_slow_likelihood'] = f"{round(num_slow_one_provider/single_provider_count,3)*100}%"
+            stats['fpn_slow_likelihood'] = f"{round(calc.percent_fpn_slow(data_set),3)}%"
+            stats['non_fpn_slow_likelihood'] = f"{round(calc.percent_non_fpn_slow(data_set),3)}%"
 
 
     return stats
