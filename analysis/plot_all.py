@@ -12,8 +12,8 @@ from logs import load
 from models.model_data_set import DataSet
 
 # Set OUT_DIR to `None` to display the graphs with the GUI
-OUT_DIR = None
-#OUT_DIR = './figs'
+#OUT_DIR = None
+OUT_DIR = './figs'
 
 
 def writeMeta(out_target_dir: str, data_set: DataSet):
