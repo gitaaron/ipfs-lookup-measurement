@@ -3,6 +3,17 @@ from logs import parse
 from logs.model_logs_config import LogsConfig
 
 
+def execute(logs_config: LogsConfig, bucket_mode: str):
+    if bucket_mode == 'ALL':
+        parse.all(logs_config)
+    elif bucket_mode == 'LATEST':
+        parse.latest(logs_config)
+    else:
+        print('log_parse.py -b ALL|LATEST')
+        sys.exit(2)
+
+
+
 def main(argv):
     bucket_mode = ''
 
@@ -18,13 +29,7 @@ def main(argv):
 
     logs_config = LogsConfig('./log_config.json')
 
-    if bucket_mode == 'ALL':
-        parse.all(logs_config)
-    elif bucket_mode == 'LATEST':
-        parse.latest(logs_config)
-    else:
-        print('log_parse.py -b ALL|LATEST')
-        sys.exit(2)
+    execute(logs_config, bucket_mode)
 
 
 if __name__ == '__main__':
