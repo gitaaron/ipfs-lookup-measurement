@@ -36,6 +36,7 @@ if __name__=='__main__':
     stats['slow_one_provider'] = f"{round(num_slow_one_provider/len(slow),3)*100}%"
     stats['many_providers_slow_likelihood'] = f"{round(num_slow_many_providers/many_providers_count,3)*100}%"
     stats['one_provider_slow_likelihood'] = f"{round(num_slow_one_provider/single_provider_count,3)*100}%"
+    stats['percent_first_provider_nearest[fpn]'] = f"{round(calc.percent_nearest_neighbor_first_provider(data_set),3)}%"
     stats['num_fpn'] = len(data_set.first_provider_nearest_retrievals)
     stats['num_non_fpn'] = len(data_set.non_first_provider_nearest_retrievals)
     stats['avg_duration_fpn'] = f"{round(calc.avg_duration_first_provider_nearest(data_set),3)} sec."
