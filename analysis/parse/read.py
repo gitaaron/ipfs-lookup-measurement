@@ -1,4 +1,4 @@
-import json
+import json, os
 from pickled.model_log_file import LogFile
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
@@ -124,8 +124,8 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
                 elif (pll := log.is_got_provider()) is not None and pll.cid in retrievals:
                     retrievals[pll.cid].received_HAVE_from_provider(
                         pll.remote_peer, pll.timestamp)
-                elif (pll := log.is_done_retrieving()) is not None and pll.cid in retrievals:
-                    retrievals[pll.cid].done_retrieving(
+                elif (pll := log.is_done_retrieving_first_block()) is not None and pll.cid in retrievals:
+                    retrievals[pll.cid].done_retrieving_first_block(
                         pll.timestamp, pll.error_str)
                     if retrievals[pll.cid].marked_for_removal:
                         sealed_retrievals[pll.cid] = retrievals[pll.cid]
@@ -157,9 +157,10 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
             for idx, line in enumerate(reversed(f.readlines())):
                 try:
                     log = AgentLogLine.from_dict(json.loads(line))
-                    if (pll := log.is_start_retrieving()):
-                        if pll.cid in sealed_retrievals:
-                            sealed_retrievals[pll.cid].agent_initiated(pll.file_size, pll.timestamp)
+                    if (pll := log.is_start_retrieving()) and pll.cid in sealed_retrievals:
+                        sealed_retrievals[pll.cid].agent_initiated(pll.timestamp, pll.file_size)
+                    elif (pll := log.is_finished_retrieving()) and pll.cid in sealed_retrievals:
+                        sealed_retrievals[pll.cid].done_retrieving(pll.timestamp, pll.file_size)
                     elif (pll := log.is_get_id()):
                         agent.add_peer(pll.peer)
                     elif (pll := log.is_start_listening()):

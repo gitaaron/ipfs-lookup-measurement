@@ -13,6 +13,7 @@ The following is an ordered sequence of events for retrieval.
   stream_opened_at: Optional[datetime]
   # there could be more than one provider
   received_first_HAVE_at: Optional[datetime]
+  done_retrieving_first_block_at: Optional[datetime]
   done_retrieving_at: Optional[datetime]
   finished_searching_providers_at: Optional[datetime]
 ```
@@ -64,7 +65,8 @@ The following is an ordered sequence of events for retrieval.
   connected_at: "${TIMESTAMP}: Connected to provider ${PROVIDER_PEER_ID}(${PROVIDER_AGENT}) for cid ${CID} from ${POINTER_PEER_ID}(${POINTER_AGENT})",
   stream_opened_at: "${TIMESTAMP}: Bitswap connected to peer ${PROVIDER_PEER_ID}",
   received_first_HAVE_at: "${TIMESTAMP}: Got provider ${PROVIDER_PEER_ID} for content ${CID}",
-  done_retrieving_at: "${TIME_STAMP}: Done retrieving content for ${CID} error: ${ERROR_MESSAGE:''}",
+  done_retrieving_first_block_at: "${TIME_STAMP}: Done retrieving content for ${CID} error: ${ERROR_MESSAGE:''}",
+  done_retrieving_at: "${TIME_STAMP}: Finished retrieve for CID:${CID} actual content length:${FILE_SIZE}",
   finished_searching_providers_at: "${TIME_STAMP}: Finish searching providers for cid ${CID} with ctx error: ${ERROR_MESSAGE:''}"
 }
 ```
@@ -74,7 +76,7 @@ The following is an ordered sequence of events for retrieval.
 ```
 {
 
-  ([^\s]+): Start retrieve for CID:([^\s]+) expected content length:([1-9][0-9]+) :
+  ([^\s]+): Start retrieve for CID:([^\s]+) expected content length:([1-9][0-9]*) :
   ${TIMESTAMP}: Start retrieve for CID:${CID} expected content length:${CONTENT_LENGTH},
 
   ([^\s]+): Start retrieving content for ([^\s]+) :
@@ -100,6 +102,9 @@ The following is an ordered sequence of events for retrieval.
 
   ([^\s]+): Done retrieving content for (\w+) error: (.+)?:
   ${TIME_STAMP}: Done retrieving content for ${CID} error: ${ERROR_MESSAGE:''},
+
+  ([^\s]+): Finished retrieve for CID:(\w+) actual content length:([1-9][0-9]*)
+  ${TIME_STAMP}: Finished retrieve for CID:${CID} actual content length:${FILE_SIZE},
 
   ([^\s]+): Finish searching providers for cid (\w+) with ctx error: (.+)?:
   ${TIME_STAMP}: Finish searching providers for cid ${CID} with ctx error: ${ERROR_MESSAGE:''},

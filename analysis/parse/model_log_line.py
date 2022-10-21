@@ -103,7 +103,7 @@ class IPFSLogLine(_LogLine):
         for peer_str in match.group(3).split(" "):
             sub_match = re.search(r"(\w+)\((.*)\)", peer_str)
             if sub_match is None:
-                raise Exception(f"could not parse peers in {match.group(1)}")
+                raise Exception(f"could not parse peer {peer_str} in {match.group(1)}")
             peers.append(Peer(sub_match.group(1), sub_match.group(2)))
         parsed = ParsedLogLine(match.group(2), match.group(1))
         parsed.closest_peers = peers
@@ -263,7 +263,7 @@ class IPFSLogLine(_LogLine):
         parsed.remote_peer = Peer(match.group(2), "n.a.")
         return parsed
 
-    def is_done_retrieving(self) -> Optional[ParsedLogLine]:
+    def is_done_retrieving_first_block(self) -> Optional[ParsedLogLine]:
         if "Done retrieving content for" not in self.line:
             return None
         match = re.search(
@@ -328,7 +328,7 @@ class AgentLogLine(_LogLine):
             return None
 
         match = re.search(
-            r"([^\s]+): Start retrieve for CID:([^\s]+) expected content length:([1-9][0-9]+)", self.line)
+            r"([^\s]+): Start retrieve for CID:([^\s]+) expected content length:([1-9][0-9]*)", self.line)
 
         if match is None:
             raise Exception("Failed to parse line: ", self.line)
@@ -336,6 +336,23 @@ class AgentLogLine(_LogLine):
         parsed = ParsedLogLine(match.group(2), match.group(1))
         parsed.file_size = int(match.group(3))
         return parsed
+
+    def is_finished_retrieving(self) -> Optional[ParsedLogLine]:
+        if "Finished retrieve for CID:" not in self.line:
+            return None
+        if "actual content length:" not in self.line:
+            return None
+
+        match = re.search(
+            r"([^\s]+): Finished retrieve for CID:(\w+) actual content length:([1-9][0-9]*)", self.line)
+
+        if match is None:
+            raise Exception("Failed to parse line: ", self.line)
+
+        parsed = ParsedLogLine(match.group(2), match.group(1))
+        parsed.file_size = int(match.group(3))
+        return parsed
+
 
     def is_get_id(self) -> Optional[ParsedLogLine]:
         if "Get PeerID:" not in self.line:

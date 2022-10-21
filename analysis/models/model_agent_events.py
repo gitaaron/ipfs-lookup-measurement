@@ -29,6 +29,13 @@ class AgentEvents:
                 f"Removed {before - len(self._completed_retrievals)} of {before} retrievals because they were incomplete for region {self.agent.region.name}")
 
             before = len(self._completed_retrievals)
+            self._completed_retrievals = list(
+                filter(lambda ret: ret.done_retrieving_at is not None, self._completed_retrievals))
+
+            print(
+                f"Removed {before - len(self._completed_retrievals)} of {before} retrievals because they were missing 'done_retrieving_at' for region {self.agent.region.name}")  # error in our measurement setup
+
+            before = len(self._completed_retrievals)
 
             self._completed_retrievals = list(filter(lambda ret: ret.state !=
                             Retrieval.State.DONE_WITHOUT_ASKING_PEERS, self._completed_retrievals))

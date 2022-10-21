@@ -187,9 +187,16 @@ class Retrieval:
             self.received_first_HAVE_at = timestamp
             self.first_provider_peer = provider
 
-    def done_retrieving(self, timestamp: datetime, error_str: Optional[str]):
+    def done_retrieving_first_block(self, timestamp: datetime, error_str: Optional[str]):
         self.done_retrieving_error = error_str
+        self.done_retrieving_first_block_at = timestamp
+
+    def done_retrieving(self, timestamp: datetime, file_size: int):
         self.done_retrieving_at = timestamp
+
+        if file_size != self.file_size:
+            raise Exception(f"Actual file size {file_size} does not match expected {self.file}")
+
         try:
             self.state = Retrieval.State.DONE
         except Exception as exc:
@@ -197,6 +204,7 @@ class Retrieval:
                 self.state = Retrieval.State.DONE_WITHOUT_ASKING_PEERS
             else:
                 self.marked_as_incomplete = True
+
 
     def finish_searching_providers(self, timestamp: datetime, error_str: Optional[str]):
         self.finish_searching_providers_ctx_error = error_str
@@ -209,6 +217,6 @@ class Retrieval:
             else:
                 self.marked_as_incomplete = True
 
-    def agent_initiated(self, file_size: int, timestamp: datetime):
+    def agent_initiated(self, timestamp: datetime, file_size: int ):
         self.agent_initated_retrieval_at = timestamp
         self.file_size = file_size
