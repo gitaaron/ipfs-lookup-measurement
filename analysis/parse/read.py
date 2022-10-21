@@ -80,7 +80,7 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
                 elif (pll := log.is_get_provider_error()) is not None and pll.cid in publications:
                     publications[pll.cid].get_provider_error(
                         pll.remote_peer, pll.timestamp, pll.error_str)
-                elif (pll := log.is_finish_providing()) is not None:
+                elif (pll := log.is_finish_providing()) is not None and pll.cid in publications:
                     publications[pll.cid].seal(pll.timestamp)
                     sealed_publications[pll.cid] = publications[pll.cid]
                     del publications[pll.cid]
@@ -146,7 +146,10 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
             except Exception as e:
                 print('Failed parsing IPFS line.')
                 print('Line: %s' % log.line)
-                print('Reason: %s' % str(e))
+                if os.getenv('SKIP_ERROR') == 'TRUE':
+                    print('Reason: %s' % str(e))
+                else:
+                    raise e
 
 
     agent: Agent = Agent(lookup.node_num_from_region(log_file_spec.region), log_file_spec.region)
@@ -169,7 +172,10 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
                 except Exception as e:
                     print('Failed parsing Agent line.')
                     print('Line: %s' % log.line)
-                    print('Reason: %s' % str(e))
+                    if os.getenv('SKIP_ERROR') == 'TRUE':
+                        print('Reason: %s' % str(e))
+                    else:
+                        raise e
     else:
         print('Skipping parse of agent as it does not exist: ', log_file_spec.agent_path)
 

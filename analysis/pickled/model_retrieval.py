@@ -194,8 +194,8 @@ class Retrieval:
     def done_retrieving(self, timestamp: datetime, file_size: int):
         self.done_retrieving_at = timestamp
 
-        if file_size != self.file_size:
-            raise Exception(f"Actual file size {file_size} does not match expected {self.file}")
+        if self.file_size is not None and file_size != self.file_size:
+            raise Exception(f"Actual file size {file_size} does not match expected {self.file_size} in region {self.origin}")
 
         try:
             self.state = Retrieval.State.DONE

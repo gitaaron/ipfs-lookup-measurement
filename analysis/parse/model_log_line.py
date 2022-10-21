@@ -100,7 +100,11 @@ class IPFSLogLine(_LogLine):
             return None
 
         peers: List[Peer] = []
-        for peer_str in match.group(3).split(" "):
+
+        matches = re.findall(
+            r"\w+\([^)]+\)", match.group(3))
+
+        for peer_str in matches:
             sub_match = re.search(r"(\w+)\((.*)\)", peer_str)
             if sub_match is None:
                 raise Exception(f"could not parse peer {peer_str} in {match.group(1)}")
