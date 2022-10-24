@@ -13,6 +13,10 @@ name_coords_map = {
     'us_west_1': (38.615248104516496, -121.51858586578618), # N. California / Sacramento
     'eu_central_1': (50.13890029070833, 8.736546836001605), # Frankfurt
     'sa_east_1': (-23.497812701529366, -46.679286631987864), # Sao Paulo
+    # fake locations for docker generated logs
+    'node0': (26.046356864775923, 50.538634198559535), # Bahrain
+    'node1': (-33.802116359682906, 151.13801505087193), # Sydney
+    'node2': (-33.864048786014315, 18.487253558675054), # Cape Town
 }
 
 
