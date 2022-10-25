@@ -172,17 +172,33 @@ func handleClean(data []byte) (byte, []byte, error) {
 
 // handleDisconnect handles disconnect request.
 func (a *agent) handleDisonnect(data []byte) (byte, []byte, error) {
+	// get current ID
+	sh := api.NewLocalShell()
+	if sh == nil {
+		return 0, nil, fmt.Errorf("error getting local ipfs shell")
+	}
+	sh.SetTimeout(20 * time.Second)
+
+	id, err := sh.ID()
+	if err != nil {
+		return 0, nil, err
+	}
+
+	fmt.Printf("found my id:%s\n", id.ID)
+
 	// Use IPFS CLI
 	ipfs := getIPFSCLI()
 
 	output := make([]string, 0)
 	for _, peer := range a.peerIDs {
-		cli := fmt.Sprintf("%v swarm peers | /bin/grep %s | %v swarm disconnect", ipfs, peer, ipfs)
-		out, err := exec.Command("sh", "-xc", cli).CombinedOutput()
-		if err != nil {
-			output = append(output, fmt.Sprintf("%v%v\n", string(out), err.Error()))
-		} else {
-			output = append(output, string(out))
+		if id.ID != peer {
+			cli := fmt.Sprintf("%v swarm peers | /bin/grep %s | %v swarm disconnect", ipfs, peer, ipfs)
+			out, err := exec.Command("sh", "-xc", cli).CombinedOutput()
+			if err != nil {
+				output = append(output, fmt.Sprintf("%v%v\n", string(out), err.Error()))
+			} else {
+				output = append(output, string(out))
+			}
 		}
 	}
 
