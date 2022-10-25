@@ -151,7 +151,6 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
                 else:
                     raise e
 
-
     agent: Agent = Agent(lookup.node_num_from_region(log_file_spec.region), log_file_spec.region)
 
     if log_file_spec.has_agent_log:
@@ -181,12 +180,14 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
 
     publications = []
     for _,publication in sealed_publications.items():
-        started_at, ended_at = chronologist.get_start_end(started_at, ended_at, publication.provide_started_at, publication.provide_ended_at)
+        if publication.provide_started_at is not None and publication.provide_ended_at is not None:
+            started_at, ended_at = chronologist.get_start_end(started_at, ended_at, publication.provide_started_at, publication.provide_ended_at)
         publications.append(publication)
 
     retrievals = []
     for _,retrieval in sealed_retrievals.items():
-        started_at, ended_at = chronologist.get_start_end(started_at, ended_at, retrieval.retrieval_started_at, retrieval.done_retrieving_at)
+        if retrieval.retrieval_started_at is not None and retrieval.done_retrieving_at is not None:
+            started_at, ended_at = chronologist.get_start_end(started_at, ended_at, retrieval.retrieval_started_at, retrieval.done_retrieving_at)
         most_recent = agent.most_recent_start_time(retrieval.retrieval_started_at)
         if most_recent is not None:
             retrieval.agent_started_at = most_recent

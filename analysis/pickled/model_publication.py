@@ -51,6 +51,7 @@ class Publication:
 
         self.cid = cid
         self.provide_started_at = publication_started_at
+        self.provide_ended_at = None
         self._state = Publication.State.INITIATED
         self.find_node_queries = []
         self.add_provider_queries = {}

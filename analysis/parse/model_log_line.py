@@ -104,6 +104,10 @@ class IPFSLogLine(_LogLine):
         matches = re.findall(
             r"\w+\([^)]+\)", match.group(3))
 
+        # peer agent may not be specified by log
+        if len(matches) == 0:
+            matches = match.group(3).split(' ')
+
         for peer_str in matches:
             sub_match = re.search(r"(\w+)\((.*)\)", peer_str)
             if sub_match is None:
@@ -308,12 +312,12 @@ class IPFSLogLine(_LogLine):
         if "Finished searching providers for cid" not in self.line:
             return None
         match = re.search(
-            r"([^\s]+): Finished searching providers for cid (\w+) ctx error: (.+)?", self.line)
+            r"([^\s]+): Finished searching providers for cid (\w+)( ctx error: )?(.+)?", self.line)
         if match is None:
             return None
 
         parsed = ParsedLogLine(match.group(2), match.group(1))
-        parsed.error_str = match.group(3)
+        parsed.error_str = match.group(4)
         return parsed
 
     @staticmethod
