@@ -24,12 +24,14 @@ def execute(logs_config: LogsConfig) -> dict:
     stats['average_providers_per_retrieval'] = avg_providers
     stats['phase_avg_duration'] = calc.avg_duration_from_breakdown({'count': len(data_set.total_completed_retrievals), 'durations':data_set.phase_durations})
 
-    if len(data_set.first_provider_nearest_retrievals) > 0:
+    if many_providers_count > 0 and len(data_set.first_provider_nearest_retrievals) > 0:
         stats['percent_first_provider_nearest[fpn]'] = f"{round(calc.percent_nearest_neighbor_first_provider(data_set),3)}%"
         stats['num_fpn'] = len(data_set.first_provider_nearest_retrievals)
         stats['num_non_fpn'] = len(data_set.non_first_provider_nearest_retrievals)
-        stats['avg_duration_fpn'] = f"{round(calc.avg_duration_first_provider_nearest(data_set),3)} sec."
-        stats['avg_duration_non_fpn'] = f"{round(calc.avg_duration_non_first_provider_nearest(data_set),3)} sec."
+        if len(data_set.first_provider_nearest_retrievals) > 0:
+            stats['avg_duration_fpn'] = f"{round(calc.avg_duration_first_provider_nearest(data_set),3)} sec."
+        if len(data_set.non_first_provider_nearest_retrievals) > 0:
+            stats['avg_duration_non_fpn'] = f"{round(calc.avg_duration_non_first_provider_nearest(data_set),3)} sec."
 
 
     stats['uptime'] = data_set.agent_uptime_durations
