@@ -1,3 +1,3 @@
 {"labels":{},"line":"2022-10-06T19:58:57.260Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:71\texisting: QmVBUgVkprLpBEGD2vnAG8MHfw95Q9h8YE4tyuufzae232","timestamp":"2022-10-06T15:58:57.284112286-04:00"}
-{"labels":{},"line":"2022-10-06T19:58:52.020535985Z: Finished retrieve for CID:QmVBUgVkprLpBEGD2vnAG8MHfw95Q9h8YE4tyuufzae232 actual content length:52429","timestamp":"2022-10-06T15:58:52.268415769-04:00"}
+{"labels":{},"line":"2022-10-06T19:58:53.120678085Z: Finished retrieve for CID:QmVBUgVkprLpBEGD2vnAG8MHfw95Q9h8YE4tyuufzae232 actual content length:52429","timestamp":"2022-10-06T15:58:52.268415769-04:00"}
 {"labels":{},"line":"2022-10-06T19:58:49.062556529Z: Start retrieve for CID:QmVBUgVkprLpBEGD2vnAG8MHfw95Q9h8YE4tyuufzae232 expected content length:52429","timestamp":"2022-10-06T15:58:49.260579408-04:00"}
