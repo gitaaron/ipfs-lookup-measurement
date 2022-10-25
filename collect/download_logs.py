@@ -71,8 +71,10 @@ if __name__ == "__main__":
         print('Setting DEFAULT_NODES %s' % DEFAULT_NODES)
         nodes = DEFAULT_NODES
 
+    since = os.getenv('SINCE', '4')
+
     downloadLogs(
         os.getenv('DOWNLOAD_DIR', '/tmp/dht_lookup/logs'),
-        os.getenv('SINCE', 4),
+        int(since),
         nodes
     )
