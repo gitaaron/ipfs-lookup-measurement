@@ -180,8 +180,8 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
 
     publications = []
     for _,publication in sealed_publications.items():
-        if publication.provide_started_at is not None and publication.provide_ended_at is not None:
-            started_at, ended_at = chronologist.get_start_end(started_at, ended_at, publication.provide_started_at, publication.provide_ended_at)
+        if publication.provide_started_at is not None and publication.get_providers_ended_at is not None:
+            started_at, ended_at = chronologist.get_start_end(started_at, ended_at, publication.provide_started_at, publication.get_providers_ended_at)
         publications.append(publication)
 
     retrievals = []

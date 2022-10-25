@@ -28,7 +28,7 @@ The following is an ordered sequence of events for publish.
   INITIATED: provide_started_at,
   GETTING_CLOSEST_PEERS: find_node_started_at,
   PUTTING_GETTING_PROVIDER_RECORDS: dht_walk_ended_at,
-  DONE: provide_ended_at
+  DONE: get_providers_ended_at
 }
 ```
 
@@ -39,7 +39,6 @@ The following is an ordered sequence of events for publish.
   INITIATED: find_node_started_at-provide_started_at,
   GETTING_CLOSEST_PEERS: dht_walk_ended_at-find_node_started_at,
   PUTTING_GETTING_PROVIDER_RECORDS: get_providers_ended_at-dht_walk_ended_at,
-  DONE: provide_ended_at-get_providers_ended_at
 }
 ```
 
