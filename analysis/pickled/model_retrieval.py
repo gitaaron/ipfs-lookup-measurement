@@ -99,9 +99,9 @@ class Retrieval:
         elif(phase==RetrievalPhase.GETTING_CLOSEST_PEERS):
             return self.dial_started_at - self.get_providers_queries_started_at
         elif(phase==RetrievalPhase.DIALING):
-            return self.connected_at - self.dial_started_at
+            return self.stream_opened_at - self.dial_started_at
         elif(phase==RetrievalPhase.FETCHING):
-            return self.done_retrieving_at - self.connected_at
+            return self.done_retrieving_at - self.stream_opened_at
         else:
             raise Exception(f"Failed to calculate duration: {phase.name} is not recognized")
 
@@ -170,6 +170,7 @@ class Retrieval:
             raise Exception(
                 f"Received provider {self.cid} from unknown provider {provider}")
         self.stream_opened_at = timestamp
+        self.state = Retrieval.State.FETCHING
 
     def connected_to_provider(self, provider: Peer, pointer: Peer, timestamp: datetime):
         if self.state.value >= Retrieval.State.DONE.value:
@@ -179,7 +180,6 @@ class Retrieval:
                 f"Received provider record for {self.cid} from unqueried peer {pointer}")
         self.provider_peers.add(provider)
         self.connected_at = timestamp
-        self.state = Retrieval.State.FETCHING
 
     def received_HAVE_from_provider(self, provider: Peer, timestamp: datetime):
         self.provider_peers.add(provider)

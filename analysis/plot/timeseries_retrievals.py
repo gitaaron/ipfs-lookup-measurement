@@ -61,16 +61,16 @@ def plot_each_phase_all_regions(retrievals:List[Retrieval], title: str):
             (ret.duration(RetrievalPhase.TOTAL)).total_seconds()]
 
         initiated_durations += [
-            (ret.get_providers_queries_started_at - ret.retrieval_started_at).total_seconds()]
+            ret.duration(RetrievalPhase.INITIATED).total_seconds()]
 
         getting_closest_peers_durations += [
-            (ret.dial_started_at - ret.get_providers_queries_started_at).total_seconds()]
+            ret.duration(RetrievalPhase.GETTING_CLOSEST_PEERS).total_seconds()]
 
         dialing_durations += [
-            (ret.connected_at - ret.dial_started_at).total_seconds()]
+            ret.duration(RetrievalPhase.DIALING).total_seconds()]
 
         fetching_durations += [
-            (ret.done_retrieving_at - ret.connected_at).total_seconds()]
+            ret.duration(RetrievalPhase.FETCHING).total_seconds()]
 
 
     start_dates = [ret.retrieval_started_at for ret in retrievals]

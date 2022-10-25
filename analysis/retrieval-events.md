@@ -36,7 +36,7 @@ The following is an ordered sequence of events for retrieval.
   INITIATED: retrieval_started_at,
   GETTING_CLOSEST_PEERS: get_providers_queries_started_at,
   DIALING: dial_started_at,
-  FETCHING: connected_at,
+  FETCHING: stream_opened_at,
   DONE: done_retrieving_at | finished_searching_providers_at
   DONE_WITHOUT_ASKING_PEERS: done_retrieving_at | finished_searching_providers_at
 }
@@ -48,8 +48,8 @@ The following is an ordered sequence of events for retrieval.
 {
   INITIATED: get_providers_queries_started_at - retrieval_started_at
   GETTING_CLOSEST_PEERS: dial_started_at - get_providers_queries_started_at,
-  DIALING: connected_at - dial_started_at,
-  FETCHING: done_retrieving_at - connected_at,
+  DIALING: stream_opened_at - dial_started_at,
+  FETCHING: done_retrieving_at - stream_opened_at,
 }
 ```
 

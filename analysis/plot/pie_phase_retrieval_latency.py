@@ -11,10 +11,10 @@ def plot(retrievals: List[Retrieval]):
     total_fetching_duration = 0
 
     for ret in retrievals:
-        total_initiated_duration += (ret.get_providers_queries_started_at - ret.retrieval_started_at).total_seconds()
-        total_getting_closest_peers_duration += (ret.dial_started_at - ret.get_providers_queries_started_at).total_seconds()
-        total_dialing_duration += (ret.connected_at - ret.dial_started_at).total_seconds()
-        total_fetching_duration += (ret.done_retrieving_at - ret.connected_at).total_seconds()
+        total_initiated_duration += ret.duration(RetrievalPhase.INITIATED).total_seconds()
+        total_getting_closest_peers_duration += ret.duration(RetrievalPhase.GETTING_CLOSEST_PEERS).total_seconds()
+        total_dialing_duration += ret.duration(RetrievalPhase.DIALING).total_seconds()
+        total_fetching_duration += ret.duration(RetrievalPhase.FETCHING).total_seconds()
 
     labels = ['initiated', 'getting_closest_peers', 'dialing', 'fetching']
     phases = [total_initiated_duration, total_getting_closest_peers_duration, total_dialing_duration, total_fetching_duration]

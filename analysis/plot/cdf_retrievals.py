@@ -39,7 +39,7 @@ def dialing_phase(axl, retrievals: List[Retrieval]):
     overall_retrieval_durations = []
     for ret in retrievals:
         overall_retrieval_durations += [
-            (ret.connected_at - ret.dial_started_at).total_seconds()]
+            ret.duration(RetrievalPhase.DIALING).total_seconds()]
 
     hist, bin_edges = np.histogram(
         overall_retrieval_durations, bins=np.arange(0, 5, 0.1),  density=True)
@@ -53,7 +53,7 @@ def fetching_phase(axl, retrievals: List[Retrieval], label: str):
     overall_retrieval_durations = []
     for ret in retrievals:
         overall_retrieval_durations += [
-            (ret.done_retrieving_at - ret.connected_at).total_seconds()]
+            ret.duration(RetrievalPhase.FETCHING).total_seconds()]
 
     hist, bin_edges = np.histogram(
         overall_retrieval_durations, bins=np.arange(0, 5, 0.1),  density=True)
