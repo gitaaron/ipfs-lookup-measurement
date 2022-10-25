@@ -13,6 +13,9 @@ services:
     container_name: controller
     environment:
       HOST_NAME: controller
+      SERVER_PORT: 5100
+      GATEWAY_PORT: 8180
+      P2P_PORT: 4100
 
   node0:
     image: ipfs-node
