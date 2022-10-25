@@ -18,6 +18,8 @@ class DataSet:
     _has_first_provider_retrievals: list[Retrieval]
     _first_provider_nearest_retrievals: list[Retrieval]
     _non_first_provider_nearest_retrievals: list[Retrieval]
+    _many_provider_retrievals: list[Retrieval]
+    _single_provider_retrievals: list[Retrieval]
     _retrievals_has_uptime: list[Retrieval]
     _total_publications: list[Publication]
     _peer_agent_map: dict[Peer,Agent]
@@ -34,6 +36,8 @@ class DataSet:
         self._has_first_provider_retrievals = None
         self._first_provider_nearest_retrievals = None
         self._non_first_provider_nearest_retrievals = None
+        self._many_provider_retrievals = None
+        self._single_provider_retrievals = None
         self._retrievals_has_uptime = None
 
         self.regions = []
@@ -98,7 +102,6 @@ class DataSet:
             self._uptime_durations = { 'count': 0, 'total': 0 }
             for phase in constants.RetrievalPhase:
                 self._phase_durations[phase] = 0
-        
             for ret in self.total_completed_retrievals:
                 if ret.file_size not in self._unique_file_sizes:
                     self._unique_file_sizes[ret.file_size] = { 'count' : 1, 'durations': ret.all_durations}
@@ -148,13 +151,35 @@ class DataSet:
         return self._retrievals_has_uptime
 
 
+    def _set_has_many_providers(self):
+        if(self._many_provider_retrievals is None or self._single_provider_retrievals is None):
+            self._many_provider_retrievals = []
+            self._single_provider_retrievals = []
+
+            for ret in self.has_first_provider_retrievals:
+                if(len(ret.provider_peers) > 1):
+                    self._many_provider_retrievals.append(ret)
+                else:
+                    self._single_provider_retrievals.append(ret)
+
+    @property
+    def many_provider_retrievals(self):
+        self._set_has_many_providers()
+        return self._many_provider_retrievals
+
+
+    @property
+    def single_provider_retrievals(self):
+        self._set_has_many_providers()
+        return self._single_provider_retrievals
+
 
     def _set_fpns(self):
         if(self._first_provider_nearest_retrievals is None or self._non_first_provider_nearest_retrievals is None):
             self._first_provider_nearest_retrievals = []
             self._non_first_provider_nearest_retrievals = []
 
-            for ret in self.has_first_provider_retrievals:
+            for ret in self.many_provider_retrievals:
                 try:
                     first_provider_region = self.agent_from_peer_id(ret.first_provider_peer).region
                     other_provider_regions = []

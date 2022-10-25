@@ -56,16 +56,11 @@ def percent_nearest_neighbor_first_provider(data_set: DataSet) -> float:
     return len(fpn_retrievals) / len(hfp_retrievals) * 100
 
 # returns a count of (many providers, single providers, average providers / retrieval)
-def provider_count(retrievals: list[Retrieval]) -> tuple[int, int, float]:
-    many_providers_count = 0
-    single_provider_count = 0
+def provider_count(data_set: DataSet) -> tuple[int, int, float]:
+    retrievals = data_set.total_completed_retrievals
     total_providers = 0
 
     for r in retrievals:
-        if len(r.provider_peers) > 1:
-            many_providers_count += 1
-        else:
-            single_provider_count += 1
         total_providers += len(r.provider_peers)
 
-    return (many_providers_count, single_provider_count, total_providers / len(retrievals))
+    return (len(data_set.many_provider_retrievals), len(data_set.single_provider_retrievals), total_providers / len(retrievals))

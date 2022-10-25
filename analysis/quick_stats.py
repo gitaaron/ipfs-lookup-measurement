@@ -18,9 +18,10 @@ def execute(logs_config: LogsConfig) -> dict:
     stats = {}
     stats['num_retrievals'] = len(completed_retrievals)
 
-    many_providers_count, single_provider_count, avg_providers = calc.provider_count(completed_retrievals)
-    stats['many_providers_count'] = many_providers_count
-    stats['single_provider_count'] = single_provider_count
+    many_providers_count, single_provider_count, avg_providers = calc.provider_count(data_set)
+    stats['num_has_first_provider'] = len(data_set.has_first_provider_retrievals)
+    stats['num_many_providers'] = many_providers_count
+    stats['num_single_provider'] = single_provider_count
     stats['average_providers_per_retrieval'] = avg_providers
     stats['phase_avg_duration'] = calc.avg_duration_from_breakdown({'count': len(data_set.total_completed_retrievals), 'durations':data_set.phase_durations})
 
