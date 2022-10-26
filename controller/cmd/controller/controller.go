@@ -10,11 +10,21 @@ import (
 	"math"
 	"sync"
 	"time"
+	"os"
+	"os/exec"
 
 	"github.com/gitaaron/ipfs-lookup-measurement/controller/pkg/config"
 	"github.com/gitaaron/ipfs-lookup-measurement/controller/pkg/server"
 	"github.com/gitaaron/ipfs-lookup-measurement/controller/pkg/simplenode"
 )
+
+func getRestartCLI() string {
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	return fmt.Sprintf("%s/restart_agents.sh", wd)
+}
 
 func main() {
 	simpleNodesFile := flag.String("l", "nodes-list.out", "nodes list file")
@@ -102,6 +112,7 @@ func main() {
 	LARGE_SIZE := MED_SIZE * 10
 
 	// Initialize vars for delayed run tracking
+	var numExperimentsPerformed = 1
 	var mainDelayedPlayer int = 0
 	var LAST_PLAYER int = len(nodesList) - 1
 	var delayedCid string
@@ -109,10 +120,35 @@ func main() {
 	currentDelayedRun := 0
 	currentDelayedSkip := 0
 	const MAX_SKIPS int = 30
-	var DELAYED_FILE_SIZE int = EXTRA_SMALL_SIZE
+	var DELAYED_FILE_SIZE int = EXTRA_SMALL_SIZE + 10 // adding 10 so that delayed runs can be tracked by file size
 
 	// Start the experiment.
 	for {
+
+		if _, err:= os.Stat("./stop_experiment.cmd"); err == nil {
+			log.Println("called stop experiment...")
+			err := os.Remove("./stop_experiment.cmd")
+			if err != nil {
+				panic(err)
+			}
+			break
+		}
+
+		if _, err:= os.Stat("./restart_agents.cmd"); err == nil {
+			log.Println("called restart agents...")
+			out, err := exec.Command("sh", getRestartCLI()).CombinedOutput()
+			if err != nil {
+				log.Printf("Error while trying to restart agents:%s err:%v\n", out, err)
+				panic(err)
+			}
+			log.Printf("restart out:%s\n", out)
+
+			rm_err := os.Remove("./restart_agents.cmd")
+			if rm_err != nil {
+				panic(err)
+			}
+		}
+
 		performedFirstPart := false
 		performedSecondPart := false
 
@@ -202,7 +238,7 @@ func main() {
 			delayedCid = ""
 		}
 
-		for i := 0; i < 6; i++ {
+		for i := 0; i < 3; i++ {
 			performExtraSmallOnlyRun()
 		}
 
@@ -229,6 +265,8 @@ func main() {
 			}
 		}
 
+		log.Printf("%d experiments perfomed...\n", numExperimentsPerformed)
+		numExperimentsPerformed += 1
 		time.Sleep(time.Duration(*intervalSeconds) * time.Second)
 	}
 }
