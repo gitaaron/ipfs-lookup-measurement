@@ -27,3 +27,6 @@ class LogFile:
         self.retrievals: list[Retrieval] = retrievals
         self.unattempted_retrieval_cids: list[str] = unattempted_retrieval_cids
         self.agent = agent
+
+    def __str__(self):
+        return 'region: %s : %s ended_at: %s' % (self.region, self.started_at, self.ended_at)

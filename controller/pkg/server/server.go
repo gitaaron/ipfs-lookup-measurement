@@ -18,6 +18,8 @@ import (
 
 var log = logging.Logger("agent")
 
+var startTime time.Time = time.Now()
+
 // agent is the agent in the system.
 type agent struct {
 	ctx context.Context

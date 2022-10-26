@@ -9,8 +9,8 @@ from pickled.model_retrieval import Retrieval
 from helpers import calc, reduce, constants
 
 def execute(logs_config: LogsConfig) -> dict:
-    #data_set: DataSet = load.latest_data_set(logs_config)
-    data_set: DataSet = load.complete_data_set(logs_config)
+    data_set: DataSet = load.latest_data_set(logs_config)
+    #data_set: DataSet = load.complete_data_set(logs_config)
 
     publications: list[Publication] = data_set.total_publications
     completed_retrievals: list[Retrieval] = data_set.total_completed_retrievals
@@ -18,7 +18,7 @@ def execute(logs_config: LogsConfig) -> dict:
     stats = {}
     stats['num_retrievals'] = len(completed_retrievals)
 
-    many_providers_count, single_provider_count, avg_providers = calc.provider_count(data_set)
+    many_providers_count, single_provider_count, avg_providers = calc.provider_count(data_set, False)
     stats['num_has_first_provider'] = len(data_set.has_first_provider_retrievals)
     stats['num_many_providers'] = many_providers_count
     stats['num_single_provider'] = single_provider_count
@@ -49,7 +49,7 @@ def execute(logs_config: LogsConfig) -> dict:
     slow = reduce.by_slow_retrievals(completed_retrievals)
 
     if len(slow) > 0:
-        num_slow_many_providers, num_slow_one_provider,_ = calc.provider_count(slow)
+        num_slow_many_providers, num_slow_one_provider,_ = calc.provider_count(data_set, True)
         stats[f"slow_retrievals (>{constants.SLOW_THRESHOLD} sec.)"] = len(slow)
         stats['slow_many_providers'] = f"{round(num_slow_many_providers/len(slow),3)*100}%"
         stats['slow_one_provider'] = f"{round(num_slow_one_provider/len(slow),3)*100}%"

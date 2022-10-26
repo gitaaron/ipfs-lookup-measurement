@@ -3,6 +3,7 @@ from helpers import reduce
 from pickled.model_retrieval import Retrieval
 from helpers.constants import RetrievalPhase
 from models.model_duration import Duration
+import numpy as np
 
 
 def _avg_duration(retrievals: list[Retrieval]):
@@ -56,11 +57,47 @@ def percent_nearest_neighbor_first_provider(data_set: DataSet) -> float:
     return len(fpn_retrievals) / len(hfp_retrievals) * 100
 
 # returns a count of (many providers, single providers, average providers / retrieval)
-def provider_count(data_set: DataSet) -> tuple[int, int, float]:
+def provider_count(data_set: DataSet, slow: bool) -> tuple[int, int, float]:
     retrievals = data_set.total_completed_retrievals
+    many_provider_retrievals = data_set.many_provider_retrievals
+    single_provider_retrievals = data_set.single_provider_retrievals
+
+
+    if slow:
+        retrievals = reduce.by_slow_retrievals(retrievals)
+        many_provider_retrievals = reduce.by_slow_retrievals(retrievals)
+        single_provider_retrievals = reduce.by_slow_retrievals(retrievals)
+
     total_providers = 0
 
     for r in retrievals:
         total_providers += len(r.provider_peers)
 
-    return (len(data_set.many_provider_retrievals), len(data_set.single_provider_retrievals), total_providers / len(retrievals))
+
+    return (len(many_provider_retrievals), len(single_provider_retrievals), total_providers / len(retrievals))
+
+def agent_uptime_duration_bins(data_set: DataSet) -> tuple[list[float], list[float], float]:
+    retrievals = data_set.retrievals_has_uptime
+    d = data_set.agent_uptime_durations
+    agent_uptimes = [ret.agent_uptime/1000 for ret in retrievals]
+    bins = np.linspace(d['min'].duration, d['max'].duration + 1e-12, 5)
+    bucket_locations = np.digitize(agent_uptimes, bins)
+
+    buckets = {}
+
+    for idx,ret in enumerate(retrievals):
+        bl = bucket_locations[idx]
+        if bl not in buckets:
+            buckets[bl] = []
+        buckets[bl].append(ret.duration(RetrievalPhase.TOTAL).total_seconds())
+        idx+=1
+
+    bucket_avgs = {}
+
+    for b,durations in buckets.items():
+        bucket_avgs[b] = np.mean(durations)
+
+    sorted_avgs = [bucket_avgs.get(i, 0) for i in range(1, len(bins))]
+
+    width=(bins[1] - bins[0])*0.9
+    return bins[:-1], sorted_avgs, width

@@ -2,8 +2,8 @@ package server
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
-  "encoding/json"
 	"io"
 	"os"
 	"os/exec"
@@ -110,13 +110,15 @@ func handlePublish(data []byte) (byte, []byte, error) {
 
 // handleLookup handles lookup request.
 func handleLookup(data []byte) (byte, []byte, error) {
-  var resp SendFile
-  json.Unmarshal(data, &resp)
+	var resp SendFile
+	json.Unmarshal(data, &resp)
 
 	cid := resp.Cid
-  size := resp.Size
+	size := resp.Size
 
-  fmt.Printf("%s: Start retrieve for CID:%v expected content length:%v\n", time.Now().Format(time.RFC3339Nano), cid, size)
+	now := time.Now()
+
+	fmt.Printf("%s: Start retrieve for CID:%v expected content length:%v agent uptime:%d\n", time.Now().Format(time.RFC3339Nano), cid, size, now.Sub(startTime).Milliseconds())
 
 	// Use IPFS shell
 	sh := api.NewLocalShell()
@@ -124,7 +126,6 @@ func handleLookup(data []byte) (byte, []byte, error) {
 		return 0, nil, fmt.Errorf("error getting local ipfs shell")
 	}
 	sh.SetTimeout(20 * time.Second)
-
 
 	// write cid to a file
 	err := os.WriteFile(fmt.Sprintf("lookup-%v", cid), []byte{1}, 0644)
@@ -141,14 +142,14 @@ func handleLookup(data []byte) (byte, []byte, error) {
 	if err != nil {
 		log.Errorf("error reading from retrieved content.")
 	} else {
-    fmt.Printf("%s: Finished retrieve for CID:%s actual content length:%v\n", time.Now().Format(time.RFC3339Nano), cid, len(retrieved))
+		fmt.Printf("%s: Finished retrieve for CID:%s actual content length:%v\n", time.Now().Format(time.RFC3339Nano), cid, len(retrieved))
 	}
 
-  out, err := json.Marshal(SendFile{Cid:cid, Size:size})
+	out, err := json.Marshal(SendFile{Cid: cid, Size: size})
 
-  if err != nil {
-    panic(err)
-  }
+	if err != nil {
+		panic(err)
+	}
 
 	return Lookup, []byte(out), nil
 }

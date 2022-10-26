@@ -23,7 +23,7 @@ class DataSet:
     _retrievals_has_uptime: list[Retrieval]
     _total_publications: list[Publication]
     _peer_agent_map: dict[Peer,Agent]
-    _agent_events_map: dict[Agent, AgentEvents] = {}
+    _agent_events_map: dict[Agent, AgentEvents]
     _unique_file_sizes: dict[int, int] = None
     _phase_durations: dict = None
     _uptime_durations: dict = None
@@ -39,6 +39,8 @@ class DataSet:
         self._many_provider_retrievals = None
         self._single_provider_retrievals = None
         self._retrievals_has_uptime = None
+        self._agent_events_map = {}
+        self._peer_agent_map = {}
 
         self.regions = []
         self._peer_agent_map = {}
@@ -99,9 +101,11 @@ class DataSet:
         if self._unique_file_sizes is None or self._phase_durations is None or self._uptime_durations:
             self._unique_file_sizes = {}
             self._phase_durations = {}
-            self._uptime_durations = { 'count': 0, 'total': 0 }
+            self._uptime_durations = { 'count': 0, }
             for phase in constants.RetrievalPhase:
                 self._phase_durations[phase] = 0
+
+            _total_uptime_duration = 0
             for ret in self.total_completed_retrievals:
                 if ret.file_size not in self._unique_file_sizes:
                     self._unique_file_sizes[ret.file_size] = { 'count' : 1, 'durations': ret.all_durations}
@@ -117,13 +121,13 @@ class DataSet:
                         self._uptime_durations['max'] = ret.agent_uptime
                     if('min' not in self._uptime_durations or self._uptime_durations['min'] > ret.agent_uptime):
                         self._uptime_durations['min'] = ret.agent_uptime
-                    self._uptime_durations['total'] += ret.agent_uptime.total_seconds()
+                    _total_uptime_duration += ret.agent_uptime
 
 
             if self._uptime_durations['count'] > 0:
-                self._uptime_durations['max'] = Duration(self._uptime_durations['max'].total_seconds())
-                self._uptime_durations['min'] = Duration(self._uptime_durations['min'].total_seconds())
-                self._uptime_durations['avg_uptime'] = Duration(self._uptime_durations['total'] / self._uptime_durations['count'])
+                self._uptime_durations['max'] = Duration(self._uptime_durations['max']/1000)
+                self._uptime_durations['min'] = Duration(self._uptime_durations['min']/1000)
+                self._uptime_durations['avg_uptime'] = Duration(_total_uptime_duration / self._uptime_durations['count']/1000)
 
 
     @property

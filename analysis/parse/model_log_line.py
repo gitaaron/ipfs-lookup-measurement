@@ -14,7 +14,8 @@ class ParsedLogLine:
     remote_peer: Optional[Peer]
     other_peer: Optional[Peer]
     closest_peers: Optional[List[Peer]]
-    file_size: Optional[int]
+    file_size: Optional[int] # bytes
+    agent_uptime: Optional[int] # milliseconds
     error_str: Optional[str]
     count: Optional[int]
 
@@ -336,13 +337,14 @@ class AgentLogLine(_LogLine):
             return None
 
         match = re.search(
-            r"([^\s]+): Start retrieve for CID:([^\s]+) expected content length:([1-9][0-9]*)", self.line)
+            r"([^\s]+): Start retrieve for CID:([^\s]+) expected content length:([1-9][0-9]*) agent uptime:([1-9][0-9]*)", self.line)
 
         if match is None:
             raise Exception("Failed to parse line: ", self.line)
 
         parsed = ParsedLogLine(match.group(2), match.group(1))
         parsed.file_size = int(match.group(3))
+        parsed.agent_uptime = int(match.group(4))
         return parsed
 
     def is_finished_retrieving(self) -> Optional[ParsedLogLine]:
@@ -373,19 +375,6 @@ class AgentLogLine(_LogLine):
         parsed = ParsedLogLine(None, match.group(1))
         parsed.peer = Peer(match.group(2), "n.a.")
         return parsed
-
-    def is_start_listening(self) -> Optional[ParsedLogLine]:
-        if "Start listening at" not in self.line:
-            return None
-        match = re.search(
-                r"([^\s]+Z).*Start listening at.*", self.line
-        )
-        if match is None:
-            raise Exception("Failed to parse line: ", self.line)
-
-        parsed = ParsedLogLine(None, match.group(1))
-        return parsed
-
 
     @staticmethod
     def from_dict(obj: Any) -> 'AgentLogLine':

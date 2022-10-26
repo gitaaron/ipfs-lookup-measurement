@@ -1,0 +1,144 @@
+{"labels":{},"line":"","timestamp":"2022-10-26T10:20:39.873530717-04:00"}
+{"labels":{},"line":"2022-10-26T14:20:39.659Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmeiEW3QtA27HWWnKK1cwyQyZBcQuxbnkDEyvKU3Napngc","timestamp":"2022-10-26T10:20:39.873528157-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:20:34.608973842-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:20:14.554687942-04:00"}
+{"labels":{},"line":"2022-10-26T14:20:14.460Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmeAptfzSzmyUjVGwAJKCU4JGYxJx2NZHKshq2CpXro9jW","timestamp":"2022-10-26T10:20:14.554684822-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:20:09.541808855-04:00"}
+{"labels":{},"line":"2022-10-26T14:20:09.353Z\t\u001b[31mERROR\u001b[0m\tagent\tserver/server.go:135\tError handling request: Post \"http://127.0.0.1:5002/api/v0/cat?arg=QmV7F1V8eAqrAJtdXhA4p2nXzbFqGqBoH2x7a4toMwxjzV\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)","timestamp":"2022-10-26T10:20:09.541805595-04:00"}
+{"labels":{},"line":"2022-10-26T14:19:49.344914015Z: Start retrieve for CID:QmV7F1V8eAqrAJtdXhA4p2nXzbFqGqBoH2x7a4toMwxjzV expected content length:52429 agent uptime:718943","timestamp":"2022-10-26T10:19:49.486127185-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:19:49.486125105-04:00"}
+{"labels":{},"line":"2022-10-26T14:19:44.177Z\t\u001b[31mERROR\u001b[0m\tagent\tserver/server.go:135\tError handling request: Post \"http://127.0.0.1:5002/api/v0/cat?arg=QmU2UCYHyK4VyGxMwABKt4Jxuy7oLqz3Tsd8DpXv12ZzrL\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)","timestamp":"2022-10-26T10:19:44.220291316-04:00"}
+{"labels":{},"line":"2022-10-26T14:19:24.174641609Z: Start retrieve for CID:QmU2UCYHyK4VyGxMwABKt4Jxuy7oLqz3Tsd8DpXv12ZzrL expected content length:52429 agent uptime:693773","timestamp":"2022-10-26T10:19:24.41327884-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:19:24.162752303-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:18:59.084845856-04:00"}
+{"labels":{},"line":"2022-10-26T14:18:58.979Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmQJPCNy7ttAZzajfZmMy5EJeg87tJsMU94E5RBXyUsRif","timestamp":"2022-10-26T10:18:59.084842616-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:18:54.069604454-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:18:40.029819417-04:00"}
+{"labels":{},"line":"2022-10-26T14:18:39.870Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmcymDhZVKkXckcWdYDNnpG5xNgQh2NHFzxhx21UG7eRan","timestamp":"2022-10-26T10:18:40.029814137-04:00"}
+{"labels":{},"line":"2022-10-26T14:18:34.866483575Z: Finished retrieve for CID:QmcymDhZVKkXckcWdYDNnpG5xNgQh2NHFzxhx21UG7eRan actual content length:52429","timestamp":"2022-10-26T10:18:35.015464457-04:00"}
+{"labels":{},"line":"2022-10-26T14:18:33.852121206Z: Start retrieve for CID:QmcymDhZVKkXckcWdYDNnpG5xNgQh2NHFzxhx21UG7eRan expected content length:52429 agent uptime:643451","timestamp":"2022-10-26T10:18:34.012654507-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:18:34.012651546-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:18:22.729824851-04:00"}
+{"labels":{},"line":"2022-10-26T14:18:22.635Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmST4YyKDMbjd8vSaoU8aVVYZyLz7RSEHBuhLRZnCdcGZS","timestamp":"2022-10-26T10:18:22.729821511-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:18:17.716056338-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:17:57.658899852-04:00"}
+{"labels":{},"line":"2022-10-26T14:17:57.457Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: Qma7TkKfU9DGft962is9kRo3K1HGYK4a4z1NZomSs9jcYT","timestamp":"2022-10-26T10:17:57.658896211-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:17:52.644134474-04:00"}
+{"labels":{},"line":"2022-10-26T14:17:52.348Z\t\u001b[31mERROR\u001b[0m\tagent\tserver/server.go:135\tError handling request: Post \"http://127.0.0.1:5002/api/v0/cat?arg=QmSBDj16scWqM5XCNvnaw3FZjezEmjfUUEHGknp1ws79fU\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)","timestamp":"2022-10-26T10:17:52.393272514-04:00"}
+{"labels":{},"line":"2022-10-26T14:17:50.406299719Z: available_mem:13456172 load_avg_last_min:0.4","timestamp":"2022-10-26T10:17:50.638817716-04:00"}
+{"labels":{},"line":"2022-10-26T14:17:32.346801518Z: Start retrieve for CID:QmSBDj16scWqM5XCNvnaw3FZjezEmjfUUEHGknp1ws79fU expected content length:52429 agent uptime:581945","timestamp":"2022-10-26T10:17:32.58299596-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:17:32.332289936-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:17:27.316627885-04:00"}
+{"labels":{},"line":"2022-10-26T14:17:27.186Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmTCZ9gbxrMaS4paho8xQuv66WJYLGPQ3w7oc8F4NeW5Sa","timestamp":"2022-10-26T10:17:27.316624405-04:00"}
+{"labels":{},"line":"2022-10-26T14:17:22.185665068Z: Finished retrieve for CID:QmTCZ9gbxrMaS4paho8xQuv66WJYLGPQ3w7oc8F4NeW5Sa actual content length:52429","timestamp":"2022-10-26T10:17:22.301308923-04:00"}
+{"labels":{},"line":"2022-10-26T14:17:21.176799959Z: Start retrieve for CID:QmTCZ9gbxrMaS4paho8xQuv66WJYLGPQ3w7oc8F4NeW5Sa expected content length:52429 agent uptime:570775","timestamp":"2022-10-26T10:17:21.298688391-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:17:21.298685141-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:16:56.225126931-04:00"}
+{"labels":{},"line":"2022-10-26T14:16:55.977Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: Qmet4mJTGt7Ao3vyK1iNHiPeHiLEh8yGA83VAy97Rk8dNa","timestamp":"2022-10-26T10:16:56.225124551-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:16:50.958732693-04:00"}
+{"labels":{},"line":"2022-10-26T14:16:50.858Z\t\u001b[31mERROR\u001b[0m\tagent\tserver/server.go:135\tError handling request: Post \"http://127.0.0.1:5002/api/v0/cat?arg=Qmd1ZXFkTMBcec1w1o5q1KZE7TG2yUEbbhfRtPNYN46DTm\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)","timestamp":"2022-10-26T10:16:50.958726273-04:00"}
+{"labels":{},"line":"2022-10-26T14:16:30.857775971Z: Start retrieve for CID:Qmd1ZXFkTMBcec1w1o5q1KZE7TG2yUEbbhfRtPNYN46DTm expected content length:52429 agent uptime:520456","timestamp":"2022-10-26T10:16:30.90618821-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:16:30.90618505-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:16:19.873875527-04:00"}
+{"labels":{},"line":"2022-10-26T14:16:19.642Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmVLTZvpgRFYXHuxhYzdhyedwKKvQ11wvVNaDQGifu9siQ","timestamp":"2022-10-26T10:16:19.873873817-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:16:14.608750142-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:15:54.547130633-04:00"}
+{"labels":{},"line":"2022-10-26T14:15:54.471Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmaCY8E1Nrrxje7fx6rWcUo76srbuKWmH1vTvAszyfCRxu","timestamp":"2022-10-26T10:15:54.547127523-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:15:49.531351918-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:15:49.531342707-04:00"}
+{"labels":{},"line":"2022-10-26T14:15:49.373Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmdjASgPc9N4xi2LnPXtfNYGJwAhM4i3cBgMqyHKwGYp7D","timestamp":"2022-10-26T10:15:49.531340737-04:00"}
+{"labels":{},"line":"2022-10-26T14:15:44.373082061Z: Finished retrieve for CID:QmdjASgPc9N4xi2LnPXtfNYGJwAhM4i3cBgMqyHKwGYp7D actual content length:52429","timestamp":"2022-10-26T10:15:44.515578764-04:00"}
+{"labels":{},"line":"2022-10-26T14:15:43.363269103Z: Start retrieve for CID:QmdjASgPc9N4xi2LnPXtfNYGJwAhM4i3cBgMqyHKwGYp7D expected content length:52429 agent uptime:472962","timestamp":"2022-10-26T10:15:43.512657149-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:15:43.512653419-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:15:24.209236021-04:00"}
+{"labels":{},"line":"2022-10-26T14:15:24.205Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmZ2NATXpinY5KaqbmKfX2yux1jvA98W1MHJigKzGMLnEV","timestamp":"2022-10-26T10:15:24.209231241-04:00"}
+{"labels":{},"line":"2022-10-26T14:15:19.204199863Z: Finished retrieve for CID:QmZ2NATXpinY5KaqbmKfX2yux1jvA98W1MHJigKzGMLnEV actual content length:52429","timestamp":"2022-10-26T10:15:19.445048661-04:00"}
+{"labels":{},"line":"2022-10-26T14:15:18.193053373Z: Start retrieve for CID:QmZ2NATXpinY5KaqbmKfX2yux1jvA98W1MHJigKzGMLnEV expected content length:52429 agent uptime:447792","timestamp":"2022-10-26T10:15:18.442748894-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:15:18.192050609-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:15:07.162828934-04:00"}
+{"labels":{},"line":"2022-10-26T14:15:06.977Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmWFePep3wtDeN9WS3zFFVoN9V5VWPr1dogsX2BfAgZCmd","timestamp":"2022-10-26T10:15:07.162826464-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:15:02.146849037-04:00"}
+{"labels":{},"line":"2022-10-26T14:15:01.849Z\t\u001b[31mERROR\u001b[0m\tagent\tserver/server.go:135\tError handling request: Post \"http://127.0.0.1:5002/api/v0/cat?arg=QmViDAZzj2bXLb9NxqEyNd6NsaPxoTqi8hDf3bwN4rVhBV\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)","timestamp":"2022-10-26T10:15:01.896244729-04:00"}
+{"labels":{},"line":"2022-10-26T14:14:41.848910163Z: Start retrieve for CID:QmViDAZzj2bXLb9NxqEyNd6NsaPxoTqi8hDf3bwN4rVhBV expected content length:52429 agent uptime:411447","timestamp":"2022-10-26T10:14:42.090468989-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:14:41.839655016-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:14:16.770469004-04:00"}
+{"labels":{},"line":"2022-10-26T14:14:16.649Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmSxKtYMbrB68SnMpsX4GrqgHvVBJ6Y5GvL4JggqcpCmhF","timestamp":"2022-10-26T10:14:16.770465184-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:14:11.757296635-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:13:51.702288255-04:00"}
+{"labels":{},"line":"2022-10-26T14:13:51.474Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmefHfsdTi1kLofyrs9Lbj2GvJnrvCFioN7JR1iDQwhwnc","timestamp":"2022-10-26T10:13:51.702283955-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:13:46.438760924-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:13:46.438748224-04:00"}
+{"labels":{},"line":"2022-10-26T14:13:46.369Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmQvJTK4fYAQz3a1hqVBUQ5AiiSgeprLqRxZDBEyV3JJYP","timestamp":"2022-10-26T10:13:46.438744174-04:00"}
+{"labels":{},"line":"2022-10-26T14:13:41.368671987Z: Finished retrieve for CID:QmQvJTK4fYAQz3a1hqVBUQ5AiiSgeprLqRxZDBEyV3JJYP actual content length:52429","timestamp":"2022-10-26T10:13:41.426223939-04:00"}
+{"labels":{},"line":"2022-10-26T14:13:40.357590685Z: Start retrieve for CID:QmQvJTK4fYAQz3a1hqVBUQ5AiiSgeprLqRxZDBEyV3JJYP expected content length:52429 agent uptime:349956","timestamp":"2022-10-26T10:13:40.423098215-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:13:40.423093605-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:13:35.406429838-04:00"}
+{"labels":{},"line":"2022-10-26T14:13:35.204Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmZNhGEpWkGd9twnD3Hw6xU1VEthJZMxoexmspkoz2yxDc","timestamp":"2022-10-26T10:13:35.406425618-04:00"}
+{"labels":{},"line":"2022-10-26T14:13:30.203944517Z: Finished retrieve for CID:QmZNhGEpWkGd9twnD3Hw6xU1VEthJZMxoexmspkoz2yxDc actual content length:52429","timestamp":"2022-10-26T10:13:30.390290376-04:00"}
+{"labels":{},"line":"2022-10-26T14:13:29.190383583Z: Start retrieve for CID:QmZNhGEpWkGd9twnD3Hw6xU1VEthJZMxoexmspkoz2yxDc expected content length:52429 agent uptime:338789","timestamp":"2022-10-26T10:13:29.386703558-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:13:29.136144458-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:13:18.102346678-04:00"}
+{"labels":{},"line":"2022-10-26T14:13:17.980Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmV2v7nQga5dtpCeTbP9GZa2yDDnpbJfNn99TNyL1jL7QY","timestamp":"2022-10-26T10:13:18.102343158-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:13:13.088687899-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:12:59.048098499-04:00"}
+{"labels":{},"line":"2022-10-26T14:12:58.877Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmZrkQYr8YwhTpL9SoUP4orNygEEtvTWc6H4LAYh3fYk6R","timestamp":"2022-10-26T10:12:59.048095759-04:00"}
+{"labels":{},"line":"2022-10-26T14:12:53.873810489Z: Finished retrieve for CID:QmZrkQYr8YwhTpL9SoUP4orNygEEtvTWc6H4LAYh3fYk6R actual content length:52429","timestamp":"2022-10-26T10:12:54.033326664-04:00"}
+{"labels":{},"line":"2022-10-26T14:12:52.861543828Z: Start retrieve for CID:QmZrkQYr8YwhTpL9SoUP4orNygEEtvTWc6H4LAYh3fYk6R expected content length:52429 agent uptime:302460","timestamp":"2022-10-26T10:12:53.030442859-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:12:53.030438549-04:00"}
+{"labels":{},"line":"2022-10-26T14:12:50.402260078Z: available_mem:13466180 load_avg_last_min:0.24","timestamp":"2022-10-26T10:12:50.523417365-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:12:27.708147492-04:00"}
+{"labels":{},"line":"2022-10-26T14:12:27.655Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmSCGzUCNEXKHQUmZYerAxsv2mk2cmaE8K8P1QpZC6uRE1","timestamp":"2022-10-26T10:12:27.708144202-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:12:22.694572748-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:12:02.633820086-04:00"}
+{"labels":{},"line":"2022-10-26T14:12:02.480Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmdRbkXkXiTnHLaET3pG78jtzVRzNUVuDu2pJGUCoB4WVp","timestamp":"2022-10-26T10:12:02.633816726-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:11:57.61991931-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:11:57.61990471-04:00"}
+{"labels":{},"line":"2022-10-26T14:11:57.380Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmaSPFQnyUP8UQ64UjFoJo8YiXUryskSLyQBD7ZkjSH68q","timestamp":"2022-10-26T10:11:57.619902579-04:00"}
+{"labels":{},"line":"2022-10-26T14:11:52.376140653Z: Finished retrieve for CID:QmaSPFQnyUP8UQ64UjFoJo8YiXUryskSLyQBD7ZkjSH68q actual content length:52429","timestamp":"2022-10-26T10:11:52.604692462-04:00"}
+{"labels":{},"line":"2022-10-26T14:11:51.367965937Z: Start retrieve for CID:QmaSPFQnyUP8UQ64UjFoJo8YiXUryskSLyQBD7ZkjSH68q expected content length:52429 agent uptime:240967","timestamp":"2022-10-26T10:11:51.601481934-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:11:51.35099817-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:11:32.294406607-04:00"}
+{"labels":{},"line":"2022-10-26T14:11:32.230Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmQiyRJL22sWcZMwFG3GvHRk4uhRGtTkveSKswfrnynVW5","timestamp":"2022-10-26T10:11:32.294403887-04:00"}
+{"labels":{},"line":"2022-10-26T14:11:27.226109071Z: Finished retrieve for CID:QmQiyRJL22sWcZMwFG3GvHRk4uhRGtTkveSKswfrnynVW5 actual content length:52429","timestamp":"2022-10-26T10:11:27.27781622-04:00"}
+{"labels":{},"line":"2022-10-26T14:11:26.212609208Z: Start retrieve for CID:QmQiyRJL22sWcZMwFG3GvHRk4uhRGtTkveSKswfrnynVW5 expected content length:52429 agent uptime:215811","timestamp":"2022-10-26T10:11:26.274822099-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:11:26.274817969-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:11:15.244804076-04:00"}
+{"labels":{},"line":"2022-10-26T14:11:14.996Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: Qmd93acgG3tCDzqKwyka3xytNeCHJAJGG5e7gVMxW5KWxe","timestamp":"2022-10-26T10:11:15.244799756-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:11:09.986024791-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:11:09.986012761-04:00"}
+{"labels":{},"line":"2022-10-26T14:11:09.877Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmYgZQL8f2cBSkX8vG7DF3zY6cqdfLde7ypHpFudaz4RjG","timestamp":"2022-10-26T10:11:09.986009221-04:00"}
+{"labels":{},"line":"2022-10-26T14:11:04.876571457Z: Finished retrieve for CID:QmYgZQL8f2cBSkX8vG7DF3zY6cqdfLde7ypHpFudaz4RjG actual content length:52429","timestamp":"2022-10-26T10:11:04.96259944-04:00"}
+{"labels":{},"line":"2022-10-26T14:11:03.869549868Z: Start retrieve for CID:QmYgZQL8f2cBSkX8vG7DF3zY6cqdfLde7ypHpFudaz4RjG expected content length:52429 agent uptime:193468","timestamp":"2022-10-26T10:11:03.959446931-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:11:03.959444191-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:10:52.678729988-04:00"}
+{"labels":{},"line":"2022-10-26T14:10:52.653Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmTMZmfCMwDGgbe9oUbMaNUCMo18tKXu91SX4rULtcfBiP","timestamp":"2022-10-26T10:10:52.678726748-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:10:47.664843648-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:10:27.604702778-04:00"}
+{"labels":{},"line":"2022-10-26T14:10:27.473Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmeSC2VxbEHARgKcwwDNN3xXeAyhoYFhFwqCS1YfLyC4hn","timestamp":"2022-10-26T10:10:27.604698838-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:10:22.589484263-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:10:22.338962909-04:00"}
+{"labels":{},"line":"2022-10-26T14:10:22.325Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmUJe8MQ3cvhQ2JJEzyNJqT9h68DTYLcnXBqDetmwWzxTA","timestamp":"2022-10-26T10:10:22.338959889-04:00"}
+{"labels":{},"line":"2022-10-26T14:10:17.323043669Z: Finished retrieve for CID:QmUJe8MQ3cvhQ2JJEzyNJqT9h68DTYLcnXBqDetmwWzxTA actual content length:52429","timestamp":"2022-10-26T10:10:17.325222078-04:00"}
+{"labels":{},"line":"2022-10-26T14:10:16.31497459Z: Start retrieve for CID:QmUJe8MQ3cvhQ2JJEzyNJqT9h68DTYLcnXBqDetmwWzxTA expected content length:52429 agent uptime:145914","timestamp":"2022-10-26T10:10:16.322282366-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:10:16.322280186-04:00"}
+{"labels":{},"line":"2022-10-26T14:10:11.150Z\t\u001b[31mERROR\u001b[0m\tagent\tserver/server.go:135\tError handling request: Post \"http://127.0.0.1:5002/api/v0/cat?arg=QmTL5zTGJQDQm5RJC6m2cAQGWGk5wxv75NgYmEF717RrwJ\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)","timestamp":"2022-10-26T10:10:11.307499424-04:00"}
+{"labels":{},"line":"2022-10-26T14:09:51.149303343Z: Start retrieve for CID:QmTL5zTGJQDQm5RJC6m2cAQGWGk5wxv75NgYmEF717RrwJ expected content length:52429 agent uptime:120748","timestamp":"2022-10-26T10:09:51.248684527-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:09:51.248681076-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:09:39.967494066-04:00"}
+{"labels":{},"line":"2022-10-26T14:09:39.936Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmaddJP2NQPgjNUqYNv6wqHJHBn1YuRnGfNrXTCy98Z9JJ","timestamp":"2022-10-26T10:09:39.967490486-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:09:34.953963517-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:09:20.915883984-04:00"}
+{"labels":{},"line":"2022-10-26T14:09:20.829Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmTw6kkQGn8oxncjgJebfY8xQmadtJj4SRa5gBSGJPVQ15","timestamp":"2022-10-26T10:09:20.915878584-04:00"}
+{"labels":{},"line":"2022-10-26T14:09:15.826569413Z: Finished retrieve for CID:QmTw6kkQGn8oxncjgJebfY8xQmadtJj4SRa5gBSGJPVQ15 actual content length:52429","timestamp":"2022-10-26T10:09:15.900699217-04:00"}
+{"labels":{},"line":"2022-10-26T14:09:14.814768082Z: Start retrieve for CID:QmTw6kkQGn8oxncjgJebfY8xQmadtJj4SRa5gBSGJPVQ15 expected content length:52429 agent uptime:84413","timestamp":"2022-10-26T10:09:14.898353749-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:09:14.898350429-04:00"}
+{"labels":{},"line":"","timestamp":"2022-10-26T10:09:03.617225922-04:00"}
+{"labels":{},"line":"2022-10-26T14:09:03.598Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/handlers.go:74\texisting: QmNMB1WDZJyh2AFzV7UsEMMd7utDPt1o1kvRG9bGvmkize","timestamp":"2022-10-26T10:09:03.617223332-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:08:58.602567717-04:00"}
+{"labels":{},"line":"2022-10-26T14:08:58.391Z\t\u001b[31mERROR\u001b[0m\tagent\tserver/server.go:135\tError handling request: Post \"http://127.0.0.1:5002/api/v0/cat?arg=QmXT2eH2HqUQcVYTfo2Yzqpx1zt8s1pV8445xgZbG56jZN\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)","timestamp":"2022-10-26T10:08:58.602558557-04:00"}
+{"labels":{},"line":"2022-10-26T14:08:38.38329722Z: Start retrieve for CID:QmXT2eH2HqUQcVYTfo2Yzqpx1zt8s1pV8445xgZbG56jZN expected content length:52429 agent uptime:47982","timestamp":"2022-10-26T10:08:38.541802006-04:00"}
+{"labels":{},"line":"found my id:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:08:38.541799875-04:00"}
+{"labels":{},"line":"2022-10-26T14:08:33.088078261Z: Get PeerID:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:08:33.275214823-04:00"}
+{"labels":{},"line":"2022-10-26T14:08:08.458954566Z: Get PeerID:12D3KooWJ4DoJYWzoCp4cBYYTe2bh8ZFZihHJqC5BKreEfU5dx7p","timestamp":"2022-10-26T10:08:08.704464772-04:00"}
+{"labels":{},"line":"2022-10-26T14:07:50.401149625Z: available_mem:13680384 load_avg_last_min:0.37","timestamp":"2022-10-26T10:07:55.416786497-04:00"}
+{"labels":{},"line":"2022-10-26T14:07:50.400Z\t\u001b[34mINFO\u001b[0m\tagent\tserver/server.go:93\tStart listening at node2:3032","timestamp":"2022-10-26T10:07:55.416781667-04:00"}

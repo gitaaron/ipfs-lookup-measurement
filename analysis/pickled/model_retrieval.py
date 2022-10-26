@@ -32,8 +32,8 @@ class Retrieval:
     done_retrieving_at: Optional[datetime]
     finished_searching_providers_at: Optional[datetime]
     agent_initiated_retrieve_at: Optional[datetime]
-    agent_started_at: Optional[datetime]
-    file_size: Optional[int]
+    file_size: Optional[int] # bytes
+    agent_uptime: Optional[int] # milliseconds
 
     provider_peers: Set[Peer]
     first_provider_peer: Peer
@@ -49,6 +49,7 @@ class Retrieval:
         self.origin = origin
         self.cid = cid
         self.file_size = None
+        self.agent_uptime = None
         self.retrieval_started_at = retrieval_started_at
         self._state = Retrieval.State.INITIATED
         self.get_providers_queries = {}
@@ -68,7 +69,6 @@ class Retrieval:
         self.done_retrieving_error = None
         self.finish_searching_providers_ctx_error = None
         self.agent_initiated_retrieval_at = None
-        self.agent_started_at = None
 
 
     @property
@@ -112,11 +112,6 @@ class Retrieval:
             r[phase] = self.duration(phase).total_seconds()
 
         return r
-
-    @property
-    def agent_uptime(self) -> Optional[timedelta]:
-        if self.agent_started_at is not None:
-            return self.retrieval_started_at - self.agent_started_at
 
 
     def getting_provider_peers_started(self, timestamp: datetime):
@@ -217,6 +212,7 @@ class Retrieval:
             else:
                 self.marked_as_incomplete = True
 
-    def agent_initiated(self, timestamp: datetime, file_size: int ):
+    def agent_initiated(self, timestamp: datetime, file_size: int, agent_uptime: int ):
         self.agent_initated_retrieval_at = timestamp
         self.file_size = file_size
+        self.agent_uptime = agent_uptime

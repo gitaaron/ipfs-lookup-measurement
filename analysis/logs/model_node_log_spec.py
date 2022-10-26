@@ -15,6 +15,9 @@ class NodeLogSpec:
         self.log_dir = log_dir
         self._has_ipfs_log_test: bool = None
 
+    def __str__(self):
+        return self.parsed_log_path
+
     @property
     def region(self):
         return self._region

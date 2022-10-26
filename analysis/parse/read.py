@@ -160,13 +160,11 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
                 try:
                     log = AgentLogLine.from_dict(json.loads(line))
                     if (pll := log.is_start_retrieving()) and pll.cid in sealed_retrievals:
-                        sealed_retrievals[pll.cid].agent_initiated(pll.timestamp, pll.file_size)
+                        sealed_retrievals[pll.cid].agent_initiated(pll.timestamp, pll.file_size, pll.agent_uptime)
                     elif (pll := log.is_finished_retrieving()) and pll.cid in sealed_retrievals:
                         sealed_retrievals[pll.cid].done_retrieving(pll.timestamp, pll.file_size)
                     elif (pll := log.is_get_id()):
                         agent.add_peer(pll.peer)
-                    elif (pll := log.is_start_listening()):
-                        agent.add_start_time(pll.timestamp)
 
                 except Exception as e:
                     print('Failed parsing Agent line.')
@@ -188,9 +186,6 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
     for _,retrieval in sealed_retrievals.items():
         if retrieval.retrieval_started_at is not None and retrieval.done_retrieving_at is not None:
             started_at, ended_at = chronologist.get_start_end(started_at, ended_at, retrieval.retrieval_started_at, retrieval.done_retrieving_at)
-        most_recent = agent.most_recent_start_time(retrieval.retrieval_started_at)
-        if most_recent is not None:
-            retrieval.agent_started_at = most_recent
 
         retrievals.append(retrieval)
 
