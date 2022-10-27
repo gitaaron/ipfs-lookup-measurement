@@ -8,10 +8,10 @@ import (
 	"io/ioutil"
 	"log"
 	"math"
-	"sync"
-	"time"
 	"os"
 	"os/exec"
+	"sync"
+	"time"
 
 	"github.com/gitaaron/ipfs-lookup-measurement/controller/pkg/config"
 	"github.com/gitaaron/ipfs-lookup-measurement/controller/pkg/server"
@@ -26,34 +26,40 @@ func getRestartCLI() string {
 	return fmt.Sprintf("%s/restart_agents.sh", wd)
 }
 
-func main() {
+func doSetup() ([]config.AgentNode, int, []byte, *simplenode.RunState, error) {
 	simpleNodesFile := flag.String("l", "nodes-list.out", "nodes list file")
 	intervalSeconds := flag.Int("i", 0, "interval between each test")
 
 	flag.Parse()
+
 	nodesList, err := config.GetNodesList(*simpleNodesFile)
 
 	if err != nil {
-		panic(err)
+		return nil, 0, nil, nil, err
 	}
 
 	// Try to load key
 	keyStr, err := ioutil.ReadFile(".key")
 	if err != nil {
 		fmt.Printf("error in getting the key: %v\n", err.Error())
-		return
+		return nil, 0, nil, nil, err
 	}
 	key, err := base64.StdEncoding.DecodeString(string(keyStr))
 	if err != nil {
 		fmt.Printf("error decoding key string: %v\n", err.Error())
-		return
+		return nil, 0, nil, nil, err
 	}
 	if len(key) != 32 {
 		fmt.Printf("Wrong key size, expect 32, got: %v\n", len(key))
-		return
+		return nil, 0, nil, nil, err
 	}
 
-	// At start up, ask for list of node IDs.
+	return nodesList, *intervalSeconds, key, new(simplenode.RunState), nil
+
+}
+
+func getSetIDS(nodesList []config.AgentNode, key []byte) error {
+	// Ask for list of node IDs.
 	// If node ID is not provided then it is probably because IPFS
 	// up yet so wait and try again until all are given
 	ids := make([]string, 0)
@@ -67,8 +73,8 @@ func main() {
 			defer wg.Done()
 			for i := 0; i < 120; i++ {
 
-				if i ==  119 { // giving up after 2 min.
-					panic(errors.New("Timing out on IPFS ID retrieval."))
+				if i == 119 { // giving up after 2 min.
+					panic(errors.New("timing out on IPFS ID retrieval"))
 				}
 
 				id, err := server.RequestGetID(node.Host(), key)
@@ -96,9 +102,19 @@ func main() {
 		out, err := server.RequestSetID(node.Host(), key, ids)
 		if err != nil {
 			fmt.Printf("error setting id for node %v: %v", node, err.Error())
-			return
+			return err
 		}
 		fmt.Printf("Got response for setting id for node %v: %v\n", node, out)
+	}
+	return nil
+}
+
+func main() {
+
+	nodesList, intervalSeconds, key, runState, err := doSetup()
+
+	if err != nil {
+		panic(err)
 	}
 
 	// Initialize some file sizes at different orders of magnitude
@@ -111,21 +127,15 @@ func main() {
 	// ~50 MB
 	LARGE_SIZE := MED_SIZE * 10
 
-	// Initialize vars for delayed run tracking
 	var numExperimentsPerformed = 1
-	var mainDelayedPlayer int = 0
-	var LAST_PLAYER int = len(nodesList) - 1
-	var delayedCid string
-	delayedInProgress := false
-	currentDelayedRun := 0
-	currentDelayedSkip := 0
-	const MAX_SKIPS int = 30
+
 	var DELAYED_FILE_SIZE int = EXTRA_SMALL_SIZE + 10 // adding 10 so that delayed runs can be tracked by file size
 
 	// Start the experiment.
 	for {
 
-		if _, err:= os.Stat("./stop_experiment.cmd"); err == nil {
+		// first check for stop and restart signals
+		if _, err := os.Stat("./stop_experiment.cmd"); err == nil {
 			log.Println("called stop experiment...")
 			err := os.Remove("./stop_experiment.cmd")
 			if err != nil {
@@ -134,7 +144,7 @@ func main() {
 			break
 		}
 
-		if _, err:= os.Stat("./restart_agents.cmd"); err == nil {
+		if _, err := os.Stat("./restart_agents.cmd"); err == nil {
 			log.Println("called restart agents...")
 			out, err := exec.Command("sh", getRestartCLI()).CombinedOutput()
 			if err != nil {
@@ -149,124 +159,82 @@ func main() {
 			}
 		}
 
-		performedFirstPart := false
-		performedSecondPart := false
+		// get and set agent IDS on each run so that analysis has log of agent's PeerId
+		getSetIDS(nodesList, key)
 
 		e := simplenode.NewExperiment()
 
+		performDelayedRun := func() {
+			log.Println("Start performing delayed runs...")
+			for mainPlayer := 0; mainPlayer < len(nodesList); mainPlayer++ {
+				runState.Wg.Add(1)
+				go e.DoRun(runState, key, mainPlayer, simplenode.Publisher, nodesList, DELAYED_FILE_SIZE, 60)
+				log.Println("one delayed run is done for node: ", mainPlayer)
+			}
+		}
+
 		performExtraSmallOnlyRun := func() {
+			log.Println("Start performing extra small runs...")
 
 			for mainPlayer := 0; mainPlayer < len(nodesList); mainPlayer++ {
-
+				runState.Wg.Add(2)
 				log.Println("start mainPlayer retriever run file_size: ", EXTRA_SMALL_SIZE)
-				e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList, EXTRA_SMALL_SIZE)
+				go e.DoRun(runState, key, mainPlayer, simplenode.Retriever, nodesList, EXTRA_SMALL_SIZE, 0)
 
 				log.Println("start mainPlayer publisher run file_size: ", EXTRA_SMALL_SIZE)
-				e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList, EXTRA_SMALL_SIZE)
+				go e.DoRun(runState, key, mainPlayer, simplenode.Publisher, nodesList, EXTRA_SMALL_SIZE, 0)
 
-				log.Println("one retrieval and publish run is done for node: ", mainPlayer)
+				log.Println("one extra small run is done for node: ", mainPlayer)
 
 			}
 
 		}
 
 		performOtherSizesRun := func() {
+			log.Println("Start performing other size runs...")
 
 			for mainPlayer := 0; mainPlayer < len(nodesList); mainPlayer++ {
-
+				runState.Wg.Add(6)
 				log.Println("start mainPlayer retriever run file_size: ", SMALL_SIZE)
-				e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList, SMALL_SIZE)
+				go e.DoRun(runState, key, mainPlayer, simplenode.Retriever, nodesList, SMALL_SIZE, 0)
 
 				log.Println("start mainPlayer retriever run file_size: ", MED_SIZE)
-				e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList, MED_SIZE)
+				go e.DoRun(runState, key, mainPlayer, simplenode.Retriever, nodesList, MED_SIZE, 0)
 
 				log.Println("start mainPlayer retriever run file_size: ", LARGE_SIZE)
-				e.DoRun(key, mainPlayer, simplenode.Retriever, nodesList, LARGE_SIZE)
+				go e.DoRun(runState, key, mainPlayer, simplenode.Retriever, nodesList, LARGE_SIZE, 0)
 
 				log.Println("start mainPlayer publisher run file_size: ", SMALL_SIZE)
-				e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList, SMALL_SIZE)
+				go e.DoRun(runState, key, mainPlayer, simplenode.Publisher, nodesList, SMALL_SIZE, 0)
 
 				log.Println("start mainPlayer publisher run file_size: ", MED_SIZE)
-				e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList, MED_SIZE)
+				go e.DoRun(runState, key, mainPlayer, simplenode.Publisher, nodesList, MED_SIZE, 0)
 
 				log.Println("start mainPlayer publisher run file_size: ", LARGE_SIZE)
-				e.DoRun(key, mainPlayer, simplenode.Publisher, nodesList, LARGE_SIZE)
+				go e.DoRun(runState, key, mainPlayer, simplenode.Publisher, nodesList, LARGE_SIZE, 0)
 
-				log.Println("one retrieval and publish experiment is done for node:", mainPlayer)
+				go log.Println("one retrieval and publish experiment is done for node:", mainPlayer)
 
 			}
 
 		}
 
-		performFirstPartOfDelayed := func() (string, error) {
-			log.Println("start delayed first part of run file_size: ", EXTRA_SMALL_SIZE)
-			return e.DoFirstPartOfRun(key, mainDelayedPlayer, simplenode.Publisher, nodesList, DELAYED_FILE_SIZE)
-		}
-
-		performSecondPartOfDelayed := func(currentCid string) {
-			log.Println("start delayed second part of cid: ", currentCid)
-			e.DoSecondPartOfRun(currentCid, key, mainDelayedPlayer, simplenode.Publisher, nodesList, DELAYED_FILE_SIZE)
-			log.Printf("first part of delayed run is done for cid:%s node:%d \n", currentCid, mainDelayedPlayer)
-		}
-
-		shouldPerformFirstDelayedPart := func() bool {
-			return delayedInProgress == false && currentDelayedRun == 0
-		}
-
-		shouldPerformSecondDelayedPart := func() bool {
-			return delayedInProgress == true && currentDelayedRun == currentDelayedSkip
-		}
-
-		if shouldPerformFirstDelayedPart() {
-			delayedInProgress = true
-			delayedCid, err = performFirstPartOfDelayed()
-			performedFirstPart = true
-			if err != nil {
-				log.Println("Error performing first part: ", err)
-				delayedInProgress = false
-				delayedCid = ""
-			} else {
-				log.Printf("first part of delayed run is done for cid:%s node:%d \n", delayedCid, mainDelayedPlayer)
-			}
-
-		}
-
-		if shouldPerformSecondDelayedPart() {
-			performSecondPartOfDelayed(delayedCid)
-			delayedInProgress = false
-			performedSecondPart = true
-			delayedCid = ""
-		}
+		// start invoking runs for each experiment type
+		performDelayedRun()
 
 		for i := 0; i < 3; i++ {
 			performExtraSmallOnlyRun()
 		}
 
 		performOtherSizesRun()
-
-		log.Println("one round of experiments is done")
-		log.Printf("performedFirstPart:%t performedSecondPart:%t currentDelayedRun:%d, currentDelayedSkip:%d delayedInProgress:%t mainDelayedPlayer:%d delayedCid:%s\n",
-			performedFirstPart, performedSecondPart, currentDelayedRun, currentDelayedSkip, delayedInProgress, mainDelayedPlayer, delayedCid)
-
-		if *intervalSeconds == 0 {
+		runState.Wg.Wait()
+		if intervalSeconds == 0 {
 			break
 		}
 
-		currentDelayedRun++
-		if performedSecondPart {
-			currentDelayedRun = 0
-			currentDelayedSkip += 5
-			if currentDelayedSkip > MAX_SKIPS {
-				currentDelayedSkip = 0
-			}
-			mainDelayedPlayer++
-			if mainDelayedPlayer > LAST_PLAYER {
-				mainDelayedPlayer = 0
-			}
-		}
-
-		log.Printf("%d experiments perfomed...\n", numExperimentsPerformed)
+		log.Printf("%d runs performed in this experiment\n", runState.Counter)
+		log.Printf("%d experiments perfomed so far\n", numExperimentsPerformed)
 		numExperimentsPerformed += 1
-		time.Sleep(time.Duration(*intervalSeconds) * time.Second)
+		time.Sleep(time.Duration(intervalSeconds) * time.Second)
 	}
 }

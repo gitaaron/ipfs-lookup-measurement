@@ -18,6 +18,21 @@ var log = logging.Logger("controller")
 
 type PlayerType int
 
+// mu is a lock so that other runs can proceed while
+// the delayed run is waiting before the second part completes
+// wg is to let the calling controller know when the run is complete
+// counter is to track how many runs have completed
+type RunState struct {
+	mu      sync.Mutex
+	Wg      sync.WaitGroup
+	Counter int
+}
+
+type FirstPartResult struct {
+	cid string
+	err error
+}
+
 const (
 	Retriever PlayerType = iota
 	Publisher
@@ -47,7 +62,7 @@ func (exp Experiment) doRetrieve(key []byte, cid string, fileSize int, retriever
 	}
 	// Need to wait till lookup is finished.
 	for i := 0; i < 30; i++ {
-		time.Sleep(5 * time.Second)
+		time.Sleep(5000 * time.Millisecond)
 		done, err := server.RequestCheck(retrieverNode, key, cid)
 		if err != nil {
 			log.Errorf("Error in requesting a check to %v: %v", retrieverNode, err.Error())
@@ -83,7 +98,7 @@ func (exp *Experiment) doPublish(key []byte, content *[]byte, publisherNode stri
 	log.Infof("Published content from %v with cid: %v", publisherNode, cid)
 	// Need to wait till publish is finished.
 	for i := 0; i < 60; i++ {
-		time.Sleep(5 * time.Second)
+		time.Sleep(5000 * time.Millisecond)
 		done, err := server.RequestCheck(publisherNode, key, cid)
 		if err != nil {
 			log.Errorf("Error in performing 'RequestCheck'")
@@ -94,7 +109,7 @@ func (exp *Experiment) doPublish(key []byte, content *[]byte, publisherNode stri
 			break
 		}
 		if i == 59 {
-			return "", errors.New("Timing out on publish OK check.")
+			return "", errors.New("timing out on publish OK check")
 		}
 		log.Infof("Publish from %v in progress...", publisherNode)
 	}
@@ -102,7 +117,8 @@ func (exp *Experiment) doPublish(key []byte, content *[]byte, publisherNode stri
 	return cid, nil
 }
 
-func (exp *Experiment) DoFirstPartOfRun(key []byte, mainPlayerIndex int, mainPlayerMode PlayerType, nodesList []config.AgentNode, size int) (string, error) {
+func (exp *Experiment) doFirstPartOfRun(result chan FirstPartResult, key []byte, mainPlayerIndex int, mainPlayerMode PlayerType, nodesList []config.AgentNode, size int) {
+	log.Infof("Start first part mainPlayerIndex: %d mainPlayerMode: %v size:%d", mainPlayerIndex, mainPlayerMode, size)
 	mainPlayer := nodesList[mainPlayerIndex].Host()
 
 	// Generate random content
@@ -114,14 +130,14 @@ func (exp *Experiment) DoFirstPartOfRun(key []byte, mainPlayerIndex int, mainPla
 	var wg sync.WaitGroup
 
 	if mainPlayerMode != Publisher && mainPlayerMode != Retriever {
-		return "", fmt.Errorf("Invalid mainPlayerMode %v", mainPlayerMode)
+		result <- FirstPartResult{"", fmt.Errorf("invalid mainPlayerMode %v", mainPlayerMode)}
 	}
 
 	// Start publish to appropriate nodes
 	if mainPlayerMode == Publisher {
 		cid, err = exp.doPublish(key, &content, mainPlayer)
 		if err != nil {
-			return "", fmt.Errorf("Error in performing 'doPublish' from %v: %v", mainPlayer, err.Error())
+			result <- FirstPartResult{"", fmt.Errorf("error in performing 'doPublish' from %v: %v", mainPlayer, err.Error())}
 		}
 	} else if mainPlayerMode == Retriever {
 		// experiment should continue only if two or more nodes succeeded in publishing the 'file'
@@ -136,7 +152,7 @@ func (exp *Experiment) DoFirstPartOfRun(key []byte, mainPlayerIndex int, mainPla
 				defer wg.Done()
 				cid, err = exp.doPublish(key, &content, publisher)
 				if err != nil {
-					log.Errorf("Error in performing 'doPublish' from %v: %v", mainPlayer, err.Error())
+					log.Errorf("error in performing 'doPublish' from %v: %v", mainPlayer, err.Error())
 				} else {
 					publishSuccessCount += 1
 				}
@@ -145,16 +161,18 @@ func (exp *Experiment) DoFirstPartOfRun(key []byte, mainPlayerIndex int, mainPla
 		wg.Wait()
 
 		if publishSuccessCount < 2 {
-			return "", fmt.Errorf("Discontinuing experiment because less than two nodes published the 'file' successfully")
+			result <- FirstPartResult{"", fmt.Errorf("discontinuing experiment because less than two nodes published the 'file' successfully")}
 		}
 
 	}
 
-	return cid, nil
+	result <- FirstPartResult{cid, nil}
 
 }
 
-func (exp *Experiment) DoSecondPartOfRun(cid string, key []byte, mainPlayerIndex int, mainPlayerMode PlayerType, nodesList []config.AgentNode, size int) {
+func (exp *Experiment) doSecondPartOfRun(secondPartWait *sync.WaitGroup, cid string, key []byte, mainPlayerIndex int, mainPlayerMode PlayerType, nodesList []config.AgentNode, size int) {
+	defer secondPartWait.Done()
+	log.Infof("Start second part cid: %s mainPlayerIndex: %d mainPlayerMode: %v", cid, mainPlayerIndex, mainPlayerMode)
 	mainPlayer := nodesList[mainPlayerIndex].Host()
 	var wg sync.WaitGroup
 
@@ -196,15 +214,32 @@ func (exp *Experiment) DoSecondPartOfRun(cid string, key []byte, mainPlayerIndex
 // DoRun instructs a set of nodes to publish a random 'file' and another set of nodes to retrieve it
 // the action of the mainPlayer is either a publisher or retriever based on mainPlayerMode
 // the rest of the nodes in the nodesList will act as the other PlayerType in the scenario
-func (exp *Experiment) DoRun(key []byte, mainPlayerIndex int, mainPlayerMode PlayerType, nodesList []config.AgentNode, size int) {
-
-	cid, err := exp.DoFirstPartOfRun(key, mainPlayerIndex, mainPlayerMode, nodesList, size)
-
-	if err != nil {
-		log.Error(err)
+func (exp *Experiment) DoRun(runState *RunState, key []byte, mainPlayerIndex int, mainPlayerMode PlayerType, nodesList []config.AgentNode, size int, delay int) {
+	defer runState.Wg.Done()
+	runState.mu.Lock()
+	resultChan := make(chan FirstPartResult)
+	go exp.doFirstPartOfRun(resultChan, key, mainPlayerIndex, mainPlayerMode, nodesList, size)
+	result := <-resultChan
+	if result.err != nil {
+		log.Error(result.err)
+		runState.mu.Unlock()
 		return
 	}
 
-	exp.DoSecondPartOfRun(cid, key, mainPlayerIndex, mainPlayerMode, nodesList, size)
+	cid := result.cid
+
+	if delay > 0 {
+		log.Infof("Sleeping for %d seconds before performing second part", delay)
+		runState.mu.Unlock()
+		time.Sleep(time.Duration(delay) * time.Second)
+		runState.mu.Lock()
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+	exp.doSecondPartOfRun(&wg, cid, key, mainPlayerIndex, mainPlayerMode, nodesList, size)
+	wg.Wait()
+	runState.Counter++
+	runState.mu.Unlock()
 
 }
