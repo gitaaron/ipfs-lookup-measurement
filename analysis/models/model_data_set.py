@@ -8,6 +8,7 @@ from pickled.model_peer import Peer
 from datetime import datetime, timedelta
 from models.model_agent_events import AgentEvents
 from models.model_duration import Duration
+from models.model_runs import Runs
 import numpy as np
 
 class DataSet:
@@ -41,6 +42,9 @@ class DataSet:
         self._retrievals_has_uptime = None
         self._agent_events_map = {}
         self._peer_agent_map = {}
+        self._runs: Runs = None
+        self._has_publish_age_retrievals: list[Retrieval] = None
+        self._publish_age_stats: dict = None
 
         self.regions = []
         self._peer_agent_map = {}
@@ -224,3 +228,51 @@ class DataSet:
             _started_at, _ended_at = chronologist.get_start_end(_started_at, _ended_at, log.started_at, log.ended_at)
 
         return (_started_at, _ended_at)
+
+    @property
+    def runs(self) -> Runs:
+        if self._runs == None:
+            self._runs = Runs(self.total_publications)
+
+        return self._runs
+
+
+    @property
+    def has_publish_age_retrievals(self):
+        if self._has_publish_age_retrievals is None:
+            self._has_publish_age_retrievals = list(
+                filter(lambda ret: self.publish_age(ret) is not None, self.total_completed_retrievals))
+        return self._has_publish_age_retrievals
+
+
+    def publish_age(self, retrieval: Retrieval) -> timedelta:
+        published_at = self.runs.first_publish_at(retrieval.cid)
+        if published_at != None:
+            return retrieval.retrieval_started_at - published_at
+        else:
+            return None
+
+    @property
+    def publish_age_stats(self):
+        if self._publish_age_stats is None:
+            self._publish_age_stats = {}
+            rets = list(
+                    filter(lambda ret: int(ret.file_size) == 52439, self.has_publish_age_retrievals))
+            self._publish_age_stats['count'] = len(rets)
+            total = 0
+            min = None
+            max = None
+
+            for ret in rets:
+                pub_age = self.publish_age(ret).total_seconds()
+                if max is None or max < pub_age:
+                    max = pub_age
+                if min is None or min > pub_age:
+                    min = pub_age
+                total +=  pub_age
+
+            self._publish_age_stats['min'] = min
+            self._publish_age_stats['max'] = max
+            self._publish_age_stats['avg'] = total/len(rets)
+
+        return self._publish_age_stats

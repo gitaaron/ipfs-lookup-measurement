@@ -59,6 +59,11 @@ def execute(logs_config: LogsConfig) -> dict:
             stats['fpn_slow_likelihood'] = f"{round(calc.percent_fpn_slow(data_set),3)}%"
             stats['non_fpn_slow_likelihood'] = f"{round(calc.percent_non_fpn_slow(data_set),3)}%"
 
+    has_publish_age = data_set.has_publish_age_retrievals
+    count = 0
+    stats['num_has_publish_age'] = len(has_publish_age)
+    stats['publish_age'] = data_set.publish_age_stats
+
 
     return stats
 
