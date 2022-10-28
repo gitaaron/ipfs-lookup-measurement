@@ -44,12 +44,18 @@ def avg_duration_first_provider_nearest(data_set: DataSet) -> float:
 def percent_fpn_slow(data_set: DataSet) -> float:
     fpn_retrievals = data_set.first_provider_nearest_retrievals
     slow_fpn_retrievals = reduce.by_slow_retrievals(fpn_retrievals)
-    return len(slow_fpn_retrievals) / len(fpn_retrievals) * 100
+    if len(fpn_retrievals) > 0:
+        return len(slow_fpn_retrievals) / len(fpn_retrievals) * 100
+    else:
+        return np.NaN
 
 def percent_non_fpn_slow(data_set: DataSet) -> float:
     non_fpn_retrievals = data_set.non_first_provider_nearest_retrievals
     slow_non_fpn_retrievals = reduce.by_slow_retrievals(non_fpn_retrievals)
-    return len(slow_non_fpn_retrievals) / len(non_fpn_retrievals) * 100
+    if len(non_fpn_retrievals) > 0:
+        return len(slow_non_fpn_retrievals) / len(non_fpn_retrievals) * 100
+    else:
+        return np.NaN
 
 def percent_nearest_neighbor_first_provider(data_set: DataSet) -> float:
     hfp_retrievals = data_set.has_first_provider_retrievals
