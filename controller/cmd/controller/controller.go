@@ -167,9 +167,13 @@ func main() {
 		performDelayedRun := func() {
 			log.Println("Start performing delayed runs...")
 			for mainPlayer := 0; mainPlayer < len(nodesList); mainPlayer++ {
-				runState.Wg.Add(1)
+				runState.Wg.Add(3)
+				log.Println("queue delayed run with 0 sec. delay")
+				go e.DoRun(runState, key, mainPlayer, simplenode.Publisher, nodesList, DELAYED_FILE_SIZE, 0)
+				log.Println("queue delayed run with 60 sec. delay")
 				go e.DoRun(runState, key, mainPlayer, simplenode.Publisher, nodesList, DELAYED_FILE_SIZE, 60)
-				log.Println("one delayed run is done for node: ", mainPlayer)
+				log.Println("queue delayed run with 120 sec. delay")
+				go e.DoRun(runState, key, mainPlayer, simplenode.Publisher, nodesList, DELAYED_FILE_SIZE, 120)
 			}
 		}
 
@@ -178,13 +182,11 @@ func main() {
 
 			for mainPlayer := 0; mainPlayer < len(nodesList); mainPlayer++ {
 				runState.Wg.Add(2)
-				log.Println("start mainPlayer retriever run file_size: ", EXTRA_SMALL_SIZE)
+				log.Println("queue mainPlayer retriever run file_size: ", EXTRA_SMALL_SIZE)
 				go e.DoRun(runState, key, mainPlayer, simplenode.Retriever, nodesList, EXTRA_SMALL_SIZE, 0)
 
-				log.Println("start mainPlayer publisher run file_size: ", EXTRA_SMALL_SIZE)
+				log.Println("queue mainPlayer publisher run file_size: ", EXTRA_SMALL_SIZE)
 				go e.DoRun(runState, key, mainPlayer, simplenode.Publisher, nodesList, EXTRA_SMALL_SIZE, 0)
-
-				log.Println("one extra small run is done for node: ", mainPlayer)
 
 			}
 
@@ -195,25 +197,23 @@ func main() {
 
 			for mainPlayer := 0; mainPlayer < len(nodesList); mainPlayer++ {
 				runState.Wg.Add(6)
-				log.Println("start mainPlayer retriever run file_size: ", SMALL_SIZE)
+				log.Println("queue mainPlayer retriever run file_size: ", SMALL_SIZE)
 				go e.DoRun(runState, key, mainPlayer, simplenode.Retriever, nodesList, SMALL_SIZE, 0)
 
-				log.Println("start mainPlayer retriever run file_size: ", MED_SIZE)
+				log.Println("queue mainPlayer retriever run file_size: ", MED_SIZE)
 				go e.DoRun(runState, key, mainPlayer, simplenode.Retriever, nodesList, MED_SIZE, 0)
 
-				log.Println("start mainPlayer retriever run file_size: ", LARGE_SIZE)
+				log.Println("queue mainPlayer retriever run file_size: ", LARGE_SIZE)
 				go e.DoRun(runState, key, mainPlayer, simplenode.Retriever, nodesList, LARGE_SIZE, 0)
 
-				log.Println("start mainPlayer publisher run file_size: ", SMALL_SIZE)
+				log.Println("queue mainPlayer publisher run file_size: ", SMALL_SIZE)
 				go e.DoRun(runState, key, mainPlayer, simplenode.Publisher, nodesList, SMALL_SIZE, 0)
 
-				log.Println("start mainPlayer publisher run file_size: ", MED_SIZE)
+				log.Println("queue mainPlayer publisher run file_size: ", MED_SIZE)
 				go e.DoRun(runState, key, mainPlayer, simplenode.Publisher, nodesList, MED_SIZE, 0)
 
-				log.Println("start mainPlayer publisher run file_size: ", LARGE_SIZE)
+				log.Println("queue mainPlayer publisher run file_size: ", LARGE_SIZE)
 				go e.DoRun(runState, key, mainPlayer, simplenode.Publisher, nodesList, LARGE_SIZE, 0)
-
-				go log.Println("one retrieval and publish experiment is done for node:", mainPlayer)
 
 			}
 
