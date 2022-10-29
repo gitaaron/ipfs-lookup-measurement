@@ -26,35 +26,37 @@ func getRestartCLI() string {
 	return fmt.Sprintf("%s/restart_agents.sh", wd)
 }
 
-func doSetup() ([]config.AgentNode, int, []byte, *simplenode.RunState, error) {
-	simpleNodesFile := flag.String("l", "nodes-list.out", "nodes list file")
-	intervalSeconds := flag.Int("i", 0, "interval between each test")
+func parseCmdLine() (string, int){
+		simpleNodesFile := flag.String("l", "nodes-list.out", "nodes list file")
+		intervalSeconds := flag.Int("i", 0, "interval between each test")
+		flag.Parse()
+		return *simpleNodesFile, *intervalSeconds
+}
 
-	flag.Parse()
-
-	nodesList, err := config.GetNodesList(*simpleNodesFile)
+func getNodes(simpleNodesFile string) ([]config.AgentNode, []byte, *simplenode.RunState, error) {
+	nodesList, err := config.GetNodesList(simpleNodesFile)
 
 	if err != nil {
-		return nil, 0, nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	// Try to load key
 	keyStr, err := ioutil.ReadFile(".key")
 	if err != nil {
 		fmt.Printf("error in getting the key: %v\n", err.Error())
-		return nil, 0, nil, nil, err
+		return nil, nil, nil, err
 	}
 	key, err := base64.StdEncoding.DecodeString(string(keyStr))
 	if err != nil {
 		fmt.Printf("error decoding key string: %v\n", err.Error())
-		return nil, 0, nil, nil, err
+		return nil, nil, nil, err
 	}
 	if len(key) != 32 {
 		fmt.Printf("Wrong key size, expect 32, got: %v\n", len(key))
-		return nil, 0, nil, nil, err
+		return nil, nil, nil, err
 	}
 
-	return nodesList, *intervalSeconds, key, new(simplenode.RunState), nil
+	return nodesList, key, new(simplenode.RunState), nil
 
 }
 
@@ -111,6 +113,8 @@ func getSetIDS(nodesList []config.AgentNode, key []byte) error {
 
 func main() {
 
+	simpleNodesFile, intervalSeconds := parseCmdLine()
+
 	// Initialize some file sizes at different orders of magnitude
 	// 0.05 MB
 	EXTRA_SMALL_SIZE := int(math.Round(0.05 * 1024 * 1024))
@@ -153,7 +157,7 @@ func main() {
 			}
 		}
 
-		nodesList, intervalSeconds, key, runState, err := doSetup()
+		nodesList, key, runState, err := getNodes(simpleNodesFile)
 
 		if err != nil {
 			panic(err)
