@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from typing import List
 from pickled.model_retrieval import Retrieval
+from helpers.constants import RetrievalPhase
 
 
 def plot(retrievals: List[Retrieval]):

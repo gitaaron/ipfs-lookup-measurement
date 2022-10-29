@@ -3,6 +3,7 @@ from pickled.model_retrieval import Retrieval
 from typing import List
 import matplotlib.pyplot as plt
 from models.model_data_set import DataSet
+from helpers.constants import RetrievalPhase
 
 
 def initiated_phase(axl, retrievals: List[Retrieval]):
