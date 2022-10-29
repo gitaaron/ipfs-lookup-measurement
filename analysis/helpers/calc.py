@@ -82,9 +82,10 @@ def provider_count(data_set: DataSet, slow: bool) -> tuple[int, int, float]:
 
     return (len(many_provider_retrievals), len(single_provider_retrievals), total_providers / len(retrievals))
 
-def publish_age_duration_bins(data_set: DataSet) -> tuple[list[float], list[float], float]:
-    retrievals = data_set.has_publish_age_retrievals
+def publish_age_duration_bins(data_set: DataSet, phase: RetrievalPhase) -> tuple[list[float], list[float], float]:
     stats = data_set.publish_age_stats
+    retrievals = stats['retrievals']
+
     publish_ages = [data_set.publish_age(ret).total_seconds() for ret in retrievals]
     edges = np.linspace(stats['min'], stats['max'] + 1e-12, 4)
     bucket_locations = np.digitize(publish_ages, edges)
@@ -95,7 +96,7 @@ def publish_age_duration_bins(data_set: DataSet) -> tuple[list[float], list[floa
         bl = bucket_locations[idx]
         if bl not in buckets:
             buckets[bl] = []
-        buckets[bl].append(ret.duration(RetrievalPhase.TOTAL).total_seconds())
+        buckets[bl].append(ret.duration(phase).total_seconds())
 
     bucket_avgs = {}
 
@@ -107,7 +108,7 @@ def publish_age_duration_bins(data_set: DataSet) -> tuple[list[float], list[floa
     width=(edges[1]-edges[0])*0.9
     return edges[:-1], sorted_avgs, width
 
-def agent_uptime_duration_bins(data_set: DataSet) -> tuple[list[float], list[float], float]:
+def agent_uptime_duration_bins(data_set: DataSet, phase: RetrievalPhase) -> tuple[list[float], list[float], float]:
     retrievals = data_set.retrievals_has_uptime
     d = data_set.agent_uptime_durations
     agent_uptimes = [ret.agent_uptime/1000 for ret in retrievals]
@@ -120,7 +121,7 @@ def agent_uptime_duration_bins(data_set: DataSet) -> tuple[list[float], list[flo
         bl = bucket_locations[idx]
         if bl not in buckets:
             buckets[bl] = []
-        buckets[bl].append(ret.duration(RetrievalPhase.TOTAL).total_seconds())
+        buckets[bl].append(ret.duration(phase).total_seconds())
         idx+=1
 
     bucket_avgs = {}

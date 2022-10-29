@@ -151,7 +151,6 @@ class DataSet:
         return self._unique_file_sizes
 
     @property
-
     def retrievals_has_uptime(self):
         if self._retrievals_has_uptime is None:
             self._retrievals_has_uptime = list(filter(lambda ret: ret.agent_uptime is not None, self.total_completed_retrievals))
@@ -274,5 +273,6 @@ class DataSet:
             self._publish_age_stats['min'] = min
             self._publish_age_stats['max'] = max
             self._publish_age_stats['avg'] = total/len(rets)
+            self._publish_age_stats['retrievals'] = rets
 
         return self._publish_age_stats
