@@ -71,9 +71,9 @@ func getSetIDS(nodesList []config.AgentNode, key []byte) error {
 
 		go func(wg *sync.WaitGroup, node config.AgentNode) {
 			defer wg.Done()
-			for i := 0; i < 120; i++ {
+			for i := 0; i < 240; i++ {
 
-				if i == 119 { // giving up after 2 min.
+				if i == 239 { // giving up after 10 min.
 					panic(errors.New("timing out on IPFS ID retrieval"))
 				}
 
@@ -110,12 +110,6 @@ func getSetIDS(nodesList []config.AgentNode, key []byte) error {
 }
 
 func main() {
-
-	nodesList, intervalSeconds, key, runState, err := doSetup()
-
-	if err != nil {
-		panic(err)
-	}
 
 	// Initialize some file sizes at different orders of magnitude
 	// 0.05 MB
@@ -157,6 +151,12 @@ func main() {
 			if rm_err != nil {
 				panic(err)
 			}
+		}
+
+		nodesList, intervalSeconds, key, runState, err := doSetup()
+
+		if err != nil {
+			panic(err)
 		}
 
 		// get and set agent IDS on each run so that analysis has log of agent's PeerId
