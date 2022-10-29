@@ -252,7 +252,7 @@ class DataSet:
             return None
 
     @property
-    def publish_age_stats(self):
+    def publish_age_stats(self) -> (dict, list[Retrieval]):
         if self._publish_age_stats is None:
             self._publish_age_stats = {}
             rets = list(
@@ -273,6 +273,5 @@ class DataSet:
             self._publish_age_stats['min'] = min
             self._publish_age_stats['max'] = max
             self._publish_age_stats['avg'] = total/len(rets)
-            self._publish_age_stats['retrievals'] = rets
 
-        return self._publish_age_stats
+        return (self._publish_age_stats, rets)

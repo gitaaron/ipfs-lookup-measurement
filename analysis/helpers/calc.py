@@ -83,8 +83,7 @@ def provider_count(data_set: DataSet, slow: bool) -> tuple[int, int, float]:
     return (len(many_provider_retrievals), len(single_provider_retrievals), total_providers / len(retrievals))
 
 def publish_age_duration_bins(data_set: DataSet, phase: RetrievalPhase) -> tuple[list[float], list[float], float]:
-    stats = data_set.publish_age_stats
-    retrievals = stats['retrievals']
+    stats,retrievals = data_set.publish_age_stats
 
     publish_ages = [data_set.publish_age(ret).total_seconds() for ret in retrievals]
     edges = np.linspace(stats['min'], stats['max'] + 1e-12, 4)

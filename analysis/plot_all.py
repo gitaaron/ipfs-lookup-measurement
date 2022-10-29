@@ -35,13 +35,13 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     for phase in RetrievalPhase:
         histo_publish_age.plot(data_set, phase, f"Retrieval {phase.name} Duration by Publish Age")
         if out_target_dir is not None:
-            plt.savefig(os.path.join(out_target_dir, 'publish_age_ret_duration_comp_bar.png'))
+            plt.savefig(os.path.join(out_target_dir, f"publish_age_ret_{phase.name}_duration_comp_bar.png"))
             plt.close()
 
     for phase in RetrievalPhase:
         histo_agent_uptime.plot(data_set, phase, f"Retrieval {phase.name} Duration by Agent Uptime")
         if out_target_dir is not None:
-            plt.savefig(os.path.join(out_target_dir, 'agent_uptime_comp_bar.png'))
+            plt.savefig(os.path.join(out_target_dir, f"agent_uptime_ret_{phase.name}_comp_bar.png"))
             plt.close()
 
     cdf_publications.plot_total(data_set)
