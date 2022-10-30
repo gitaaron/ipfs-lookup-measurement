@@ -58,9 +58,9 @@ def percent_non_fpn_slow(data_set: DataSet) -> float:
         return np.NaN
 
 def percent_nearest_neighbor_first_provider(data_set: DataSet) -> float:
-    hfp_retrievals = data_set.has_first_provider_retrievals
+    non_fpn_retrievals = data_set.non_first_provider_nearest_retrievals
     fpn_retrievals = data_set.first_provider_nearest_retrievals
-    return len(fpn_retrievals) / len(hfp_retrievals) * 100
+    return len(fpn_retrievals) / len(fpn_retrievals+non_fpn_retrievals) * 100
 
 # returns a count of (many providers, single providers, average providers / retrieval)
 def provider_count(data_set: DataSet, slow: bool) -> tuple[int, int, float]:
