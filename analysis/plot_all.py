@@ -32,6 +32,16 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     publications = data_set.total_publications
     retrievals = data_set.total_completed_retrievals
 
+    first_provider_nearest.plot_fpn_durations(data_set)
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, f"fpn_durations.png"))
+        plt.close()
+
+    first_provider_nearest.plot_fpn_durations_by_phase(data_set)
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, f"fpn_durations_by_phase.png"))
+        plt.close()
+
     first_provider_nearest.plot_fpn_likelihood(data_set)
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, f"fpn_likelihood.png"))

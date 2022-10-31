@@ -6,13 +6,13 @@ from models.model_duration import Duration
 import numpy as np
 
 
-def _avg_duration(retrievals: list[Retrieval]):
+def avg_duration(retrievals: list[Retrieval], phase: RetrievalPhase):
     num: float = len(retrievals)
     _total_duration: int = 0
     for ret in retrievals:
-        _total_duration += ret.duration(RetrievalPhase.TOTAL).total_seconds()
+        _total_duration += ret.duration(phase).total_seconds()
 
-    return _total_duration / num
+    return round(_total_duration / num, 3)
 
 def avg_duration_from_breakdown(breakdown: dict[str, float]):
     avg_duration = {}
@@ -31,14 +31,13 @@ def avg_duration_from_breakdowns(breakdowns: dict[int,  dict[str, float]]):
     return avg_durations
 
 
-
 def avg_duration_non_first_provider_nearest(data_set: DataSet) -> float:
     non_fpn_retrievals = data_set.non_first_provider_nearest_retrievals
-    return _avg_duration(non_fpn_retrievals)
+    return avg_duration(non_fpn_retrievals, RetrievalPhase.TOTAL)
 
 def avg_duration_first_provider_nearest(data_set: DataSet) -> float:
     fpn_retrievals = data_set.first_provider_nearest_retrievals
-    return _avg_duration(fpn_retrievals)
+    return avg_duration(fpn_retrievals, RetrievalPhase.TOTAL)
 
 def percent_fpn_slow(data_set: DataSet) -> float:
     fpn_retrievals = data_set.first_provider_nearest_retrievals
