@@ -26,7 +26,7 @@ def execute(logs_config: LogsConfig) -> dict:
     stats['phase_avg_duration'] = calc.avg_duration_from_breakdown({'count': len(data_set.total_completed_retrievals), 'durations':data_set.phase_durations})
 
     if many_providers_count > 0 and len(data_set.first_provider_nearest_retrievals) > 0:
-        stats['percent_first_provider_nearest[fpn]'] = f"{round(calc.percent_nearest_neighbor_first_provider(data_set),3)}%"
+        stats['percent_first_provider_nearest[fpn]'] = calc.first_provider_nearest_stats(data_set)
         stats['num_fpn'] = len(data_set.first_provider_nearest_retrievals)
         stats['num_non_fpn'] = len(data_set.non_first_provider_nearest_retrievals)
         if len(data_set.first_provider_nearest_retrievals) > 0:

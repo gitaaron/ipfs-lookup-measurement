@@ -40,7 +40,6 @@ def avg_duration_first_provider_nearest(data_set: DataSet) -> float:
     fpn_retrievals = data_set.first_provider_nearest_retrievals
     return _avg_duration(fpn_retrievals)
 
-
 def percent_fpn_slow(data_set: DataSet) -> float:
     fpn_retrievals = data_set.first_provider_nearest_retrievals
     slow_fpn_retrievals = reduce.by_slow_retrievals(fpn_retrievals)
@@ -57,10 +56,32 @@ def percent_non_fpn_slow(data_set: DataSet) -> float:
     else:
         return np.NaN
 
-def percent_nearest_neighbor_first_provider(data_set: DataSet) -> float:
+def first_provider_nearest_stats(data_set: DataSet) -> dict:
     non_fpn_retrievals = data_set.non_first_provider_nearest_retrievals
     fpn_retrievals = data_set.first_provider_nearest_retrievals
-    return len(fpn_retrievals) / len(fpn_retrievals+non_fpn_retrievals) * 100
+    a = {}
+    a['num_fpn'] = len(fpn_retrievals)
+    a['num_non_fpn'] =  len(non_fpn_retrievals)
+    a['fpn_likelihood'] = round(len(fpn_retrievals) / len(fpn_retrievals+non_fpn_retrievals) * 100, 3)
+    regions = {}
+    for agent,_ in data_set.agent_events_map.items():
+        if agent.region not in regions:
+            regions[agent.region.name] = {'num_fpns':0, 'num_non_fpns':0}
+
+    for ret in non_fpn_retrievals:
+        if ret.origin.name in regions:
+            regions[ret.origin.name]['num_non_fpns'] += 1
+
+    for ret in fpn_retrievals:
+        if ret.origin.name in regions:
+            regions[ret.origin.name]['num_fpns'] += 1
+
+    for region,val in regions.items():
+        regions[region]['fpn_likelihood'] = round(val['num_fpns'] / (val['num_fpns']+val['num_non_fpns']) * 100, 3)
+
+    regions['all'] = a
+
+    return regions
 
 # returns a count of (many providers, single providers, average providers / retrieval)
 def provider_count(data_set: DataSet, slow: bool) -> tuple[int, int, float]:
