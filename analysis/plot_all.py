@@ -3,7 +3,7 @@ import pickle
 from typing import List
 import matplotlib.pyplot as plt
 from pathlib import Path
-from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency, pie_phase_retrieval_latency, timeseries_retrievals, histo_agent_uptime, histo_publish_age
+from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency, pie_phase_retrieval_latency, timeseries_retrievals, histo_agent_uptime, histo_publish_age, first_provider_nearest
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
 from helpers.constants import RetrievalPhase
@@ -31,6 +31,16 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     publications = data_set.total_publications
     retrievals = data_set.total_completed_retrievals
+
+    first_provider_nearest.plot_fpn_likelihood(data_set)
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, f"fpn_likelihood.png"))
+        plt.close()
+
+    first_provider_nearest.plot_fpn_likelihood_by_region(data_set)
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, f"fpn_likelihood_by_region.png"))
+        plt.close()
 
     for phase in RetrievalPhase:
         histo_publish_age.plot(data_set, phase, f"Retrieval {phase.name} Duration by Publish Age")
