@@ -71,8 +71,8 @@ def provider_count(data_set: DataSet, slow: bool) -> tuple[int, int, float]:
 
     if slow:
         retrievals = reduce.by_slow_retrievals(retrievals)
-        many_provider_retrievals = reduce.by_slow_retrievals(retrievals)
-        single_provider_retrievals = reduce.by_slow_retrievals(retrievals)
+        many_provider_retrievals = reduce.by_slow_retrievals(many_provider_retrievals)
+        single_provider_retrievals = reduce.by_slow_retrievals(single_provider_retrievals)
 
     total_providers = 0
 

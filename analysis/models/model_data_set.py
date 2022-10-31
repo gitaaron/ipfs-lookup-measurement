@@ -272,8 +272,8 @@ class DataSet:
                     min = pub_age
                 total +=  pub_age
 
-            self._publish_age_stats['min'] = min
-            self._publish_age_stats['max'] = max
-            self._publish_age_stats['avg'] = total/len(self._publish_age_retrievals)
+            self._publish_age_stats['min (sec.)'] = round(min,3)
+            self._publish_age_stats['max (sec.)'] = round(max,1)
+            self._publish_age_stats['average (sec.)'] = round(total/len(self._publish_age_retrievals),1)
 
         return (self._publish_age_stats, self._publish_age_retrievals)
