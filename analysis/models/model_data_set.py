@@ -45,6 +45,7 @@ class DataSet:
         self._runs: Runs = None
         self._has_publish_age_retrievals: list[Retrieval] = None
         self._publish_age_stats: dict = None
+        self._publish_age_retrievals: list[Retrieval] = None
 
         self.regions = []
         self._peer_agent_map = {}
@@ -253,16 +254,17 @@ class DataSet:
 
     @property
     def publish_age_stats(self) -> (dict, list[Retrieval]):
-        if self._publish_age_stats is None:
+        if self._publish_age_stats is None or self._publish_age_retrievals is None:
             self._publish_age_stats = {}
-            rets = list(
+            # filtering by 52439 since there is not even distribution of publish/retrieval delays and filesizes
+            self._publish_age_retrievals = list(
                     filter(lambda ret: int(ret.file_size) == 52439, self.has_publish_age_retrievals))
-            self._publish_age_stats['count'] = len(rets)
+            self._publish_age_stats['count'] = len(self._publish_age_retrievals)
             total = 0
             min = None
             max = None
 
-            for ret in rets:
+            for ret in self._publish_age_retrievals:
                 pub_age = self.publish_age(ret).total_seconds()
                 if max is None or max < pub_age:
                     max = pub_age
@@ -272,6 +274,6 @@ class DataSet:
 
             self._publish_age_stats['min'] = min
             self._publish_age_stats['max'] = max
-            self._publish_age_stats['avg'] = total/len(rets)
+            self._publish_age_stats['avg'] = total/len(self._publish_age_retrievals)
 
-        return (self._publish_age_stats, rets)
+        return (self._publish_age_stats, self._publish_age_retrievals)
