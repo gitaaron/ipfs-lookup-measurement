@@ -258,7 +258,7 @@ class DataSet:
             self._publish_age_stats = {}
             # filtering by 52439 since there is not even distribution of publish/retrieval delays and filesizes
             self._publish_age_retrievals = list(
-                    filter(lambda ret: int(ret.file_size) == 52439, self.has_publish_age_retrievals))
+                    filter(lambda ret: ret.file_size is not None and int(ret.file_size) == 52439, self.has_publish_age_retrievals))
             self._publish_age_stats['count'] = len(self._publish_age_retrievals)
             total = 0
             min = None

@@ -12,13 +12,13 @@ def plot_duration(data_set: DataSet, phase: RetrievalPhase, title: str):
     stats = calc.avg_duration_from_breakdowns(data_set.unique_file_sizes)
 
     sorted_fs = list(data_set.unique_file_sizes.keys())
+    # ignore delayed retrievals and missing file_size
+    sorted_fs = list(filter(lambda fs: fs is not None and fs != 52439, sorted_fs))
     sorted_fs.sort()
 
     for file_size in sorted_fs:
-        # ignore delayed retrievals
-        if file_size != 52439:
-            file_size_labels.append(str(file_size))
-            durations.append(stats[file_size][phase.name].duration)
+        file_size_labels.append(str(file_size))
+        durations.append(stats[file_size][phase.name].duration)
 
 
     ax1.bar(file_size_labels, durations)
