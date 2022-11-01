@@ -156,9 +156,8 @@ class DataSet:
         self._set_completed_stats()
         cpy = self._unique_file_sizes.copy()
         del(cpy[52439])
+        del(cpy[None])
         return cpy
-
-
 
     @property
     def retrievals_has_uptime(self):

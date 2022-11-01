@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from typing import List
 from pickled.model_retrieval import Retrieval
 from helpers.constants import RetrievalPhase
+from helpers import reduce, stringify
 from models.model_region import Region
 from models.model_data_set import DataSet
 
@@ -27,9 +28,9 @@ def plot_num_providers(retrievals:List[Retrieval], title: str):
     ax.set_ylabel('Number Providers found during Retrieval')
     ax.set_title(title)
 
-def plot_duration_each_region(phase: RetrievalPhase, data_set: DataSet, title: str):
-
-    start_dates = [ret.retrieval_started_at for ret in data_set.total_completed_retrievals]
+def plot_duration_each_region(file_size: int, phase: RetrievalPhase, data_set: DataSet, title: str):
+    retrievals = reduce.by_file_size(data_set.total_completed_retrievals, file_size)
+    start_dates = [ret.retrieval_started_at for ret in retrievals]
     start_dates.sort()
 
     region_durations = {}
@@ -39,7 +40,9 @@ def plot_duration_each_region(phase: RetrievalPhase, data_set: DataSet, title: s
         for start_date in start_dates:
             region_durations[agent.region].append(np.nan)
 
-        for ret in agent_events.completed_retrievals:
+        agent_retrievals = reduce.by_file_size(agent_events.completed_retrievals, file_size)
+
+        for ret in agent_retrievals:
             start_index = start_dates.index(ret.retrieval_started_at)
             region_durations[agent.region][start_index] = (ret.duration(phase)).total_seconds()
 
@@ -48,8 +51,11 @@ def plot_duration_each_region(phase: RetrievalPhase, data_set: DataSet, title: s
     ax = DF.plot(x_compat=True, rot=90, figsize=(16, 5),)
     ax.set_ylabel('Duration (sec.)')
     ax.set_title(title)
+    txt = f"File Size: {stringify.file_size(file_size)}"
+    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=12)
 
-def plot_each_phase_all_regions(retrievals:List[Retrieval], title: str):
+def plot_each_phase_all_regions(file_size: int, retrievals:List[Retrieval], title: str):
+    retrievals = reduce.by_file_size(retrievals, file_size)
     overall_durations = []
     initiated_durations = []
     getting_closest_peers_durations = []
@@ -87,3 +93,5 @@ def plot_each_phase_all_regions(retrievals:List[Retrieval], title: str):
     ax = DF.plot(x_compat=True, rot=90, figsize=(16, 5),)
     ax.set_ylabel('Duration (sec.)')
     ax.set_title(title)
+    txt = f"File Size: {stringify.file_size(file_size)}"
+    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=12)

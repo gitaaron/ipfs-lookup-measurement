@@ -119,17 +119,17 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         plt.close()
 
 
-    timeseries_retrievals.plot_each_phase_all_regions(data_set.total_completed_retrievals, 'Retrieval Duration by Phase')
-
-    if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'trend_ret_phase_breakdown.png'))
-        plt.close()
-
-    for phase in RetrievalPhase:
-        timeseries_retrievals.plot_duration_each_region(phase, data_set, f"Retrieval {phase.name} Duration by Region")
+    for file_size in data_set.comparable_file_sizes:
+        timeseries_retrievals.plot_each_phase_all_regions(file_size, data_set.total_completed_retrievals, 'Retrieval Duration by Phase')
         if out_target_dir is not None:
-            plt.savefig(os.path.join(out_target_dir, f"trend_ret_{phase.name}_region_breakdown.png"))
+            plt.savefig(os.path.join(out_target_dir, 'trend_ret_phase_breakdown.png'))
             plt.close()
+
+        for phase in RetrievalPhase:
+            timeseries_retrievals.plot_duration_each_region(file_size, phase, data_set, f"Retrieval {phase.name} Duration by Region")
+            if out_target_dir is not None:
+                plt.savefig(os.path.join(out_target_dir, f"trend_ret_{phase.name}_region_breakdown.png"))
+                plt.close()
 
     timeseries_retrievals.plot_num_providers(retrievals, 'Retrieval Number Providers')
     if out_target_dir is not None:
