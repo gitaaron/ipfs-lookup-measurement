@@ -152,6 +152,15 @@ class DataSet:
         return self._unique_file_sizes
 
     @property
+    def comparable_file_sizes(self):
+        self._set_completed_stats()
+        cpy = self._unique_file_sizes.copy()
+        del(cpy[52439])
+        return cpy
+
+
+
+    @property
     def retrievals_has_uptime(self):
         if self._retrievals_has_uptime is None:
             self._retrievals_has_uptime = list(filter(lambda ret: ret.agent_uptime is not None, self.total_completed_retrievals))

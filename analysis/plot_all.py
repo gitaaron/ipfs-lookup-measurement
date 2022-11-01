@@ -107,13 +107,13 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         plt.savefig(os.path.join(out_target_dir, 'ret_phase_comparison_cdf.png'))
         plt.close()
 
-    pie_phase_retrieval_latency.plot(retrievals)
-    if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'ret_phase_comparison_pie.png'))
-        plt.close()
+    for file_size in data_set.comparable_file_sizes:
+        pie_phase_retrieval_latency.plot(retrievals, file_size)
+        if out_target_dir is not None:
+            plt.savefig(os.path.join(out_target_dir, f"ret_phase_comparison_pie_fs_{file_size}.png"))
+            plt.close()
 
     bar_region_retrieval_latency.plot(data_set)
-
     if out_target_dir is not None:
         plt.savefig(os.path.join(out_target_dir, 'ret_region_comparison_bar.png'))
         plt.close()
