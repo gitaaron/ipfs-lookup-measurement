@@ -155,8 +155,10 @@ class DataSet:
     def comparable_file_sizes(self):
         self._set_completed_stats()
         cpy = self._unique_file_sizes.copy()
-        del(cpy[52439])
-        del(cpy[None])
+        if 52439 in cpy:
+            del(cpy[52439])
+        if None in cpy:
+            del(cpy[None])
         return cpy
 
     @property

@@ -29,4 +29,4 @@ def plot(retrievals: List[Retrieval], file_size: int):
     ax1.axis('equal')
     ax1.set_title('Retrieval Phase Duration Comparison')
     txt = f"File Size: {stringify.file_size(file_size)}"
-    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=12)
+    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)

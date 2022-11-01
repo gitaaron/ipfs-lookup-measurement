@@ -87,27 +87,18 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         plt.savefig(os.path.join(out_target_dir, 'pvd_total_add_provider.png'))
         plt.close()
 
-    cdf_retrievals.plot_total(data_set)
-    if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'ret_total.png'))
-        plt.close()
-
-    cdf_retrievals.plot_getting_closest_peers(data_set)
-    if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'ret_getting_closest_peers.png'))
-        plt.close()
-
-    cdf_retrievals.plot_fetch(data_set)
-    if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'ret_fetch.png'))
-        plt.close()
-
-    cdf_retrievals.plot_phase_comparison(retrievals)
-    if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'ret_phase_comparison_cdf.png'))
-        plt.close()
-
     for file_size in data_set.comparable_file_sizes:
+        for phase in RetrievalPhase:
+            cdf_retrievals.plot_duration_by_region(file_size, phase, data_set)
+            if out_target_dir is not None:
+                plt.savefig(os.path.join(out_target_dir, f"ret_{phase.name}_fs_{file_size}_cdf.png"))
+                plt.close()
+
+        cdf_retrievals.plot_phase_comparison(file_size, retrievals)
+        if out_target_dir is not None:
+            plt.savefig(os.path.join(out_target_dir, 'ret_phase_comparison_fs_{file_size}_cdf.png'))
+        plt.close()
+
         pie_phase_retrieval_latency.plot(retrievals, file_size)
         if out_target_dir is not None:
             plt.savefig(os.path.join(out_target_dir, f"ret_phase_comparison_pie_fs_{file_size}.png"))

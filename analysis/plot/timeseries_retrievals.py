@@ -52,7 +52,7 @@ def plot_duration_each_region(file_size: int, phase: RetrievalPhase, data_set: D
     ax.set_ylabel('Duration (sec.)')
     ax.set_title(title)
     txt = f"File Size: {stringify.file_size(file_size)}"
-    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=12)
+    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
 
 def plot_each_phase_all_regions(file_size: int, retrievals:List[Retrieval], title: str):
     retrievals = reduce.by_file_size(retrievals, file_size)
@@ -94,4 +94,4 @@ def plot_each_phase_all_regions(file_size: int, retrievals:List[Retrieval], titl
     ax.set_ylabel('Duration (sec.)')
     ax.set_title(title)
     txt = f"File Size: {stringify.file_size(file_size)}"
-    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=12)
+    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
