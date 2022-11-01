@@ -106,7 +106,11 @@ def publish_age_duration_bins(data_set: DataSet, phase: RetrievalPhase) -> tuple
     stats,retrievals = data_set.publish_age_stats
 
     publish_ages = [data_set.publish_age(ret).total_seconds() for ret in retrievals]
-    edges = np.linspace(stats['min'], stats['max'] + 1e-12, 4)
+    if 'min' in stats and 'max' in stats:
+        edges = np.linspace(stats['min'], stats['max'] + 1e-12, 4)
+    else:
+        edges = np.linspace(0, 1, 4)
+
     bucket_locations = np.digitize(publish_ages, edges)
 
     buckets = {}
