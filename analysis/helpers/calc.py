@@ -103,7 +103,7 @@ def provider_count(data_set: DataSet, slow: bool) -> tuple[int, int, float]:
     return (len(many_provider_retrievals), len(single_provider_retrievals), total_providers / len(retrievals))
 
 def publish_age_duration_bins(data_set: DataSet, phase: RetrievalPhase) -> tuple[list[float], list[float], float]:
-    stats,retrievals = data_set.publish_age_stats
+    stats,retrievals,delay_file_size = data_set.publish_age_stats
 
     publish_ages = [data_set.publish_age(ret).total_seconds() for ret in retrievals]
     if 'min' in stats and 'max' in stats:
@@ -129,10 +129,11 @@ def publish_age_duration_bins(data_set: DataSet, phase: RetrievalPhase) -> tuple
     sorted_avgs = [bucket_avgs.get(i, 0) for i in range(1, len(edges))]
 
     width=(edges[1]-edges[0])*0.9
-    return edges[:-1], sorted_avgs, width
+    return edges[:-1], sorted_avgs, width, delay_file_size
 
-def agent_uptime_duration_bins(data_set: DataSet, phase: RetrievalPhase) -> tuple[list[float], list[float], float]:
+def agent_uptime_duration_bins(data_set: DataSet, file_size: int, phase: RetrievalPhase) -> tuple[list[float], list[float], float]:
     retrievals = data_set.retrievals_has_uptime
+    retrievals = reduce.by_file_size(retrievals, file_size)
     d = data_set.agent_uptime_durations
     agent_uptimes = [ret.agent_uptime/1000 for ret in retrievals]
     edges = np.linspace(d['min'].duration, d['max'].duration + 1e-12, 5)
@@ -145,7 +146,6 @@ def agent_uptime_duration_bins(data_set: DataSet, phase: RetrievalPhase) -> tupl
         if bl not in buckets:
             buckets[bl] = []
         buckets[bl].append(ret.duration(phase).total_seconds())
-        idx+=1
 
     bucket_avgs = {}
 

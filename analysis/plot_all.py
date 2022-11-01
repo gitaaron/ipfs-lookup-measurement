@@ -40,15 +40,16 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
             plt.savefig(os.path.join(out_target_dir, f"file_size_{phase.name}_durations.png"))
             plt.close()
 
-    first_provider_nearest.plot_fpn_durations(data_set)
-    if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, f"fpn_durations.png"))
-        plt.close()
+    for file_size in data_set.comparable_file_sizes:
+        did_plot = first_provider_nearest.plot_fpn_durations(data_set, file_size)
+        if did_plot and out_target_dir is not None:
+            plt.savefig(os.path.join(out_target_dir, f"fpn_durations_fs_{file_size}.png"))
+            plt.close()
 
-    first_provider_nearest.plot_fpn_durations_by_phase(data_set)
-    if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, f"fpn_durations_by_phase.png"))
-        plt.close()
+        did_plot = first_provider_nearest.plot_fpn_durations_by_phase(data_set, file_size)
+        if did_plot and out_target_dir is not None:
+            plt.savefig(os.path.join(out_target_dir, f"fpn_durations_by_phase_fs_{file_size}.png"))
+            plt.close()
 
     first_provider_nearest.plot_fpn_likelihood(data_set)
     if out_target_dir is not None:
@@ -67,10 +68,11 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
             plt.close()
 
     for phase in RetrievalPhase:
-        histo_agent_uptime.plot(data_set, phase, f"Retrieval {phase.name} Duration by Agent Uptime")
+        histo_agent_uptime.plot(data_set, data_set.smallest_file_size, phase, f"Retrieval {phase.name} Duration by Agent Uptime")
         if out_target_dir is not None:
             plt.savefig(os.path.join(out_target_dir, f"agent_uptime_ret_{phase.name}_comp_bar.png"))
             plt.close()
+
 
     cdf_publications.plot_total(data_set)
     if out_target_dir is not None:

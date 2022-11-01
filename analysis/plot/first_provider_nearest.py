@@ -1,56 +1,69 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from helpers import calc
+from helpers import calc, reduce, stringify
 from models.model_data_set import DataSet
 from helpers.constants import RetrievalPhase
 
-def plot_fpn_durations(data_set: DataSet):
-    fig1, ax1 = plt.subplots(figsize=(12,6), dpi=80)
+def plot_fpn_durations(data_set: DataSet, file_size: int) -> bool:
 
     phase_labels = []
     fpn_durations = []
     non_fpn_durations = []
-    fpn_rs = data_set.first_provider_nearest_retrievals
-    non_fpn_rs = data_set.non_first_provider_nearest_retrievals
+    fpn_rs = reduce.by_file_size(data_set.first_provider_nearest_retrievals, file_size)
+    non_fpn_rs = reduce.by_file_size(data_set.non_first_provider_nearest_retrievals, file_size)
 
-    for phase in RetrievalPhase:
-        if phase==RetrievalPhase.TOTAL:
-            phase_labels.append(phase.name)
-            fpn_durations.append(calc.avg_duration(fpn_rs, phase))
-            non_fpn_durations.append(calc.avg_duration(non_fpn_rs, phase))
+    if len(fpn_rs) > 0 and len(non_fpn_rs) > 0:
+        fig1, ax1 = plt.subplots(figsize=(12,6), dpi=80)
+        for phase in RetrievalPhase:
+            if phase==RetrievalPhase.TOTAL:
+                phase_labels.append(phase.name)
+                fpn_durations.append(calc.avg_duration(fpn_rs, phase))
+                non_fpn_durations.append(calc.avg_duration(non_fpn_rs, phase))
 
-    b1 = ax1.barh(phase_labels, fpn_durations)
-    b2 = ax1.barh(phase_labels, non_fpn_durations, left=fpn_durations)
+        b1 = ax1.barh(phase_labels, fpn_durations)
+        b2 = ax1.barh(phase_labels, non_fpn_durations, left=fpn_durations)
 
-    plt.legend([b1, b2], ['fpn', 'non_fpn'], loc="upper right")
+        plt.legend([b1, b2], ['fpn', 'non_fpn'], loc="upper right")
 
-    ax1.set_ylabel(None)
-    ax1.set_xlabel('fpn vs non-fpn durations (sec.)')
-    ax1.set_title('First Provider Nearest effects on Total Duration')
+        ax1.set_ylabel(None)
+        ax1.set_xlabel('fpn vs non-fpn durations (sec.)')
+        ax1.set_title('First Provider Nearest effects on Total Duration')
+        txt = f"File Size: {stringify.file_size(file_size)}"
+        plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
+        return True
+
+    return False
 
 
-def plot_fpn_durations_by_phase(data_set: DataSet):
-    fig1, ax1 = plt.subplots(figsize=(12,6), dpi=80)
+def plot_fpn_durations_by_phase(data_set: DataSet, file_size: int) -> bool:
 
     phase_labels = []
     fpn_durations = []
     non_fpn_durations = []
-    fpn_rs = data_set.first_provider_nearest_retrievals
-    non_fpn_rs = data_set.non_first_provider_nearest_retrievals
+    fpn_rs = reduce.by_file_size(data_set.first_provider_nearest_retrievals, file_size)
+    non_fpn_rs = reduce.by_file_size(data_set.non_first_provider_nearest_retrievals, file_size)
 
-    for phase in RetrievalPhase:
-        if phase != RetrievalPhase.TOTAL:
-            phase_labels.append(phase.name)
-            fpn_durations.append(calc.avg_duration(fpn_rs, phase))
-            non_fpn_durations.append(calc.avg_duration(non_fpn_rs, phase))
+    if len(fpn_rs) > 0 and len(non_fpn_rs) >  0:
+        fig1, ax1 = plt.subplots(figsize=(12,6), dpi=80)
+        for phase in RetrievalPhase:
+            if phase != RetrievalPhase.TOTAL:
+                phase_labels.append(phase.name)
+                fpn_durations.append(calc.avg_duration(fpn_rs, phase))
+                non_fpn_durations.append(calc.avg_duration(non_fpn_rs, phase))
 
-    b1 = ax1.bar(phase_labels, fpn_durations)
-    b2 = ax1.bar(phase_labels, non_fpn_durations, bottom=fpn_durations)
+        b1 = ax1.bar(phase_labels, fpn_durations)
+        b2 = ax1.bar(phase_labels, non_fpn_durations, bottom=fpn_durations)
 
-    plt.legend([b1, b2], ['fpn', 'non_fpn'], loc="upper right")
+        plt.legend([b1, b2], ['fpn', 'non_fpn'], loc="upper right")
 
-    ax1.set_ylabel('fpn vs non-fpn durations (sec.)')
-    ax1.set_title('First Provider Nearest effects on Duration by Phase')
+        ax1.set_ylabel('fpn vs non-fpn durations (sec.)')
+        ax1.set_title('First Provider Nearest effects on Duration by Phase')
+        txt = f"File Size: {stringify.file_size(file_size)}"
+        plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
+        return True
+
+    return False
+
 
 def plot_fpn_likelihood(data_set: DataSet):
     fig1, ax1 = plt.subplots(figsize=(9,6), dpi=80)

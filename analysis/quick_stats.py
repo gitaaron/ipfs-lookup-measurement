@@ -63,7 +63,7 @@ def execute(logs_config: LogsConfig) -> dict:
     has_publish_age = data_set.has_publish_age_retrievals
     count = 0
     stats['num_has_publish_age'] = len(has_publish_age)
-    stats['publish_age(retrieval_started-first_publish_ended)'],_ = data_set.publish_age_stats
+    stats['publish_age(retrieval_started-first_publish_ended)'],_,_ = data_set.publish_age_stats
 
 
     return stats
