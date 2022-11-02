@@ -9,3 +9,7 @@ class RetrievalPhase(str, Enum):
     GETTING_CLOSEST_PEERS = 'GETTING_CLOSEST_PEERS'
     DIALING = 'DIALING'
     FETCHING = 'FETCHING'
+
+class PlayerType(str, Enum):
+    RETRIEVER = 'RETRIEVER'
+    PUBLISHER = 'PUBLISHER'

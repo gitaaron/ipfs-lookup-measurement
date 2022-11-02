@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency,\
                  pie_phase_retrieval_latency, timeseries_retrievals, histo_agent_uptime,\
-                 histo_publish_age, first_provider_nearest, file_size
+                 histo_publish_age, first_provider_nearest, file_size_comparison
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
-from helpers.constants import RetrievalPhase
+from helpers.constants import RetrievalPhase, PlayerType
 from logs.model_logs_config import LogsConfig
 from logs import load
 from models.model_data_set import DataSet
@@ -35,10 +35,21 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     retrievals = data_set.total_completed_retrievals
 
     for phase in RetrievalPhase:
-        file_size.plot_duration(data_set, phase, f"Retreival {phase.name} duration by file size")
+        file_size_comparison.plot_duration(data_set, phase, f"Retreival {phase.name} duration by file size", PlayerType.PUBLISHER)
+        if out_target_dir is not None:
+            plt.savefig(os.path.join(out_target_dir, f"file_size_{phase.name}_durations_single_provider.png"))
+            plt.close()
+
+        file_size_comparison.plot_duration(data_set, phase, f"Retreival {phase.name} duration by file size", PlayerType.RETRIEVER)
+        if out_target_dir is not None:
+            plt.savefig(os.path.join(out_target_dir, f"file_size_{phase.name}_durations_multi_provider.png"))
+            plt.close()
+
+        file_size_comparison.plot_duration(data_set, phase, f"Retreival {phase.name} duration by file size", None)
         if out_target_dir is not None:
             plt.savefig(os.path.join(out_target_dir, f"file_size_{phase.name}_durations.png"))
             plt.close()
+
 
     for file_size in data_set.comparable_file_sizes:
         did_plot = first_provider_nearest.plot_fpn_durations(data_set, file_size)
