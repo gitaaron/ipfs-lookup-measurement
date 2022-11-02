@@ -81,7 +81,7 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     for phase in RetrievalPhase:
         histo_agent_uptime.plot(data_set, data_set.smallest_file_size, phase, f"Retrieval {phase.name} Duration by Agent Uptime")
         if out_target_dir is not None:
-            plt.savefig(os.path.join(out_target_dir, f"agent_uptime_ret_{phase.name}_comp_bar.png"))
+            plt.savefig(os.path.join(out_target_dir, f"agent_uptime_ret_{phase.name}_fs_{data_set.smallest_file_size}_comp_bar.png"))
             plt.close()
 
 
@@ -117,11 +117,21 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
             plt.savefig(os.path.join(out_target_dir, f"ret_phase_comparison_pie_fs_{file_size}.png"))
             plt.close()
 
-    bar_region_retrieval_latency.plot(data_set)
+    file_size = data_set.smallest_file_size
+    bar_region_retrieval_latency.plot(data_set, file_size, PlayerType.PUBLISHER)
     if out_target_dir is not None:
-        plt.savefig(os.path.join(out_target_dir, 'ret_region_comparison_bar.png'))
+        plt.savefig(os.path.join(out_target_dir, f"ret_region_comparison_bar_fs_{file_size}_single_provider.png"))
         plt.close()
 
+    bar_region_retrieval_latency.plot(data_set, file_size, PlayerType.RETRIEVER)
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, f"ret_region_comparison_bar_fs_{file_size}_multi_provider.png"))
+        plt.close()
+
+    bar_region_retrieval_latency.plot(data_set, file_size, None)
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, f"ret_region_comparison_bar_fs_{file_size}.png"))
+        plt.close()
 
     for file_size in data_set.comparable_file_sizes:
         timeseries_retrievals.plot_each_phase_all_regions(file_size, data_set.total_completed_retrievals, 'Retrieval Duration by Phase')
