@@ -35,21 +35,20 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     retrievals = data_set.total_completed_retrievals
 
     for phase in RetrievalPhase:
-        file_size_comparison.plot_duration(data_set, phase, f"Retreival {phase.name} duration by file size", PlayerType.PUBLISHER)
+        file_size_comparison.plot_duration(data_set, phase, f"Retrieval {phase.name} duration by File Size", PlayerType.PUBLISHER)
         if out_target_dir is not None:
             plt.savefig(os.path.join(out_target_dir, f"file_size_{phase.name}_durations_single_provider.png"))
             plt.close()
 
-        file_size_comparison.plot_duration(data_set, phase, f"Retreival {phase.name} duration by file size", PlayerType.RETRIEVER)
+        file_size_comparison.plot_duration(data_set, phase, f"Retrieval {phase.name} duration by File Size", PlayerType.RETRIEVER)
         if out_target_dir is not None:
             plt.savefig(os.path.join(out_target_dir, f"file_size_{phase.name}_durations_multi_provider.png"))
             plt.close()
 
-        file_size_comparison.plot_duration(data_set, phase, f"Retreival {phase.name} duration by file size", None)
+        file_size_comparison.plot_duration(data_set, phase, f"Retrieval {phase.name} duration by File Size", None)
         if out_target_dir is not None:
             plt.savefig(os.path.join(out_target_dir, f"file_size_{phase.name}_durations.png"))
             plt.close()
-
 
     for file_size in data_set.comparable_file_sizes:
         did_plot = first_provider_nearest.plot_fpn_durations(data_set, file_size)

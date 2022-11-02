@@ -10,6 +10,10 @@ def plot_duration_line(axl, phase: RetrievalPhase, file_size: int, retrievals: L
     retrievals = reduce.by_file_size(retrievals, file_size)
     overall_retrieval_durations = []
     highest_duration = 0
+
+    if len(retrievals) == 0:
+        return
+
     for ret in retrievals:
         duration = ret.duration(phase).total_seconds()
         if duration > highest_duration:
@@ -33,8 +37,10 @@ def plot_duration_by_region(file_size: int, phase: RetrievalPhase, data_set: Dat
         plot_duration_line(axl, phase, file_size, agent_events.completed_retrievals, agent.region)
 
     axl.set_title(f"Retrieval {phase.name} Duration by Region")
+    axl.set_xlabel('Duration (sec.)')
     axl.legend(loc='lower right')
     txt = f"File Size: {stringify.file_size(file_size)}"
+    fig.subplots_adjust(bottom=0.15)
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
 
 
@@ -43,6 +49,8 @@ def plot_phase_comparison(file_size: int, retrievals: list[Retrieval]):
     for phase in RetrievalPhase:
         plot_duration_line(axl, phase, file_size, retrievals, phase.name)
     axl.set_title('Retrieval Phase Duration Distribution')
+    axl.set_xlabel('Duration (sec.)')
     axl.legend(loc='lower right')
     txt = f"File Size: {stringify.file_size(file_size)}"
+    fig.subplots_adjust(bottom=0.15)
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)

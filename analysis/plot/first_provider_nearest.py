@@ -25,8 +25,9 @@ def plot_fpn_durations(data_set: DataSet, file_size: int) -> bool:
 
         plt.legend([b1, b2], ['fpn', 'non_fpn'], loc="upper right")
 
-        ax1.set_ylabel(None)
+        ax1.axes.get_yaxis().set_visible(False)
         ax1.set_xlabel('fpn vs non-fpn durations (sec.)')
+
         ax1.set_title('First Provider Nearest effects on Total Duration')
         txt = f"File Size: {stringify.file_size(file_size)}"
         plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)

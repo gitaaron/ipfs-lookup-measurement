@@ -49,8 +49,8 @@ def plot_total(data_set: DataSet):
     for agent,agent_events in data_set.agent_events_map.items():
         total(axl, agent_events.publications, agent.region)
 
-    axl.set_title('Publish Total Duration by Region (fig. a)')
-    axl.set_ylabel('Duration (sec).')
+    axl.set_title('Publish Total Duration by Region')
+    axl.set_xlabel('Duration (sec).')
     axl.legend(loc='lower right')
 
 def plot_getting_closest_peers(data_set: DataSet):
@@ -59,8 +59,8 @@ def plot_getting_closest_peers(data_set: DataSet):
     for agent,agent_events in data_set.agent_events_map.items():
         getting_closest_peers_phase(axl, agent_events.publications, agent.region)
 
-    axl.set_title('Publish Getting Closest Peer Duration by Region (fig. b)')
-    axl.set_ylabel('Duration (sec).')
+    axl.set_title('Publish Getting Closest Peer Duration by Region')
+    axl.set_xlabel('Duration (sec).')
     axl.legend(loc='lower right')
 
 def plot_total_add_provider(data_set: DataSet):
@@ -70,5 +70,5 @@ def plot_total_add_provider(data_set: DataSet):
         total_add_provider_phase(axl, agent_events.publications, agent.region)
 
     axl.set_title('Publish Total Add Provider Duration by Region')
-    axl.set_ylabel('Duration (sec).')
+    axl.set_xlabel('Duration (sec).')
     axl.legend(loc='lower right')

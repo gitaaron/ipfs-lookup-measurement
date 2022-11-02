@@ -26,7 +26,7 @@ def plot_duration(data_set: DataSet, phase: RetrievalPhase, title: str, main_pla
 
     ax1.bar(file_size_labels, durations)
 
-    ax1.set_ylabel(f"{phase.name} duration (sec.)")
+    ax1.set_ylabel(f"Average Duration (sec.)")
     ax1.set_title(title)
 
     if main_player is not None:
