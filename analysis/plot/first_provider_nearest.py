@@ -29,7 +29,7 @@ def plot_fpn_durations(data_set: DataSet, file_size: int) -> bool:
         ax1.set_xlabel('fpn vs non-fpn durations (sec.)')
 
         ax1.set_title('First Provider Nearest effects on Total Duration')
-        txt = f"File Size: {stringify.file_size(file_size)}"
+        txt = f"File Size: {stringify.file_size(file_size)}, Sample Size: [fpn={len(fpn_rs)},non_fpn={len(non_fpn_rs)}]"
         plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
         return True
 
@@ -59,7 +59,7 @@ def plot_fpn_durations_by_phase(data_set: DataSet, file_size: int) -> bool:
 
         ax1.set_ylabel('fpn vs non-fpn durations (sec.)')
         ax1.set_title('First Provider Nearest effects on Duration by Phase')
-        txt = f"File Size: {stringify.file_size(file_size)}"
+        txt = f"File Size: {stringify.file_size(file_size)}, Sample Size: [fpn={len(fpn_rs)},non_fpn={len(non_fpn_rs)}]"
         plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
         return True
 
@@ -80,10 +80,14 @@ def plot_fpn_likelihood(data_set: DataSet):
     ax1.set_ylabel(None)
     ax1.set_xlabel('Ratio of fpn vs non-fpn')
     ax1.set_title('First Provider Nearest Likelihood')
+    txt = f"Sample Size: {num_fpn + num_non_fpn}"
+    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
+
 
 def plot_fpn_likelihood_by_region(data_set: DataSet):
     plt.rcdefaults()
     fig1, ax1 = plt.subplots(figsize=(9,6), dpi=80)
+    sample_size = 0
 
     region_labels = []
 
@@ -110,3 +114,5 @@ def plot_fpn_likelihood_by_region(data_set: DataSet):
     ax1.set_ylabel('Ratio of fpn vs non-fpn')
 
     ax1.set_title('First Provider Nearest Likelihood by Region')
+    txt = f"Sample Size: {sum(regions_num_fpns)+sum(regions_num_non_fpns)}"
+    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)

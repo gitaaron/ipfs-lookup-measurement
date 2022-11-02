@@ -13,12 +13,15 @@ def plot(data_set: DataSet, file_size: int, main_player: PlayerType):
 
     regions_average_retrieval_duration = []
 
+    sample_size = 0
+
     for agent, agent_events in data_set.agent_events_map.items():
         retrievals = reduce.by_file_size(agent_events.completed_retrievals, file_size)
         if main_player is not None:
             retrievals = reduce.by_main_player(retrievals, main_player)
 
         if len(retrievals) > 0:
+            sample_size += len(retrievals)
             region_labels.append(agent.region)
             total_retrieval_durations = [ret.duration(RetrievalPhase.TOTAL).total_seconds() for ret in retrievals]
             regions_average_retrieval_duration.append(np.average(total_retrieval_durations))
@@ -35,7 +38,7 @@ def plot(data_set: DataSet, file_size: int, main_player: PlayerType):
     ax1.set_ylabel('Average Duration (sec.)')
     ax1.set_title('Retrieval Duration by Region')
 
-    txt = f"File Size: {stringify.file_size(file_size)}"
+    txt = f"File Size: {stringify.file_size(file_size)}, Sample Size: {sample_size}"
 
     if main_player is not None:
         if main_player==PlayerType.RETRIEVER:

@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from models.model_data_set import DataSet
 
 
-
 def total(axl, publications: List[Publication], label: str):
     overall_publication_durations = []
     for pub in publications:
@@ -43,32 +42,45 @@ def total_add_provider_phase(axl, publications: List[Publication], label: str):
 
     axl.plot(bin_edges[:-1], cdf, label=label)
 
+def _add_sample_size(sample_size, fig):
+    txt = f"Sample Size: {sample_size}"
+    fig.subplots_adjust(bottom=0.15)
+    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=8)
+
 def plot_total(data_set: DataSet):
     fig, axl = plt.subplots()
-
+    sample_size = 0
     for agent,agent_events in data_set.agent_events_map.items():
+        sample_size += len(agent_events.publications)
         total(axl, agent_events.publications, agent.region)
 
     axl.set_title('Publish Total Duration by Region')
     axl.set_xlabel('Duration (sec).')
     axl.legend(loc='lower right')
+    _add_sample_size(sample_size, fig)
 
 def plot_getting_closest_peers(data_set: DataSet):
     fig, axl = plt.subplots()
-
+    sample_size = 0
     for agent,agent_events in data_set.agent_events_map.items():
+        sample_size += len(agent_events.publications)
         getting_closest_peers_phase(axl, agent_events.publications, agent.region)
 
     axl.set_title('Publish Getting Closest Peer Duration by Region')
     axl.set_xlabel('Duration (sec).')
     axl.legend(loc='lower right')
+    _add_sample_size(sample_size, fig)
 
 def plot_total_add_provider(data_set: DataSet):
     fig, axl = plt.subplots()
 
+    sample_size = 0
+
     for agent,agent_events in data_set.agent_events_map.items():
+        sample_size += len(agent_events.publications)
         total_add_provider_phase(axl, agent_events.publications, agent.region)
 
     axl.set_title('Publish Total Add Provider Duration by Region')
     axl.set_xlabel('Duration (sec).')
     axl.legend(loc='lower right')
+    _add_sample_size(sample_size, fig)

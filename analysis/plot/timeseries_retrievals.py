@@ -27,6 +27,9 @@ def plot_num_providers(retrievals:List[Retrieval], title: str):
     ax = DF.plot(x_compat=True, rot=90, figsize=(16, 5),)
     ax.set_ylabel('Number Providers found during Retrieval')
     ax.set_title(title)
+    txt = f"Sample Size: {len(retrievals)}"
+    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
+
 
 def plot_duration_each_region(file_size: int, phase: RetrievalPhase, data_set: DataSet, title: str):
     retrievals = reduce.by_file_size(data_set.total_completed_retrievals, file_size)
@@ -51,7 +54,7 @@ def plot_duration_each_region(file_size: int, phase: RetrievalPhase, data_set: D
     ax = DF.plot(x_compat=True, rot=90, figsize=(16, 5),)
     ax.set_ylabel('Duration (sec.)')
     ax.set_title(title)
-    txt = f"File Size: {stringify.file_size(file_size)}"
+    txt = f"File Size: {stringify.file_size(file_size)}, Sample Size: {len(retrievals)}"
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
 
 def plot_each_phase_all_regions(file_size: int, retrievals:List[Retrieval], title: str):
@@ -93,5 +96,5 @@ def plot_each_phase_all_regions(file_size: int, retrievals:List[Retrieval], titl
     ax = DF.plot(x_compat=True, rot=90, figsize=(16, 5),)
     ax.set_ylabel('Duration (sec.)')
     ax.set_title(title)
-    txt = f"File Size: {stringify.file_size(file_size)}"
+    txt = f"File Size: {stringify.file_size(file_size)}, Sample Size: {len(retrievals)}"
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)

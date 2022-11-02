@@ -7,7 +7,6 @@ from helpers import stringify
 
 
 def plot(retrievals: List[Retrieval], file_size: int):
-
     total_initiated_duration = 0
     total_getting_closest_peers_duration = 0
     total_dialing_duration = 0
@@ -28,5 +27,5 @@ def plot(retrievals: List[Retrieval], file_size: int):
     ax1.pie(phases, labels=labels, autopct='%1.1f%%')
     ax1.axis('equal')
     ax1.set_title('Retrieval Phase Duration Comparison')
-    txt = f"File Size: {stringify.file_size(file_size)}"
+    txt = f"File Size: {stringify.file_size(file_size)}, Sample Size: {len(retrievals)}"
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
