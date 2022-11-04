@@ -39,7 +39,8 @@ def plot_duration_by_region(file_size: int, phase: RetrievalPhase, data_set: Dat
     for agent,agent_events in data_set.agent_events_map.items():
         sample_size += plot_duration_line(axl, phase, file_size, agent_events.completed_retrievals, agent.region)
 
-    axl.set_title(f"Retrieval {phase.name} Duration by Region")
+    axl.set_title(f"CDF of TOTAL {phase.name} Duration by Region")
+    axl.set_ylabel('Number of Retrievals in %')
     axl.set_xlabel('Duration (sec.)')
     axl.legend(loc='lower right')
     txt = f"File Size: {stringify.file_size(file_size)}, Sample Size: {sample_size}"
@@ -52,7 +53,8 @@ def plot_phase_comparison(file_size: int, retrievals: list[Retrieval]):
     sample_size = 0
     for phase in RetrievalPhase:
         sample_size += plot_duration_line(axl, phase, file_size, retrievals, phase.name)
-    axl.set_title('Retrieval Phase Duration Distribution')
+    axl.set_title('CDF of Duration by Phase')
+    axl.set_ylabel('Number of Retrievals in %')
     axl.set_xlabel('Duration (sec.)')
     axl.legend(loc='lower right')
     txt = f"File Size: {stringify.file_size(file_size)}, Sample Size: {sample_size}"
