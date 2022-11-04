@@ -39,7 +39,7 @@ def plot_duration_by_region(file_size: int, phase: RetrievalPhase, data_set: Dat
     for agent,agent_events in data_set.agent_events_map.items():
         sample_size += plot_duration_line(axl, phase, file_size, agent_events.completed_retrievals, agent.region)
 
-    axl.set_title(f"CDF of TOTAL {phase.name} Duration by Region")
+    axl.set_title(f"CDF of {phase.name} Duration by Region")
     axl.set_ylabel('Number of Retrievals in %')
     axl.set_xlabel('Duration (sec.)')
     axl.legend(loc='lower right')
