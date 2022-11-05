@@ -25,6 +25,10 @@ def getContainerDir(download_dir):
             print(f"{d} is not an int")
             print(e)
 
+    # roll over logs after about two weeks
+    if num > 84:
+        num = 0
+
     return str(num+1)
 
 def writeAnalysisConfig(root_dir_path, latest_dir_name):
@@ -41,14 +45,14 @@ def downloadLogs(download_dir, sinceHours, nodes):
 
     for i in nodes:
         logFile = "%s/ipfs-%s.log" % (output_dir, nodes[i])
-        cmd = """ logcli query --limit=987654321 --since=%dh --output=jsonl '{host="node%d",filename=~".*/all.log"}' > %s """ % (
+        cmd = """ logcli query --limit=987654321 --retries=2 --since=%dh --output=jsonl '{host="node%d",filename=~".*/all.log"}' > %s """ % (
             sinceHours, i, logFile)
         print(cmd)
         run(cmd, shell=True)
 
 
         logFile = "%s/agent-%s.log" % (output_dir, nodes[i])
-        cmd = """ logcli query --limit=987654321 --since=%dh --output=jsonl '{host="node%d",filename=~".*/agent.log"}' > %s """ % (
+        cmd = """ logcli query --limit=987654321 --retries=2 --since=%dh --output=jsonl '{host="node%d",filename=~".*/agent.log"}' > %s """ % (
             sinceHours, i, logFile)
         print(cmd)
 
@@ -73,7 +77,7 @@ if __name__ == "__main__":
     since = os.getenv('SINCE', '4')
 
     downloadLogs(
-        os.getenv('DOWNLOAD_DIR', '/tmp/dht_lookup/logs'),
+        os.getenv('DOWNLOAD_DIR', os.path.join(os.getcwd(), 'logs')),
         int(since),
         nodes
     )
