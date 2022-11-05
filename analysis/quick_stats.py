@@ -9,8 +9,8 @@ from pickled.model_retrieval import Retrieval
 from helpers import calc, reduce, constants
 
 def execute(logs_config: LogsConfig) -> dict:
-    data_set: DataSet = load.latest_data_set(logs_config)
-    #data_set: DataSet = load.complete_data_set(logs_config)
+    #data_set: DataSet = load.latest_data_set(logs_config)
+    data_set: DataSet = load.complete_data_set(logs_config)
 
     publications: list[Publication] = data_set.total_publications
     completed_retrievals: list[Retrieval] = data_set.total_completed_retrievals
@@ -55,9 +55,13 @@ def execute(logs_config: LogsConfig) -> dict:
     hfs = reduce.by_has_file_size(completed_retrievals)
 
     if len(hfs) > 0:
-        stats['has_file_size'] = len(hfs)
-        stats['file_size_avg_duration'] = calc.avg_duration_from_breakdowns(data_set.unique_file_sizes)
-
+        fstats = {}
+        fstats['has_file_size'] = len(hfs)
+        fstats['counts'] = calc.count_from_breakdown(data_set.comparable_file_size_retrievals)
+        fstats['avg_phase_durations'] = calc.avg_phase_duration_from_breakdown(data_set.comparable_file_size_retrievals)
+        fstats['standard_deviations'] = calc.std_from_breakdown(data_set.comparable_file_size_retrievals)
+        fstats['percent_slow'] = calc.percent_slow_phase_breakdown_from_breakdown(data_set.comparable_file_size_retrievals)
+        stats['file_size'] = fstats
 
 
     has_publish_age = data_set.has_publish_age_retrievals

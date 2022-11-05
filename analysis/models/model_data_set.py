@@ -46,6 +46,7 @@ class DataSet:
         self._has_publish_age_retrievals: list[Retrieval] = None
         self._publish_age_stats: dict = None
         self._publish_age_retrievals: list[Retrieval] = None
+        self._comparable_file_size_retrievals: dict[int, list[Retrieval]]= None
 
         self.regions = []
         self._peer_agent_map = {}
@@ -101,6 +102,20 @@ class DataSet:
 
         return self._has_first_provider_retrievals
 
+    @property
+    def comparable_file_size_retrievals(self):
+        if(self._comparable_file_size_retrievals) is None:
+            self._comparable_file_size_retrievals = {}
+            for ret in self.total_completed_retrievals:
+                if ret.file_size is None or ret.file_size == 52439:
+                    continue
+                if ret.file_size not in self._comparable_file_size_retrievals:
+                    self._comparable_file_size_retrievals[ret.file_size] = [ret]
+                else:
+                    self._comparable_file_size_retrievals[ret.file_size].append(ret)
+
+        return self._comparable_file_size_retrievals
+
     def _set_completed_stats(self):
 
         if self._unique_file_sizes is None or self._phase_durations is None or self._uptime_durations:
@@ -153,13 +168,7 @@ class DataSet:
 
     @property
     def comparable_file_sizes(self):
-        self._set_completed_stats()
-        cpy = self._unique_file_sizes.copy()
-        if 52439 in cpy:
-            del(cpy[52439])
-        if None in cpy:
-            del(cpy[None])
-        cpy = list(cpy.keys())
+        cpy = list(self.comparable_file_size_retrievals.keys())
         cpy.sort()
         return cpy
 

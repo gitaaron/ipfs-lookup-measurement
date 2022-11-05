@@ -23,13 +23,67 @@ def avg_duration_from_breakdown(breakdown: dict[str, float]):
     return avg_duration
 
 
-def avg_duration_from_breakdowns(breakdowns: dict[int,  dict[str, float]]):
+def count_from_breakdown(breakdown: dict[int, list[Retrieval]]):
+    counts = {}
+    for b_key, b_val in breakdown.items():
+        counts[b_key] = len(b_val)
+
+    return counts
+
+def avg_phase_duration_breakdown(retrievals: list[Retrieval]):
+    b = {}
+    for phase in RetrievalPhase:
+        b[phase] = Duration(avg_duration(retrievals, phase))
+    return b
+
+def avg_phase_duration_from_breakdown(breakdown: dict[int,  list[Retrieval]]):
     avg_durations = {}
-    for b_key, b_val in breakdowns.items():
-        avg_durations[b_key] = avg_duration_from_breakdown(b_val)
+    for b_key, b_val in breakdown.items():
+        avg_durations[b_key] = avg_phase_duration_breakdown(b_val)
 
     return avg_durations
 
+def std_breakdown(retrievals: list[Retrieval]):
+    phases = {}
+    for phase in RetrievalPhase:
+        durations = [ret.duration(phase).total_seconds() for ret in retrievals]
+        phases[phase] = round(np.std(durations), 3)
+
+    return phases
+
+def std_from_breakdown(breakdown: dict[int, list[Retrieval]]):
+    stds = {}
+    for b_key, rets in breakdown.items():
+        stds[b_key] = std_breakdown(rets)
+
+    return stds
+
+# calculate percentage of retrievals that are more than two std slower than mean
+def percent_slow(retrievals: list[Retrieval], phase: RetrievalPhase):
+    durations = [ret.duration(phase).total_seconds() for ret in retrievals]
+    std = np.std(durations)
+    mean = np.mean(durations)
+    slow = mean+std
+    count = 0
+    for ret in retrievals:
+        if ret.duration(phase).total_seconds() > slow:
+            count += 1
+
+    return round(count / len(retrievals) * 100, 3)
+
+def percent_slow_breakdown(retrievals: list[Retrieval]):
+    percents = {}
+    for phase in RetrievalPhase:
+        percents[phase] = percent_slow(retrievals, phase)
+
+    return percents
+
+def percent_slow_phase_breakdown_from_breakdown(breakdown: dict[int, list[Retrieval]]):
+    percents = {}
+    for b_key, rets in breakdown.items():
+        percents[b_key] =  percent_slow_breakdown(rets)
+
+    return percents
 
 def avg_duration_non_first_provider_nearest(data_set: DataSet) -> float:
     non_fpn_retrievals = data_set.non_first_provider_nearest_retrievals
