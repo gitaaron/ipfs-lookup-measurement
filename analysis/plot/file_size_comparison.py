@@ -12,10 +12,7 @@ def plot_duration(data_set: DataSet, phase: RetrievalPhase, title: str, main_pla
 
     retrievals = data_set.total_completed_retrievals
 
-    sorted_fs = list(data_set.unique_file_sizes.keys())
-    # ignore delayed retrievals and missing file_size
-    sorted_fs = list(filter(lambda fs: fs is not None and fs != 52439, sorted_fs))
-    sorted_fs.sort()
+    sorted_fs = data_set.comparable_file_sizes
 
     for file_size in sorted_fs:
         f_rets = reduce.by_file_size(retrievals, file_size)

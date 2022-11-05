@@ -159,6 +159,8 @@ class DataSet:
             del(cpy[52439])
         if None in cpy:
             del(cpy[None])
+        cpy = list(cpy.keys())
+        cpy.sort()
         return cpy
 
     @property
