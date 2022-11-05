@@ -1,8 +1,8 @@
 from pickled.model_retrieval import Retrieval
-from helpers.constants import RetrievalPhase, PlayerType
+from helpers.constants import RetrievalPhase, PlayerType, SLOW_THRESHOLD
 
 def by_slow_retrievals(retrievals: list[Retrieval]) -> list[Retrieval]:
-    return list(filter(lambda ret: (ret.duration(RetrievalPhase.TOTAL).total_seconds() > constants.SLOW_THRESHOLD), retrievals))
+    return list(filter(lambda ret: (ret.duration(RetrievalPhase.TOTAL).total_seconds() > SLOW_THRESHOLD), retrievals))
 
 def by_has_file_size(retrievals: list[Retrieval]) -> list[Retrieval]:
     return list(filter(lambda ret: (ret.file_size is not None), retrievals))
