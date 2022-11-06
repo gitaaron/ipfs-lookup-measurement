@@ -125,7 +125,7 @@ func handleLookup(data []byte) (byte, []byte, error) {
 	if sh == nil {
 		return 0, nil, fmt.Errorf("error getting local ipfs shell")
 	}
-	sh.SetTimeout(20 * time.Second)
+	sh.SetTimeout(35 * time.Second)
 
 	// write cid to a file
 	err := os.WriteFile(fmt.Sprintf("lookup-%v", cid), []byte{1}, 0644)
