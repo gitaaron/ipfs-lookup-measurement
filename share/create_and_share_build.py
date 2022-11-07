@@ -57,6 +57,9 @@ def share_figs_folder_to_ipfs(target_figs_dir):
 
 def create_fig_page(figs_dir_name, target_figs_dir, meta_info):
 
+    if 'sections' not in meta_info:
+        return
+
     fig_page = open(os.path.join(target_figs_dir, 'index.html'), 'w')
     fig_page.write(f"""
     <html>
