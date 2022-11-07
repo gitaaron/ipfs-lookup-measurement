@@ -6,7 +6,7 @@ from models.model_data_set import DataSet
 from helpers.constants import RetrievalPhase
 from helpers import reduce, stringify
 
-def plot_duration_line(axl, phase: RetrievalPhase, file_size: int, retrievals: List[Retrieval], label: str) -> int:
+def plot_duration_line(axl, phase: RetrievalPhase, file_size: int, retrievals: List[Retrieval], label: str, include_size: bool) -> int:
     retrievals = reduce.by_file_size(retrievals, file_size)
     overall_retrieval_durations = []
     highest_duration = 0
@@ -29,6 +29,9 @@ def plot_duration_line(axl, phase: RetrievalPhase, file_size: int, retrievals: L
     dx = bin_edges[1]-bin_edges[0]
     cdf = np.cumsum(hist)*dx
 
+    if include_size:
+        label = f"{label} ({len(retrievals)})"
+
     axl.plot(bin_edges[:-1], cdf, label=label)
 
     return len(retrievals)
@@ -37,7 +40,7 @@ def plot_duration_by_region(file_size: int, phase: RetrievalPhase, data_set: Dat
     fig, axl = plt.subplots()
     sample_size = 0
     for agent,agent_events in data_set.agent_events_map.items():
-        sample_size += plot_duration_line(axl, phase, file_size, agent_events.completed_retrievals, agent.region)
+        sample_size += plot_duration_line(axl, phase, file_size, agent_events.completed_retrievals, agent.region, True)
 
     axl.set_title(f"CDF of {phase.name} Duration by Region")
     axl.set_ylabel('Number of Retrievals in %')
@@ -52,7 +55,7 @@ def plot_phase_comparison(file_size: int, retrievals: list[Retrieval]):
     fig, axl = plt.subplots()
     sample_size = 0
     for phase in RetrievalPhase:
-        sample_size += plot_duration_line(axl, phase, file_size, retrievals, phase.name)
+        sample_size = plot_duration_line(axl, phase, file_size, retrievals, phase.name, False)
     axl.set_title('CDF of Duration by Phase')
     axl.set_ylabel('Number of Retrievals in %')
     axl.set_xlabel('Duration (sec.)')
