@@ -20,6 +20,9 @@ FIGS_ROOT_DIR = '../analysis/figs'
 def printDate(d):
     return d.strftime('%d-%m-%Y %H:%M')
 
+def toLink(name):
+    return name.replace(' ', '_').lower()
+
 def create_index_page(build_dir, meta_info_list):
     index_page = open(os.path.join(build_dir, 'home/index.html'), 'w')
     index_page.write("""
@@ -53,19 +56,33 @@ def share_figs_folder_to_ipfs(target_figs_dir):
 
 
 def create_fig_page(figs_dir_name, target_figs_dir, meta_info):
+
     fig_page = open(os.path.join(target_figs_dir, 'index.html'), 'w')
     fig_page.write(f"""
     <html>
         <body>
             <h1>IPFS Measurement Figures</h1>
             <h2>{printDate(meta_info['started_at'])} to {printDate(meta_info['ended_at'])}</h2>
+            <h2>Table of Contents</h2>
+            <ul>
     """)
-    image_pat = r'%s/*.png' % target_figs_dir
-    for fig in glob.glob(image_pat):
-        figName = fig.split('/')[-1]
+
+    for section_name, section_file_names in meta_info['sections'].items():
         fig_page.write(f'''
-            <img src="./{figName}" /><br />
+                <li><a href="#{toLink(section_name)}">{section_name}</a></li>
         ''')
+
+    fig_page.write('</ul>')
+
+    for section_name, section_file_names in meta_info['sections'].items():
+        fig_page.write(f'''
+            <h2 id="{toLink(section_name)}">{section_name}</h2>
+        ''')
+        for file_name in section_file_names:
+            fig_page.write(f'''
+                <img src="./{file_name}" /><br />
+            ''')
+
 
     fig_page.write("""
         </body>
@@ -112,7 +129,10 @@ def create_build():
         print('figs_dir : %s' % figs_dir)
         target_figs_dir = os.path.join(build_dir, figs_dir)
         source_figs_dir = os.path.join(FIGS_ROOT_DIR, figs_dir)
-        shutil.copytree(source_figs_dir, target_figs_dir, dirs_exist_ok=True)
+        # rm target if it exists
+        if os.path.exists(target_figs_dir) and os.path.isdir(target_figs_dir):
+            shutil.rmtree(target_figs_dir)
+        shutil.copytree(source_figs_dir, target_figs_dir)
         try:
             figs_info = pickle.load(open(os.path.join(target_figs_dir, 'meta.p'), 'rb'))
             figs_info['name'] = figs_dir
