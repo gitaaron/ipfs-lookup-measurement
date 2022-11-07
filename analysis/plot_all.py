@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency,\
                  pie_phase_retrieval_latency, timeseries_retrievals, histo_agent_uptime,\
-                 histo_publish_age, first_provider_nearest, file_size_comparison
+                 histo_publish_age, first_provider_nearest, file_size_comparison, scatter
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
 from helpers.constants import RetrievalPhase, PlayerType
@@ -33,6 +33,21 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     publications = data_set.total_publications
     retrievals = data_set.total_completed_retrievals
+
+    scatter.plot_phases(data_set, RetrievalPhase.GETTING_CLOSEST_PEERS, RetrievalPhase.DIALING, data_set.smallest_file_size)
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, f"phase_correlation_{RetrievalPhase.GETTING_CLOSEST_PEERS.name}_vs_{RetrievalPhase.DIALING}_fs_{data_set.smallest_file_size}.png"))
+        plt.close()
+
+    scatter.plot_phases(data_set, RetrievalPhase.GETTING_CLOSEST_PEERS, RetrievalPhase.FETCHING, data_set.smallest_file_size)
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, f"phase_correlation_{RetrievalPhase.GETTING_CLOSEST_PEERS.name}_vs_{RetrievalPhase.FETCHING}_fs_{data_set.smallest_file_size}.png"))
+        plt.close()
+
+    scatter.plot_phases(data_set, RetrievalPhase.DIALING, RetrievalPhase.FETCHING, data_set.smallest_file_size)
+    if out_target_dir is not None:
+        plt.savefig(os.path.join(out_target_dir, f"phase_correlation_{RetrievalPhase.DIALING.name}_vs_{RetrievalPhase.FETCHING}_fs_{data_set.smallest_file_size}.png"))
+        plt.close()
 
     for phase in RetrievalPhase:
         file_size_comparison.plot_duration(data_set, phase, f"Retrieval {phase.name} duration by File Size", PlayerType.PUBLISHER)
