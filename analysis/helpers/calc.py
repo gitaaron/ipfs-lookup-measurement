@@ -140,7 +140,7 @@ def agent_uptime_percent_slow_bins(data_set: DataSet, phase: RetrievalPhase) -> 
     width=(edges[1] - edges[0])*0.9
     return edges[:-1], sorted_percent_slow, width, sample_sizes
 
-def agent_uptime_duration_bins(data_set: DataSet, file_size: int, phase: RetrievalPhase) -> tuple[list[float], list[float], float, int]:
+def agent_uptime_duration_bins(data_set: DataSet, file_size: int, phase: RetrievalPhase) -> tuple[list[float], list[float], float, list[int]]:
     retrievals = data_set.retrievals_has_uptime
     retrievals = reduce.by_file_size(retrievals, file_size)
     d = data_set.agent_uptime_durations
@@ -158,10 +158,12 @@ def agent_uptime_duration_bins(data_set: DataSet, file_size: int, phase: Retriev
 
     bucket_avgs = {}
 
+    sample_sizes = []
     for b,durations in buckets.items():
         bucket_avgs[b] = np.mean(durations)
+        sample_sizes.append(len(durations))
 
     sorted_avgs = [bucket_avgs.get(i, 0) for i in range(1, len(edges))]
 
     width=(edges[1] - edges[0])*0.9
-    return edges[:-1], sorted_avgs, width, len(retrievals)
+    return edges[:-1], sorted_avgs, width, sample_sizes
