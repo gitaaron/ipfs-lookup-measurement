@@ -3,7 +3,7 @@ import pickle
 from typing import List
 import matplotlib.pyplot as plt
 from pathlib import Path
-from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency,\
+from plot import cdf_retrievals, cdf_publications, regions,\
                  pie_phase_retrieval_latency, timeseries_retrievals, agent_uptime,\
                  publish_age, first_provider_nearest, file_size_comparison, scatter
 from pickled.model_publication import Publication
@@ -149,16 +149,14 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         saveFig(out_target_dir, section_name, f"ret_phase_comparison_pie_fs_{file_size}.png")
 
 
-    section_name = 'Region Comparisons'
+    section_name = 'Regional Comparisons'
+
+    regions.plot_histo_percent_slow(data_set)
+    saveFig(out_target_dir, section_name, f"percent_slow_region_comparison_bar.png")
+
     file_size = data_set.smallest_file_size
-    bar_region_retrieval_latency.plot(data_set, file_size, PlayerType.PUBLISHER)
-    saveFig(out_target_dir, section_name, f"ret_region_comparison_bar_fs_{file_size}_single_provider.png")
-
-    bar_region_retrieval_latency.plot(data_set, file_size, PlayerType.RETRIEVER)
-    saveFig(out_target_dir, section_name, f"ret_region_comparison_bar_fs_{file_size}_multi_provider.png")
-
-    bar_region_retrieval_latency.plot(data_set, file_size, None)
-    saveFig(out_target_dir, section_name, f"ret_region_comparison_bar_fs_{file_size}.png")
+    regions.plot_histo_duration(data_set, file_size)
+    saveFig(out_target_dir, section_name, f"duration_region_comparison_bar_fs_{file_size}.png")
 
     section_name = 'Trends'
 
