@@ -123,22 +123,25 @@ def agent_uptime_percent_slow_bins(data_set: DataSet, phase: RetrievalPhase) -> 
     edges = np.linspace(d['min'].duration, d['max'].duration + 1e-12, 5)
     bucket_locations = np.digitize(agent_uptimes, edges)
     buckets = {}
+    for bl in range(5):
+        buckets[bl] = []
+
     for idx,ret in enumerate(retrievals):
         bl = bucket_locations[idx]
-        if bl not in buckets:
-            buckets[bl] = []
         buckets[bl].append(ret)
 
-    sample_sizes = []
+    sample_sizes = {}
     buckets_percent_slow = {}
     for b,retrievals in buckets.items():
-        buckets_percent_slow[b] = data_set.percent_slow(retrievals, phase)
-        sample_sizes.append(len(retrievals))
+        if len(retrievals)>0:
+            buckets_percent_slow[b] = data_set.percent_slow(retrievals, phase)
+        sample_sizes[b] = len(retrievals)
 
     sorted_percent_slow = [buckets_percent_slow.get(i, 0) for i in range(1, len(edges))]
+    sorted_sample_sizes = [sample_sizes.get(i, 0) for i in range(1, len(edges))]
 
     width=(edges[1] - edges[0])*0.9
-    return edges[:-1], sorted_percent_slow, width, sample_sizes
+    return edges[:-1], sorted_percent_slow, width, sorted_sample_sizes
 
 def agent_uptime_duration_bins(data_set: DataSet, file_size: int, phase: RetrievalPhase) -> tuple[list[float], list[float], float, list[int]]:
     retrievals = data_set.retrievals_has_uptime
@@ -147,23 +150,23 @@ def agent_uptime_duration_bins(data_set: DataSet, file_size: int, phase: Retriev
     agent_uptimes = [ret.agent_uptime/1000 for ret in retrievals]
     edges = np.linspace(d['min'].duration, d['max'].duration + 1e-12, 5)
     bucket_locations = np.digitize(agent_uptimes, edges)
-
     buckets = {}
-
+    for bl in range(5):
+        buckets[bl] = []
     for idx,ret in enumerate(retrievals):
         bl = bucket_locations[idx]
-        if bl not in buckets:
-            buckets[bl] = []
         buckets[bl].append(ret.duration(phase).total_seconds())
 
     bucket_avgs = {}
 
-    sample_sizes = []
+    sample_sizes = {}
     for b,durations in buckets.items():
         bucket_avgs[b] = np.mean(durations)
-        sample_sizes.append(len(durations))
+        sample_sizes[b] = len(durations)
 
     sorted_avgs = [bucket_avgs.get(i, 0) for i in range(1, len(edges))]
+    sorted_sample_sizes = [sample_sizes.get(i, 0) for i in range(1, len(edges))]
+
 
     width=(edges[1] - edges[0])*0.9
-    return edges[:-1], sorted_avgs, width, sample_sizes
+    return edges[:-1], sorted_avgs, width, sorted_sample_sizes
