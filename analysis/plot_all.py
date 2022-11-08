@@ -68,24 +68,24 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         file_size_comparison.plot_duration(data_set, phase, f"Retrieval {phase.name} duration by File Size", None)
         saveFig(out_target_dir, section_name, f"file_size_{phase.name}_durations.png")
 
+    section_name = 'First Provider Nearest Percent Slow'
+    did_plot = first_provider_nearest.plot_percent_slow_by_phase(data_set)
+    if did_plot:
+        saveFig(out_target_dir, section_name, f"fpn_percent_slow_by_phase.png")
+
     section_name = 'First Provider Nearest Durations'
     for file_size in data_set.comparable_file_sizes:
-        did_plot = first_provider_nearest.plot_fpn_durations(data_set, file_size)
-        if did_plot:
-            saveFig(out_target_dir, section_name, f"fpn_durations_fs_{file_size}.png")
-
-        did_plot = first_provider_nearest.plot_fpn_durations_by_phase(data_set, file_size)
+        did_plot = first_provider_nearest.plot_durations_by_phase(data_set, file_size)
         if did_plot:
             saveFig(out_target_dir, section_name, f"fpn_durations_by_phase_fs_{file_size}.png")
 
     section_name = 'First Provider Nearest Likelihood'
 
-    first_provider_nearest.plot_fpn_likelihood(data_set)
+    first_provider_nearest.plot_likelihood(data_set)
     saveFig(out_target_dir, section_name, f"fpn_likelihood.png")
 
     first_provider_nearest.plot_fpn_likelihood_by_region(data_set)
     saveFig(out_target_dir, section_name, f"fpn_likelihood_by_region.png")
-
 
     section_name = 'Publish Age'
 
@@ -99,7 +99,6 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         histo_agent_uptime.plot(data_set, data_set.smallest_file_size, phase, f"Retrieval {phase.name} Duration by Agent Uptime")
         saveFig(out_target_dir, section_name, f"agent_uptime_ret_{phase.name}_fs_{data_set.smallest_file_size}_comp_bar.png")
 
-
     section_name = 'CDF Publications'
 
     cdf_publications.plot_total(data_set)
@@ -110,7 +109,6 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     cdf_publications.plot_total_add_provider(data_set)
     saveFig(out_target_dir, section_name, 'pvd_total_add_provider.png')
-
 
     for file_size in data_set.comparable_file_sizes:
         section_name = 'CDF Retrievals by Region'
@@ -125,6 +123,7 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         section_name = 'Phase Comparisons'
         pie_phase_retrieval_latency.plot(retrievals, file_size)
         saveFig(out_target_dir, section_name, f"ret_phase_comparison_pie_fs_{file_size}.png")
+
 
     section_name = 'Region Comparisons'
     file_size = data_set.smallest_file_size

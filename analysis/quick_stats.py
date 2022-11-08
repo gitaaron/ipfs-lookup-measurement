@@ -6,7 +6,7 @@ from models.model_data_set import DataSet
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
 
-from helpers import calc, reduce, constants
+from helpers import calc, breakdowns, reduce, constants
 
 def execute(logs_config: LogsConfig) -> dict:
     #data_set: DataSet = load.latest_data_set(logs_config)
@@ -23,7 +23,7 @@ def execute(logs_config: LogsConfig) -> dict:
     stats['num_many_providers'] = many_providers_count
     stats['num_single_provider'] = single_provider_count
     stats['average_providers_per_retrieval'] = avg_providers
-    stats['phase_avg_duration'] = calc.avg_duration_from_breakdown({'count': len(data_set.total_completed_retrievals), 'durations':data_set.phase_durations})
+    stats['phase_avg_duration'] = breakdowns.avg_duration_from_breakdown({'count': len(data_set.total_completed_retrievals), 'durations':data_set.phase_durations})
 
     if many_providers_count > 0 and len(data_set.first_provider_nearest_retrievals) > 0:
         stats['first_provider_nearest[fpn]'] = calc.first_provider_nearest_stats(data_set)
@@ -57,10 +57,10 @@ def execute(logs_config: LogsConfig) -> dict:
     if len(hfs) > 0:
         fstats = {}
         fstats['has_file_size'] = len(hfs)
-        fstats['counts'] = calc.count_from_breakdown(data_set.comparable_file_size_retrievals)
-        fstats['avg_phase_durations'] = calc.avg_phase_duration_from_breakdown(data_set.comparable_file_size_retrievals)
-        fstats['standard_deviations'] = calc.std_from_breakdown(data_set.comparable_file_size_retrievals)
-        fstats['percent_slow'] = calc.percent_slow_phase_breakdown_from_breakdown(data_set.comparable_file_size_retrievals)
+        fstats['counts'] = breakdowns.count_from_breakdown(data_set.comparable_file_size_retrievals)
+        fstats['avg_phase_durations'] = breakdowns.avg_phase_duration_from_breakdown(data_set.comparable_file_size_retrievals)
+        fstats['standard_deviations'] = breakdowns.std_from_breakdown(data_set.comparable_file_size_retrievals)
+        fstats['percent_slow'] = breakdowns.percent_slow_phase_breakdown_from_breakdown(data_set.comparable_file_size_retrievals)
         stats['file_size'] = fstats
 
 

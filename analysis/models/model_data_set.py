@@ -2,7 +2,7 @@ from pickled.model_log_file import LogFile
 from pickled.model_retrieval import Retrieval
 from pickled.model_publication import Publication
 from models.model_region import Region
-from helpers import proximity, chronologist, map, constants
+from helpers import proximity, chronologist, map, constants, breakdowns
 from pickled.model_agent import Agent
 from pickled.model_peer import Peer
 from datetime import datetime, timedelta
@@ -25,7 +25,6 @@ class DataSet:
     _total_publications: list[Publication]
     _peer_agent_map: dict[Peer,Agent]
     _agent_events_map: dict[Agent, AgentEvents]
-    _unique_file_sizes: dict[int, int] = None
     _phase_durations: dict = None
     _uptime_durations: dict = None
 
@@ -47,6 +46,8 @@ class DataSet:
         self._publish_age_stats: dict = None
         self._publish_age_retrievals: list[Retrieval] = None
         self._comparable_file_size_retrievals: dict[int, list[Retrieval]]= None
+        self._file_size_means: dict[int, dict[RetrievalPhase, Duration]] = None
+        self._file_size_deviations: dict[int, dict[RetrievalPhase, Duration]] = None
 
         self.regions = []
         self._peer_agent_map = {}
@@ -116,10 +117,31 @@ class DataSet:
 
         return self._comparable_file_size_retrievals
 
+    def percent_slow(self, retrievals: list[Retrieval], phase):
+        slow_retrievals = list(filter(lambda ret: self.is_slow(ret, phase), retrievals))
+        return round(len(slow_retrievals)/len(retrievals)*100, 2)
+
+    def is_slow(self, ret: Retrieval, phase: constants.RetrievalPhase):
+        mean = self.file_size_means[ret.file_size][phase]
+        std = self.file_size_deviations[ret.file_size][phase]
+        return ret.duration(phase).total_seconds() > (mean.duration + std.duration)
+
+    @property
+    def file_size_means(self):
+        if  self._file_size_means is None:
+            self._file_size_means = breakdowns.avg_phase_duration_from_breakdown(self.comparable_file_size_retrievals)
+
+        return self._file_size_means
+
+    @property
+    def file_size_deviations(self):
+        if self._file_size_deviations is None:
+            self._file_size_deviations = breakdowns.std_from_breakdown(self.comparable_file_size_retrievals)
+        return self._file_size_deviations
+
     def _set_completed_stats(self):
 
-        if self._unique_file_sizes is None or self._phase_durations is None or self._uptime_durations:
-            self._unique_file_sizes = {}
+        if self._phase_durations is None or self._uptime_durations:
             self._phase_durations = {}
             self._uptime_durations = { 'count': 0, }
             for phase in constants.RetrievalPhase:
@@ -127,12 +149,6 @@ class DataSet:
 
             _total_uptime_duration = 0
             for ret in self.total_completed_retrievals:
-                if ret.file_size not in self._unique_file_sizes:
-                    self._unique_file_sizes[ret.file_size] = { 'count' : 1, 'durations': ret.all_durations}
-                else:
-                    self._unique_file_sizes[ret.file_size]['count'] += 1
-                    self._unique_file_sizes[ret.file_size]['durations'] = map.add_keys(self._unique_file_sizes[ret.file_size]['durations'], ret.all_durations)
-
                 self._phase_durations = map.add_keys(self._phase_durations, ret.all_durations)
 
                 if ret.agent_uptime is not None:
@@ -160,11 +176,6 @@ class DataSet:
         self._set_completed_stats()
         return self._phase_durations
 
-
-    @property
-    def unique_file_sizes(self):
-        self._set_completed_stats()
-        return self._unique_file_sizes
 
     @property
     def comparable_file_sizes(self):
@@ -283,7 +294,7 @@ class DataSet:
             return None
 
     @property
-    def publish_age_stats(self) -> (dict, list[Retrieval], int):
+    def publish_age_stats(self) -> tuple[dict, list[Retrieval], int]:
         delay_file_size = 52439
 
         if self._publish_age_stats is None or self._publish_age_retrievals is None:
