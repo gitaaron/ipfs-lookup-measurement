@@ -42,7 +42,6 @@ def saveFig(out_target_dir, section_name, file_name):
 
 def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
-    publications = data_set.total_publications
     retrievals = data_set.total_completed_retrievals
 
     section_name = 'Retrieval Phase Duration Comparisons'
@@ -93,11 +92,18 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         histo_publish_age.plot(data_set, phase, f"Retrieval {phase.name} Duration by Publish Age")
         saveFig(out_target_dir, section_name, f"publish_age_ret_{phase.name}_duration_comp_bar.png")
 
-    section_name = 'Agent Uptime'
+    section_name = 'Agent Uptime Percent Slow'
 
     for phase in RetrievalPhase:
-        histo_agent_uptime.plot(data_set, data_set.smallest_file_size, phase, f"Retrieval {phase.name} Duration by Agent Uptime")
+        histo_agent_uptime.plot_percent_slow(data_set, phase, f"Retrieval {phase.name} Duration by Agent Uptime")
         saveFig(out_target_dir, section_name, f"agent_uptime_ret_{phase.name}_fs_{data_set.smallest_file_size}_comp_bar.png")
+
+    section_name = 'Agent Uptime Durations'
+
+    for phase in RetrievalPhase:
+        histo_agent_uptime.plot_duration(data_set, data_set.smallest_file_size, phase, f"Retrieval {phase.name} Duration by Agent Uptime")
+        saveFig(out_target_dir, section_name, f"agent_uptime_ret_{phase.name}_fs_{data_set.smallest_file_size}_comp_bar.png")
+
 
     section_name = 'CDF Publications'
 

@@ -155,7 +155,7 @@ class DataSet:
             for ret in self.total_completed_retrievals:
                 self._phase_durations = map.add_keys(self._phase_durations, ret.all_durations)
 
-                if ret.agent_uptime is not None:
+                if hasattr(ret, 'agent_uptime') and ret.agent_uptime is not None:
                     self._uptime_durations['count'] += 1
                     if('max' not in self._uptime_durations or self._uptime_durations['max'] < ret.agent_uptime):
                         self._uptime_durations['max'] = ret.agent_uptime
@@ -199,7 +199,7 @@ class DataSet:
     @property
     def retrievals_has_uptime(self):
         if self._retrievals_has_uptime is None:
-            self._retrievals_has_uptime = list(filter(lambda ret: ret.agent_uptime is not None, self.total_completed_retrievals))
+            self._retrievals_has_uptime = list(filter(lambda ret: hasattr(ret, 'agent_uptime') and ret.agent_uptime is not None, self.total_completed_retrievals))
 
         return self._retrievals_has_uptime
 
