@@ -103,12 +103,15 @@ class DataSet:
 
         return self._has_first_provider_retrievals
 
+    def exclude_file_size(self, file_size: int) -> bool:
+        return file_size is None or file_size == 52439
+
     @property
     def comparable_file_size_retrievals(self):
         if(self._comparable_file_size_retrievals) is None:
             self._comparable_file_size_retrievals = {}
             for ret in self.total_completed_retrievals:
-                if ret.file_size is None or ret.file_size == 52439:
+                if self.exclude_file_size(ret.file_size):
                     continue
                 if ret.file_size not in self._comparable_file_size_retrievals:
                     self._comparable_file_size_retrievals[ret.file_size] = [ret]
@@ -117,11 +120,12 @@ class DataSet:
 
         return self._comparable_file_size_retrievals
 
-    def percent_slow(self, retrievals: list[Retrieval], phase):
+    def percent_slow(self, retrievals: list[Retrieval], phase) -> float:
+        retrievals = list(filter(lambda ret: self.exclude_file_size(ret.file_size)==False, retrievals))
         slow_retrievals = list(filter(lambda ret: self.is_slow(ret, phase), retrievals))
         return round(len(slow_retrievals)/len(retrievals)*100, 2)
 
-    def is_slow(self, ret: Retrieval, phase: constants.RetrievalPhase):
+    def is_slow(self, ret: Retrieval, phase: constants.RetrievalPhase) -> bool:
         mean = self.file_size_means[ret.file_size][phase]
         std = self.file_size_deviations[ret.file_size][phase]
         return ret.duration(phase).total_seconds() > (mean.duration + std.duration)
