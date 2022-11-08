@@ -315,15 +315,14 @@ class DataSet:
         else:
             return None
 
+
     @property
     def publish_age_stats(self) -> tuple[dict, list[Retrieval], int]:
-        delay_file_size = 52439
-
         if self._publish_age_stats is None or self._publish_age_retrievals is None:
             self._publish_age_stats = {}
             # filtering by 52439 since there is not even distribution of publish/retrieval delays and filesizes
             self._publish_age_retrievals = list(
-                    filter(lambda ret: ret.file_size is not None and int(ret.file_size) == delay_file_size, self.has_publish_age_retrievals))
+                    filter(lambda ret: ret.file_size is not None and int(ret.file_size) == constants.DELAY_FILE_SIZE, self.has_publish_age_retrievals))
             self._publish_age_stats['count'] = len(self._publish_age_retrievals)
             total = 0
             min = None
@@ -341,4 +340,4 @@ class DataSet:
             self._publish_age_stats['max'] = round(max,1)
             self._publish_age_stats['average'] = round(total/len(self._publish_age_retrievals),1)
 
-        return (self._publish_age_stats, self._publish_age_retrievals, delay_file_size)
+        return (self._publish_age_stats, self._publish_age_retrievals, constants.DELAY_FILE_SIZE)

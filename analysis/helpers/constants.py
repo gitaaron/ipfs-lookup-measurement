@@ -13,3 +13,6 @@ class RetrievalPhase(str, Enum):
 class PlayerType(str, Enum):
     RETRIEVER = 'RETRIEVER'
     PUBLISHER = 'PUBLISHER'
+
+DELAY_FILE_SIZE = 52439
+

@@ -8,7 +8,7 @@ from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency,
                  publish_age, first_provider_nearest, file_size_comparison, scatter
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
-from helpers.constants import RetrievalPhase, PlayerType
+from helpers.constants import RetrievalPhase, PlayerType, DELAY_FILE_SIZE
 from logs.model_logs_config import LogsConfig
 from logs import load
 from models.model_data_set import DataSet
@@ -92,11 +92,20 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         saveFig(out_target_dir, section_name, f"publish_age_ret_{phase.name}_duration_comp_bar.png")
 
 
-    section_name = 'Publish Age Durations'
+    section_name = 'Publish Age Durations (Bar)'
     for phase in RetrievalPhase:
         publish_age.plot_histo_duration(data_set, phase, f"Retrieval {phase.name} Duration by Publish Age")
-        saveFig(out_target_dir, section_name, f"publish_age_ret_{phase.name}_duration_comp_bar.png")
+        saveFig(out_target_dir, section_name, f"histo_publish_age_ret_{phase.name}_duration_comp_bar.png")
 
+    section_name = 'Publish Age Durations (Scatter)'
+    for file_size in data_set.comparable_file_sizes:
+        for phase in RetrievalPhase:
+            publish_age.plot_scatter_duration(data_set, file_size, phase,)
+            saveFig(out_target_dir, section_name, f"scatter_publish_age_ret_{phase.name}_duration_fs_{file_size}_comp_bar.png")
+
+    for phase in RetrievalPhase:
+        publish_age.plot_scatter_duration(data_set, DELAY_FILE_SIZE, phase,)
+        saveFig(out_target_dir, section_name, f"scatter_publish_age_ret_{phase.name}_duration_fs_{DELAY_FILE_SIZE}_comp_bar.png")
 
     section_name = 'Agent Uptime Percent Slow'
     for phase in RetrievalPhase:
