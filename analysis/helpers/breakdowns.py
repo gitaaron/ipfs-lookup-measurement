@@ -12,7 +12,7 @@ def avg_duration(retrievals: list[Retrieval], phase: RetrievalPhase):
     return round(_total_duration / num, 3)
 
 
-# calculate percentage of retrievals that are more than two std slower than mean
+# calculate percentage of retrievals that are more than one std slower than mean
 def percent_slow(retrievals: list[Retrieval], phase: RetrievalPhase):
     durations = [ret.duration(phase).total_seconds() for ret in retrievals]
     std = np.std(durations)

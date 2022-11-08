@@ -46,6 +46,7 @@ class DataSet:
         self._publish_age_stats: dict = None
         self._publish_age_retrievals: list[Retrieval] = None
         self._comparable_file_size_retrievals: dict[int, list[Retrieval]]= None
+        self._file_size_retrievals: dict[int, list[Retrieval]]= None
         self._file_size_means: dict[int, dict[RetrievalPhase, Duration]] = None
         self._file_size_deviations: dict[int, dict[RetrievalPhase, Duration]] = None
 
@@ -107,8 +108,21 @@ class DataSet:
         return file_size is None or file_size == 52439
 
     @property
+    def file_size_retrievals(self):
+        if(self._file_size_retrievals is None):
+            self._file_size_retrievals = {}
+            for ret in self.total_completed_retrievals:
+                if ret.file_size not in self._file_size_retrievals:
+                    self._file_size_retrievals[ret.file_size] = [ret]
+                else:
+                    self._file_size_retrievals[ret.file_size].append(ret)
+
+        return self._file_size_retrievals
+
+
+    @property
     def comparable_file_size_retrievals(self):
-        if(self._comparable_file_size_retrievals) is None:
+        if(self._comparable_file_size_retrievals is None):
             self._comparable_file_size_retrievals = {}
             for ret in self.total_completed_retrievals:
                 if self.exclude_file_size(ret.file_size):
@@ -120,11 +134,15 @@ class DataSet:
 
         return self._comparable_file_size_retrievals
 
-    def percent_slow(self, retrievals: list[Retrieval], phase) -> float:
-        retrievals = list(filter(lambda ret: self.exclude_file_size(ret.file_size)==False, retrievals))
+    def percent_slow(self, retrievals: list[Retrieval], phase) -> tuple[float,int]:
         slow_retrievals = list(filter(lambda ret: self.is_slow(ret, phase), retrievals))
-        return round(len(slow_retrievals)/len(retrievals)*100, 2)
+        if len(retrievals)>0:
+            return round(len(slow_retrievals)/len(retrievals)*100, 2),len(retrievals)
+        else:
+            return 0,len(retrievals)
 
+    # a retrieval is considered slow if it is more than one standard deviation greater than the mean
+    # for retrievals of the same file size
     def is_slow(self, ret: Retrieval, phase: constants.RetrievalPhase) -> bool:
         mean = self.file_size_means[ret.file_size][phase]
         std = self.file_size_deviations[ret.file_size][phase]
@@ -133,14 +151,14 @@ class DataSet:
     @property
     def file_size_means(self):
         if  self._file_size_means is None:
-            self._file_size_means = breakdowns.avg_phase_duration_from_breakdown(self.comparable_file_size_retrievals)
+            self._file_size_means = breakdowns.avg_phase_duration_from_breakdown(self.file_size_retrievals)
 
         return self._file_size_means
 
     @property
     def file_size_deviations(self):
         if self._file_size_deviations is None:
-            self._file_size_deviations = breakdowns.std_from_breakdown(self.comparable_file_size_retrievals)
+            self._file_size_deviations = breakdowns.std_from_breakdown(self.file_size_retrievals)
         return self._file_size_deviations
 
     def _set_completed_stats(self):

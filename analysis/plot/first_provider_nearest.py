@@ -15,8 +15,8 @@ def plot_percent_slow_by_phase(data_set: DataSet) -> bool:
     if len(fpn_rs) > 0 and len(non_fpn_rs) >  0:
         fig1, ax1 = plt.subplots(figsize=(12,6), dpi=80)
         for phase in RetrievalPhase:
-            fpn_percent_slow = data_set.percent_slow(fpn_rs, phase)
-            non_fpn_percent_slow = data_set.percent_slow(non_fpn_rs, phase)
+            fpn_percent_slow,fpn_sample_size = data_set.percent_slow(fpn_rs, phase)
+            non_fpn_percent_slow,non_fpn_sample_size = data_set.percent_slow(non_fpn_rs, phase)
             if fpn_percent_slow > 0:
                 label = f"{phase.name} ({round(non_fpn_percent_slow/fpn_percent_slow,1)})"
             else:
@@ -34,7 +34,7 @@ def plot_percent_slow_by_phase(data_set: DataSet) -> bool:
 
         ax1.set_ylabel('Percent Slow')
         ax1.set_title('First Provider Nearest effects on Duration by Phase')
-        txt = f"Sample Size: [fpn={len(fpn_rs)},non_fpn={len(non_fpn_rs)}]"
+        txt = f"Sample Size: [fpn={len(fpn_sample_size)},non_fpn={len(non_fpn_sample_size)}]"
         plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
         return True
 

@@ -1,9 +1,10 @@
+import math
+import numpy as np
 from models.model_data_set import DataSet
 from helpers import reduce
 from pickled.model_retrieval import Retrieval
 from helpers.constants import RetrievalPhase
 from models.model_duration import Duration
-import numpy as np
 
 
 def avg_duration(retrievals: list[Retrieval], phase: RetrievalPhase):
@@ -87,10 +88,10 @@ def provider_count(data_set: DataSet, slow: bool) -> tuple[int, int, float]:
 
     return (len(many_provider_retrievals), len(single_provider_retrievals), total_providers / len(retrievals))
 
-def publish_age_duration_bins(data_set: DataSet, phase: RetrievalPhase) -> tuple[list[float], list[float], float]:
+def publish_age_percent_slow_bins(data_set: DataSet, phase: RetrievalPhase) -> tuple[list[float], list[float], float, list[int]]:
     stats,retrievals,delay_file_size = data_set.publish_age_stats
 
-    publish_ages = [data_set.publish_age(ret).total_seconds() for ret in retrievals]
+    publish_ages = [math.floor(data_set.publish_age(ret).total_seconds()) for ret in retrievals]
     if 'min' in stats and 'max' in stats:
         edges = np.linspace(stats['min'], stats['max'] + 1e-12, 4)
     else:
@@ -99,31 +100,69 @@ def publish_age_duration_bins(data_set: DataSet, phase: RetrievalPhase) -> tuple
     bucket_locations = np.digitize(publish_ages, edges)
 
     buckets = {}
+    for bl in range(len(edges)):
+        buckets[bl] = []
 
     for idx, ret in enumerate(retrievals):
         bl = bucket_locations[idx]
-        if bl not in buckets:
-            buckets[bl] = []
+        buckets[bl].append(ret)
+
+    bucket_percents = {}
+    sample_sizes = {}
+
+    for b,retrievals in buckets.items():
+        if len(retrievals)>0:
+            bucket_percents[b],sample_sizes[b] = data_set.percent_slow(retrievals, phase)
+
+    sorted_percents = [bucket_percents.get(i, 0) for i in range(1, len(edges))]
+    sorted_sample_sizes = [sample_sizes.get(i, 0) for i in range(1, len(edges))]
+
+
+    width=(edges[1]-edges[0])*0.9
+    return edges[:-1], sorted_percents, width, delay_file_size, sorted_sample_sizes
+
+def publish_age_duration_bins(data_set: DataSet, phase: RetrievalPhase) -> tuple[list[float], list[float], float, list[int]]:
+    stats,retrievals,delay_file_size = data_set.publish_age_stats
+
+    publish_ages = [math.floor(data_set.publish_age(ret).total_seconds()) for ret in retrievals]
+    if 'min' in stats and 'max' in stats:
+        edges = np.linspace(stats['min'], stats['max'] + 1e-12, 4)
+    else:
+        edges = np.linspace(0, 1, 4)
+
+    bucket_locations = np.digitize(publish_ages, edges)
+
+    buckets = {}
+    for bl in range(len(edges)):
+        buckets[bl] = []
+
+
+    for idx, ret in enumerate(retrievals):
+        bl = bucket_locations[idx]
         buckets[bl].append(ret.duration(phase).total_seconds())
 
     bucket_avgs = {}
+    sample_sizes = {}
 
     for b,durations in buckets.items():
         bucket_avgs[b] = np.mean(durations)
+        sample_sizes[b] = len(durations)
 
     sorted_avgs = [bucket_avgs.get(i, 0) for i in range(1, len(edges))]
+    sorted_sample_sizes = [sample_sizes.get(i, 0) for i in range(1, len(edges))]
+
 
     width=(edges[1]-edges[0])*0.9
-    return edges[:-1], sorted_avgs, width, delay_file_size, len(retrievals)
+    return edges[:-1], sorted_avgs, width, delay_file_size, sorted_sample_sizes
 
 def agent_uptime_percent_slow_bins(data_set: DataSet, phase: RetrievalPhase) -> tuple[list[float], list[float], float, list[int]]:
     retrievals = reduce.by_comparable_file_sizes(data_set.retrievals_has_uptime)
     d = data_set.agent_uptime_durations
-    agent_uptimes = [ret.agent_uptime/1000 for ret in retrievals]
+    agent_uptimes = [math.floor(ret.agent_uptime/1000) for ret in retrievals]
     edges = np.linspace(d['min'].duration, d['max'].duration + 1e-12, 5)
     bucket_locations = np.digitize(agent_uptimes, edges)
     buckets = {}
-    for bl in range(5):
+    for bl in range(len(edges)):
         buckets[bl] = []
 
     for idx,ret in enumerate(retrievals):
@@ -134,8 +173,7 @@ def agent_uptime_percent_slow_bins(data_set: DataSet, phase: RetrievalPhase) -> 
     buckets_percent_slow = {}
     for b,retrievals in buckets.items():
         if len(retrievals)>0:
-            buckets_percent_slow[b] = data_set.percent_slow(retrievals, phase)
-        sample_sizes[b] = len(retrievals)
+            buckets_percent_slow[b],sample_sizes[b] = data_set.percent_slow(retrievals, phase)
 
     sorted_percent_slow = [buckets_percent_slow.get(i, 0) for i in range(1, len(edges))]
     sorted_sample_sizes = [sample_sizes.get(i, 0) for i in range(1, len(edges))]
@@ -147,11 +185,11 @@ def agent_uptime_duration_bins(data_set: DataSet, file_size: int, phase: Retriev
     retrievals = data_set.retrievals_has_uptime
     retrievals = reduce.by_file_size(retrievals, file_size)
     d = data_set.agent_uptime_durations
-    agent_uptimes = [ret.agent_uptime/1000 for ret in retrievals]
+    agent_uptimes = [math.floor(ret.agent_uptime/1000) for ret in retrievals]
     edges = np.linspace(d['min'].duration, d['max'].duration + 1e-12, 5)
     bucket_locations = np.digitize(agent_uptimes, edges)
     buckets = {}
-    for bl in range(5):
+    for bl in range(len(edges)):
         buckets[bl] = []
     for idx,ret in enumerate(retrievals):
         bl = bucket_locations[idx]

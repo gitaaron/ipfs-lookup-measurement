@@ -19,9 +19,9 @@ def plot_histo_duration(data_set: DataSet, file_size: int, phase: RetrievalPhase
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
 
 def plot_histo_percent_slow(data_set: DataSet, phase: RetrievalPhase, title: str):
-    bins, sorted_avgs, width, sample_sizes = calc.agent_uptime_percent_slow_bins(data_set, phase)
+    bins, sorted_percents, width, sample_sizes = calc.agent_uptime_percent_slow_bins(data_set, phase)
     fig1, ax1 = plt.subplots(figsize=(12,6), dpi=80)
-    rects = ax1.bar(bins, height=sorted_avgs,
+    rects = ax1.bar(bins, height=sorted_percents,
         width=width, align='edge')
     for idx, rect in enumerate(rects):
         plt.text(rect.get_x() + rect.get_width() / 2.0, rect.get_height(), f'count:{sample_sizes[idx]}', ha='center', va='bottom')

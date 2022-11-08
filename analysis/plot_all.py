@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from plot import cdf_retrievals, cdf_publications, bar_region_retrieval_latency,\
                  pie_phase_retrieval_latency, timeseries_retrievals, agent_uptime,\
-                 histo_publish_age, first_provider_nearest, file_size_comparison, scatter
+                 publish_age, first_provider_nearest, file_size_comparison, scatter
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
 from helpers.constants import RetrievalPhase, PlayerType
@@ -86,16 +86,21 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     first_provider_nearest.plot_fpn_likelihood_by_region(data_set)
     saveFig(out_target_dir, section_name, f"fpn_likelihood_by_region.png")
 
+    section_name = 'Publish Age Percent Slow'
+    for phase in RetrievalPhase:
+        publish_age.plot_histo_percent_slow(data_set, phase, f"Retrieval {phase.name} Percent Slow by Publish Age")
+        saveFig(out_target_dir, section_name, f"publish_age_ret_{phase.name}_duration_comp_bar.png")
+
 
     section_name = 'Publish Age Durations'
-
     for phase in RetrievalPhase:
-        histo_publish_age.plot(data_set, phase, f"Retrieval {phase.name} Duration by Publish Age")
+        publish_age.plot_histo_duration(data_set, phase, f"Retrieval {phase.name} Duration by Publish Age")
         saveFig(out_target_dir, section_name, f"publish_age_ret_{phase.name}_duration_comp_bar.png")
+
 
     section_name = 'Agent Uptime Percent Slow'
     for phase in RetrievalPhase:
-        agent_uptime.plot_histo_percent_slow(data_set, phase, f"Retrieval {phase.name} Duration by Agent Uptime")
+        agent_uptime.plot_histo_percent_slow(data_set, phase, f"Retrieval {phase.name} Percent Slow by Agent Uptime")
         saveFig(out_target_dir, section_name, f"agent_uptime_ret_{phase.name}_percent_slow_fs_{data_set.smallest_file_size}_comp_bar.png")
 
     section_name = 'Agent Uptime Durations (Bar)'
@@ -108,7 +113,6 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         for phase in RetrievalPhase:
             agent_uptime.plot_scatter_duration(data_set, file_size, phase,)
             saveFig(out_target_dir, section_name, f"scatter_agent_uptime_ret_{phase.name}_duration_fs_{file_size}_comp_bar.png")
-
 
     section_name = 'CDF Publications'
 
