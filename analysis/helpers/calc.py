@@ -60,7 +60,8 @@ def first_provider_nearest_stats(data_set: DataSet) -> dict:
             regions[ret.origin.name]['num_fpns'] += 1
 
     for region,val in regions.items():
-        regions[region]['fpn_likelihood'] = round(val['num_fpns'] / (val['num_fpns']+val['num_non_fpns']) * 100, 3)
+        if((val['num_fpns']+val['num_non_fpns']) > 0):
+            regions[region]['fpn_likelihood'] = round(val['num_fpns'] / (val['num_fpns']+val['num_non_fpns']) * 100, 3)
 
     regions['all'] = a
 
