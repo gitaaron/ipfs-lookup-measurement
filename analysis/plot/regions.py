@@ -47,8 +47,8 @@ def plot_histo_percent_slow(data_set: DataSet):
     fig1, ax1 = plt.subplots(figsize=(18,6), dpi=80)
 
     width = 0.4
-    sp_rects = ax1.bar(x_pos-0.2, sp_regions_percent_slow, width, align='center', color='green', label='single provider(=1)')
-    mp_rects = ax1.bar(x_pos+0.2, mp_regions_percent_slow, width, align='center', color='red', label='many providers(~5)')
+    sp_rects = ax1.bar(x_pos-0.2, sp_regions_percent_slow, width, align='center', label='single provider(=1)')
+    mp_rects = ax1.bar(x_pos+0.2, mp_regions_percent_slow, width, align='center', label='many providers(~5)')
 
     for idx, rect in enumerate(sp_rects):
         plt.text(rect.get_x() + rect.get_width() / 2.0, rect.get_height(), f'total:{sp_regions_sample_size[idx]}', ha='center', va='bottom')
@@ -106,8 +106,8 @@ def plot_histo_duration(data_set: DataSet, file_size: int):
     fig1, ax1 = plt.subplots(figsize=(18,6), dpi=80)
 
     width = 0.4
-    sp_rects = ax1.bar(x_pos-0.2, sp_regions_average_retrieval_duration, width, color='green', align='center', label='single provider(=1)')
-    mp_rects = ax1.bar(x_pos+0.2, mp_regions_average_retrieval_duration, width, color='red', align='center', label='many providers(~5)')
+    sp_rects = ax1.bar(x_pos-0.2, sp_regions_average_retrieval_duration, width, align='center', label='single provider(=1)')
+    mp_rects = ax1.bar(x_pos+0.2, mp_regions_average_retrieval_duration, width, align='center', label='many providers(~5)')
 
     for idx, rect in enumerate(sp_rects):
         plt.text(rect.get_x() + rect.get_width() / 2.0, rect.get_height(), f'total:{sp_regions_sample_size[idx]}', ha='center', va='bottom')

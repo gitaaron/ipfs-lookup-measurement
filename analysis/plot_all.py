@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from plot import cdf_retrievals, cdf_publications, regions,\
                  pie_phase_retrieval_latency, timeseries_retrievals, agent_uptime,\
-                 publish_age, first_provider_nearest, file_size_comparison, scatter
+                 publish_age, first_provider_nearest, file_size_phases, scatter,\
+                 single_multi_provider
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
 from helpers.constants import RetrievalPhase, PlayerType, DELAY_FILE_SIZE
@@ -44,7 +45,7 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     retrievals = data_set.total_completed_retrievals
 
-    section_name = 'Retrieval Phase Duration Comparisons'
+    section_name = 'Phase vs Phase Duration Comparisons'
 
     scatter.plot_phases(data_set, RetrievalPhase.GETTING_CLOSEST_PEERS, RetrievalPhase.DIALING, data_set.smallest_file_size)
     saveFig(out_target_dir, section_name, f"phase_correlation_{RetrievalPhase.GETTING_CLOSEST_PEERS.name}_vs_{RetrievalPhase.DIALING}_fs_{data_set.smallest_file_size}.png")
@@ -56,16 +57,36 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     scatter.plot_phases(data_set, RetrievalPhase.DIALING, RetrievalPhase.FETCHING, data_set.smallest_file_size)
     saveFig(out_target_dir, section_name, f"phase_correlation_{RetrievalPhase.DIALING.name}_vs_{RetrievalPhase.FETCHING}_fs_{data_set.smallest_file_size}.png")
 
-    section_name = 'File Size Comparisons for each Phase'
-    for phase in RetrievalPhase:
-        file_size_comparison.plot_duration(data_set, phase, f"Retrieval {phase.name} duration by File Size", PlayerType.PUBLISHER)
-        saveFig(out_target_dir, section_name, f"file_size_{phase.name}_durations_single_provider.png")
+    section_name = 'File Size / Phase Comparisons'
 
-        file_size_comparison.plot_duration(data_set, phase, f"Retrieval {phase.name} duration by File Size", PlayerType.RETRIEVER)
-        saveFig(out_target_dir, section_name, f"file_size_{phase.name}_durations_multi_provider.png")
+    file_size_phases.plot_percent_slow(data_set, f"Retrieval Percent Slow for each Phase by File Size")
+    saveFig(out_target_dir, section_name, f"file_size_phase_durations.png")
 
-        file_size_comparison.plot_duration(data_set, phase, f"Retrieval {phase.name} duration by File Size", None)
-        saveFig(out_target_dir, section_name, f"file_size_{phase.name}_durations.png")
+    file_size_phases.plot_duration(data_set, f"Retrieval Durations for each Phase by File Size")
+    saveFig(out_target_dir, section_name, f"file_size_phase_durations.png")
+
+    section_name = 'Single vs Multi Providers'
+
+    single_multi_provider.plot_duration_by_phase(data_set, f"Single vs Multi Provider Retrieval Durations by Phase", data_set.smallest_file_size)
+    saveFig(out_target_dir, section_name, f"single_multi_provider_durations_by_phase.png")
+
+    single_multi_provider.plot_duration_by_file_size(data_set, f"Single vs Multi Provider Retrieval Durations by File Size")
+    saveFig(out_target_dir, section_name, f"single_multi_provider__durations_by_file_size.png")
+
+
+    single_multi_provider.plot_percent_slow_by_phase(data_set, f"Single vs Multi Provider Retrieval Percent Slow by Phase")
+    saveFig(out_target_dir, section_name, f"single_multi_provider_durations_by_phase.png")
+
+    single_multi_provider.plot_percent_slow_by_file_size(data_set, f"Single vs Multi Provider Retrieval Percent Slow by File Size")
+    saveFig(out_target_dir, section_name, f"single_multi_provider__durations_by_file_size.png")
+
+    section_name = 'First Provider Nearest Likelihood'
+
+    first_provider_nearest.plot_likelihood(data_set)
+    saveFig(out_target_dir, section_name, f"fpn_likelihood.png")
+
+    first_provider_nearest.plot_fpn_likelihood_by_region(data_set)
+    saveFig(out_target_dir, section_name, f"fpn_likelihood_by_region.png")
 
     section_name = 'First Provider Nearest Percent Slow'
     did_plot = first_provider_nearest.plot_percent_slow_by_phase(data_set)
@@ -78,13 +99,6 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         if did_plot:
             saveFig(out_target_dir, section_name, f"fpn_durations_by_phase_fs_{file_size}.png")
 
-    section_name = 'First Provider Nearest Likelihood'
-
-    first_provider_nearest.plot_likelihood(data_set)
-    saveFig(out_target_dir, section_name, f"fpn_likelihood.png")
-
-    first_provider_nearest.plot_fpn_likelihood_by_region(data_set)
-    saveFig(out_target_dir, section_name, f"fpn_likelihood_by_region.png")
 
     section_name = 'Publish Age Percent Slow'
     for phase in RetrievalPhase:
