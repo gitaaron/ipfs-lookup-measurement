@@ -34,7 +34,7 @@ def plot_percent_slow_by_phase(data_set: DataSet) -> bool:
 
         ax1.set_ylabel('Percent Slow')
         ax1.set_title('First Provider Nearest effects on Duration by Phase')
-        txt = f"Sample Size: [fpn={len(fpn_sample_size)},non_fpn={len(non_fpn_sample_size)}]"
+        txt = f"Sample Size: [fpn={fpn_sample_size},non_fpn={non_fpn_sample_size}]"
         plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
         return True
 
