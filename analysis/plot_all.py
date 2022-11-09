@@ -4,7 +4,7 @@ from typing import List
 import matplotlib.pyplot as plt
 from pathlib import Path
 from plot import cdf_retrievals, cdf_publications, regions,\
-                 pie_phase_retrieval_latency, timeseries_retrievals, agent_uptime,\
+                 timeseries_retrievals, agent_uptime,\
                  publish_age, first_provider_nearest, file_size_phases, scatter,\
                  single_multi_provider
 from pickled.model_publication import Publication
@@ -157,11 +157,6 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         section_name = 'CDF Retrievals by Phase'
         cdf_retrievals.plot_phase_comparison(file_size, retrievals)
         saveFig(out_target_dir, section_name, f"ret_phase_comparison_fs_{file_size}_cdf.png")
-
-        section_name = 'Phase Comparisons'
-        pie_phase_retrieval_latency.plot(retrievals, file_size)
-        saveFig(out_target_dir, section_name, f"ret_phase_comparison_pie_fs_{file_size}.png")
-
 
     section_name = 'Regional Comparisons'
 
