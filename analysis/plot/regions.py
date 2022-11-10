@@ -121,6 +121,8 @@ def plot_histo_duration(data_set: DataSet, file_size: int, phase):
     ax1.set_xlabel('Regions')
     ax1.set_ylabel('Average Duration (sec.)')
     ax1.set_title(f"Retrieval {phase.name} Duration by Region")
+    ax1.legend(loc='upper left')
+
 
     txt = f"File Size: {stringify.file_size(file_size)}, Sample Size: {np.sum(sp_regions_sample_size)+np.sum(mp_regions_sample_size)}"
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=8)
