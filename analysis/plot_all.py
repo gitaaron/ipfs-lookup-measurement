@@ -53,24 +53,37 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     retrievals = data_set.total_completed_retrievals
 
-    section_name = 'Trends'
 
     for file_size in data_set.comparable_file_sizes:
+        section_name = 'Trends by Phase'
         timeseries_retrievals.plot_each_phase_all_regions(file_size, data_set, 'Retrieval Duration by Phase')
         saveFig(out_target_dir, section_name, f"trend_ret_phase_breakdown_fs_{file_size}.png")
 
-        timeseries_retrievals.plot_interval_each_phase_all_regions(file_size, data_set, 'Retrieval Duration by Phase (every 30 min.)')
+        section_name = 'Trends by Phase (every 30 min.)'
+        timeseries_retrievals.plot_interval_each_phase_all_regions(file_size, data_set, 'Retrieval Duration by Phase (30m)', '30min')
         saveFig(out_target_dir, section_name, f"trend_ret_phase_breakdown_fs_{file_size}_30_min.png")
+
+        section_name = 'Trends by Phase (every 4 hours)'
+        timeseries_retrievals.plot_interval_each_phase_all_regions(file_size, data_set, 'Retrieval Duration by Phase (4h)', '4H')
+        saveFig(out_target_dir, section_name, f"trend_ret_phase_breakdown_fs_{file_size}_4_hour.png")
 
 
         for phase in RetrievalPhase:
 
+            section_name = 'Trends by Region'
             timeseries_retrievals.plot_duration_each_region(file_size, phase, data_set, f"Retrieval {phase.name} Duration by Region")
             saveFig(out_target_dir, section_name, f"trend_ret_{phase.name}_region_breakdown_fs_{file_size}.png")
 
-            timeseries_retrievals.plot_interval_duration_each_region(data_set.smallest_file_size, RetrievalPhase.TOTAL, data_set, f"Retrieval TOTAL Duration by Region (every 30 min.)")
+            section_name = 'Trends by Region (every 30 min.)'
+            timeseries_retrievals.plot_interval_duration_each_region(data_set.smallest_file_size, RetrievalPhase.TOTAL, data_set, f"Retrieval TOTAL Duration by Region (30m)", '30min')
             saveFig(out_target_dir, section_name, f"trend_ret_{phase.name}_region_breakdown_fs_{file_size}_30_min.png")
 
+            section_name = 'Trends by Region (every 4 hours)'
+            timeseries_retrievals.plot_interval_duration_each_region(data_set.smallest_file_size, RetrievalPhase.TOTAL, data_set, f"Retrieval TOTAL Duration by Region (4h)", '4H')
+            saveFig(out_target_dir, section_name, f"trend_ret_{phase.name}_region_breakdown_fs_{file_size}_4_hour.png")
+
+
+    return
     section_name = 'Phase vs Phase Duration Comparisons'
 
     scatter.plot_phases(data_set, RetrievalPhase.GETTING_CLOSEST_PEERS, RetrievalPhase.DIALING, data_set.smallest_file_size)

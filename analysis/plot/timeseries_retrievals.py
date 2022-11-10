@@ -8,8 +8,9 @@ from helpers import reduce, stringify, calc
 from models.model_region import Region
 from models.model_data_set import DataSet
 
-
-def plot_interval_duration_each_region(file_size: int, phase: RetrievalPhase, data_set: DataSet, title: str):
+# `freq` is specified by Pandas `date_range`
+# https://pandas.pydata.org/docs/reference/api/pandas.date_range.html
+def plot_interval_duration_each_region(file_size: int, phase: RetrievalPhase, data_set: DataSet, title: str, freq: str):
     retrievals = reduce.by_file_size(data_set.total_completed_retrievals, file_size)
     start_dates = [pd.to_datetime(ret.retrieval_started_at) for ret in retrievals]
     ts_start_dates = [ts.value for ts in start_dates]
@@ -23,7 +24,7 @@ def plot_interval_duration_each_region(file_size: int, phase: RetrievalPhase, da
             end = ts
 
 
-    edges = [pd.to_datetime(v) for v in pd.date_range(start=start, end=end+timedelta(seconds=1), freq='30min').values]
+    edges = [pd.to_datetime(v) for v in pd.date_range(start=start, end=end+timedelta(seconds=1), freq=freq).values]
     ts_edges = [ts.value for ts in edges]
 
     bucket_locations = np.digitize(ts_start_dates, ts_edges)
@@ -132,7 +133,9 @@ def plot_duration_each_region(file_size: int, phase: RetrievalPhase, data_set: D
     txt = f"File Size: {stringify.file_size(file_size)}, Sample Size: {len(retrievals)}"
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
 
-def plot_interval_each_phase_all_regions(file_size: int, data_set:DataSet, title: str):
+# `freq` is specified by Pandas `date_range`
+# https://pandas.pydata.org/docs/reference/api/pandas.date_range.html
+def plot_interval_each_phase_all_regions(file_size: int, data_set:DataSet, title: str, freq: str):
     retrievals = reduce.by_file_size(data_set.total_completed_retrievals, file_size)
 
     start_dates = [pd.to_datetime(ret.retrieval_started_at) for ret in retrievals]
@@ -146,7 +149,7 @@ def plot_interval_each_phase_all_regions(file_size: int, data_set:DataSet, title
         if end is None or ts > end:
             end = ts
 
-    edges = [pd.to_datetime(v) for v in pd.date_range(start=start, end=end+timedelta(seconds=1), freq='30min').values]
+    edges = [pd.to_datetime(v) for v in pd.date_range(start=start, end=end+timedelta(seconds=1), freq=freq).values]
     ts_edges = [ts.value for ts in edges]
 
     bucket_locations = np.digitize(ts_start_dates, ts_edges)
