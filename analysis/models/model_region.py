@@ -42,8 +42,12 @@ class Region:
     def distance(self, from_region):
         return geopy.distance.geodesic(self.coords, from_region.coords).km
 
+
     def __repr__(self):
         return self.name
+
+    def __eq__(self, other):
+        return hasattr(other, 'name') and self.name  == other.name
 
     def __hash__(self):
         return hash(self.name)
