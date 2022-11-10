@@ -116,6 +116,15 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     single_multi_provider.plot_percent_slow_by_file_size(data_set, f"Single vs Multi Provider Retrieval Percent Slow by File Size")
     saveFig(out_target_dir, section_name, f"single_multi_provider_percent_slow_by_file_size.png")
 
+    section_name = 'Regional Comparisons'
+
+    regions.plot_histo_percent_slow(data_set)
+    saveFig(out_target_dir, section_name, f"percent_slow_region_comparison_bar.png")
+
+    for file_size in data_set.comparable_file_sizes:
+        regions.plot_histo_duration(data_set, file_size)
+        saveFig(out_target_dir, section_name, f"duration_region_comparison_bar_fs_{file_size}.png")
+
     section_name = 'First Provider Nearest Likelihood'
 
     first_provider_nearest.plot_likelihood(data_set)
@@ -189,15 +198,6 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         section_name = 'CDF Retrievals by Phase'
         cdf_retrievals.plot_phase_comparison(file_size, retrievals)
         saveFig(out_target_dir, section_name, f"ret_phase_comparison_fs_{file_size}_cdf.png")
-
-    section_name = 'Regional Comparisons'
-
-    regions.plot_histo_percent_slow(data_set)
-    saveFig(out_target_dir, section_name, f"percent_slow_region_comparison_bar.png")
-
-    file_size = data_set.smallest_file_size
-    regions.plot_histo_duration(data_set, file_size)
-    saveFig(out_target_dir, section_name, f"duration_region_comparison_bar_fs_{file_size}.png")
 
 
     section_name = 'Experimental Controls'
