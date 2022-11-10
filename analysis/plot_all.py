@@ -3,7 +3,7 @@ import pickle
 from typing import List
 import matplotlib.pyplot as plt
 from pathlib import Path
-from plot import cdf_retrievals, cdf_publications, regions,\
+from plot import cdf_retrievals, cdf_publications, regions, experimental_controls,\
                  timeseries_retrievals, agent_uptime,\
                  publish_age, first_provider_nearest, file_size_phases, scatter,\
                  single_multi_provider
@@ -44,6 +44,24 @@ def saveFig(out_target_dir, section_name, file_name):
 def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     retrievals = data_set.total_completed_retrievals
+
+    section_name = 'Trends'
+
+    for file_size in data_set.comparable_file_sizes:
+        timeseries_retrievals.plot_each_phase_all_regions(file_size, data_set, 'Retrieval Duration by Phase')
+        saveFig(out_target_dir, section_name, f"trend_ret_phase_breakdown_fs_{file_size}.png")
+
+        timeseries_retrievals.plot_interval_each_phase_all_regions(file_size, data_set, 'Retrieval Duration by Phase (every 30 min.)')
+        saveFig(out_target_dir, section_name, f"trend_ret_phase_breakdown_fs_{file_size}_30_min.png")
+
+
+        for phase in RetrievalPhase:
+
+            timeseries_retrievals.plot_duration_each_region(file_size, phase, data_set, f"Retrieval {phase.name} Duration by Region")
+            saveFig(out_target_dir, section_name, f"trend_ret_{phase.name}_region_breakdown_fs_{file_size}.png")
+
+            timeseries_retrievals.plot_interval_duration_each_region(data_set.smallest_file_size, RetrievalPhase.TOTAL, data_set, f"Retrieval TOTAL Duration by Region (every 30 min.)")
+            saveFig(out_target_dir, section_name, f"trend_ret_{phase.name}_region_breakdown_fs_{file_size}_30_min.png")
 
     section_name = 'Phase vs Phase Duration Comparisons'
 
@@ -167,17 +185,9 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     regions.plot_histo_duration(data_set, file_size)
     saveFig(out_target_dir, section_name, f"duration_region_comparison_bar_fs_{file_size}.png")
 
-    section_name = 'Trends'
 
-    for file_size in data_set.comparable_file_sizes:
-        timeseries_retrievals.plot_each_phase_all_regions(file_size, data_set.total_completed_retrievals, 'Retrieval Duration by Phase')
-        saveFig(out_target_dir, section_name, f"trend_ret_phase_breakdown_fs_{file_size}.png")
-
-        for phase in RetrievalPhase:
-            timeseries_retrievals.plot_duration_each_region(file_size, phase, data_set, f"Retrieval {phase.name} Duration by Region")
-            saveFig(out_target_dir, section_name, f"trend_ret_{phase.name}_region_breakdown_fs_{file_size}.png")
-
-    timeseries_retrievals.plot_num_providers(retrievals, 'Retrieval Number Providers')
+    section_name = 'Experimental Controls'
+    experimental_controls.plot_num_providers(retrievals, 'Retrieval Number Providers')
     saveFig(out_target_dir, section_name, 'ret_num_providers.png')
 
     if out_target_dir is not None:
