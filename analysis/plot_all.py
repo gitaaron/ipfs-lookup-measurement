@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from plot import cdf_retrievals, cdf_publications, regions, experimental_controls,\
                  timeseries_retrievals, agent_uptime,\
-                 publish_age, first_provider_nearest, file_size_phases, scatter,\
+                 publish_age, first_provider_nearest, file_size_phases,\
                  single_multi_provider
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
@@ -53,7 +53,6 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     retrievals = data_set.total_completed_retrievals
 
-
     for file_size in data_set.comparable_file_sizes:
         section_name = 'Trends by Phase'
         timeseries_retrievals.plot_each_phase_all_regions(file_size, data_set, 'Retrieval Duration by Phase')
@@ -82,20 +81,19 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
             timeseries_retrievals.plot_interval_duration_each_region(data_set.smallest_file_size, RetrievalPhase.TOTAL, data_set, f"Retrieval TOTAL Duration by Region (4h)", '4H')
             saveFig(out_target_dir, section_name, f"trend_ret_{phase.name}_region_breakdown_fs_{file_size}_4_hour.png")
 
+    section_name = 'File Size / Phase Comparisons (scatter)'
 
-    section_name = 'Phase vs Phase Duration Comparisons'
+    for file_size in data_set.comparable_file_sizes:
+        file_size_phases.plot_scatter(data_set, RetrievalPhase.GETTING_CLOSEST_PEERS, RetrievalPhase.DIALING, file_size)
+        saveFig(out_target_dir, section_name, f"phase_correlation_{RetrievalPhase.GETTING_CLOSEST_PEERS.name}_vs_{RetrievalPhase.DIALING}_fs_{file_size}.png")
 
-    scatter.plot_phases(data_set, RetrievalPhase.GETTING_CLOSEST_PEERS, RetrievalPhase.DIALING, data_set.smallest_file_size)
-    saveFig(out_target_dir, section_name, f"phase_correlation_{RetrievalPhase.GETTING_CLOSEST_PEERS.name}_vs_{RetrievalPhase.DIALING}_fs_{data_set.smallest_file_size}.png")
+        file_size_phases.plot_scatter(data_set, RetrievalPhase.GETTING_CLOSEST_PEERS, RetrievalPhase.FETCHING, data_set.smallest_file_size)
+        saveFig(out_target_dir, section_name, f"phase_correlation_{RetrievalPhase.GETTING_CLOSEST_PEERS.name}_vs_{RetrievalPhase.FETCHING}_fs_{data_set.smallest_file_size}.png")
 
+        file_size_phases.plot_scatter(data_set, RetrievalPhase.DIALING, RetrievalPhase.FETCHING, data_set.smallest_file_size)
+        saveFig(out_target_dir, section_name, f"phase_correlation_{RetrievalPhase.DIALING.name}_vs_{RetrievalPhase.FETCHING}_fs_{data_set.smallest_file_size}.png")
 
-    scatter.plot_phases(data_set, RetrievalPhase.GETTING_CLOSEST_PEERS, RetrievalPhase.FETCHING, data_set.smallest_file_size)
-    saveFig(out_target_dir, section_name, f"phase_correlation_{RetrievalPhase.GETTING_CLOSEST_PEERS.name}_vs_{RetrievalPhase.FETCHING}_fs_{data_set.smallest_file_size}.png")
-
-    scatter.plot_phases(data_set, RetrievalPhase.DIALING, RetrievalPhase.FETCHING, data_set.smallest_file_size)
-    saveFig(out_target_dir, section_name, f"phase_correlation_{RetrievalPhase.DIALING.name}_vs_{RetrievalPhase.FETCHING}_fs_{data_set.smallest_file_size}.png")
-
-    section_name = 'File Size / Phase Comparisons'
+    section_name = 'File Size / Phase Comparisons (histo)'
 
     file_size_phases.plot_percent_slow(data_set, f"Retrieval Percent Slow for each Phase by File Size")
     saveFig(out_target_dir, section_name, f"file_size_phase_percent_slow.png")
@@ -150,10 +148,6 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         saveFig(out_target_dir, section_name, f"histo_publish_age_ret_{phase.name}_duration_comp_bar.png")
 
     section_name = 'Publish Age Durations (Scatter)'
-    for file_size in data_set.comparable_file_sizes:
-        for phase in RetrievalPhase:
-            publish_age.plot_scatter_duration(data_set, file_size, phase,)
-            saveFig(out_target_dir, section_name, f"scatter_publish_age_ret_{phase.name}_duration_fs_{file_size}_comp_bar.png")
 
     for phase in RetrievalPhase:
         publish_age.plot_scatter_duration(data_set, DELAY_FILE_SIZE, phase,)
