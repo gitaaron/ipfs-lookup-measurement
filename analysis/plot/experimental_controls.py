@@ -1,5 +1,6 @@
 from pickled.model_retrieval import Retrieval
 import matplotlib.pyplot as plt
+import pandas as pd
 
 def plot_num_providers(retrievals:list[Retrieval], title: str):
 
