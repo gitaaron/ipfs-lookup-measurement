@@ -118,12 +118,13 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     section_name = 'Regional Comparisons'
 
-    regions.plot_histo_percent_slow(data_set)
-    saveFig(out_target_dir, section_name, f"percent_slow_region_comparison_bar.png")
+    for phase in RetrievalPhase:
+        regions.plot_histo_percent_slow(data_set, phase)
+        saveFig(out_target_dir, section_name, f"{phase.name}_percent_slow_region_comparison_bar.png")
 
-    for file_size in data_set.comparable_file_sizes:
-        regions.plot_histo_duration(data_set, file_size)
-        saveFig(out_target_dir, section_name, f"duration_region_comparison_bar_fs_{file_size}.png")
+        for file_size in data_set.comparable_file_sizes:
+            regions.plot_histo_duration(data_set, file_size, phase)
+            saveFig(out_target_dir, section_name, f"{phase.name}_duration_region_comparison_bar_fs_{file_size}.png")
 
     section_name = 'First Provider Nearest Likelihood'
 

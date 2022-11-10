@@ -8,7 +8,7 @@ from helpers.constants import PlayerType, RetrievalPhase
 from helpers import reduce, stringify
 
 
-def plot_histo_percent_slow(data_set: DataSet):
+def plot_histo_percent_slow(data_set: DataSet, phase):
 
     region_labels = []
 
@@ -25,7 +25,7 @@ def plot_histo_percent_slow(data_set: DataSet):
 
         region_labels.append(agent.region)
         if len(sp_retrievals) > 0:
-            sp_percent_slow, sp_sample_size = data_set.percent_slow(sp_retrievals, RetrievalPhase.TOTAL)
+            sp_percent_slow, sp_sample_size = data_set.percent_slow(sp_retrievals, phase)
             sp_regions_percent_slow.append(sp_percent_slow)
             sp_regions_sample_size.append(sp_sample_size)
         else:
@@ -33,7 +33,7 @@ def plot_histo_percent_slow(data_set: DataSet):
             sp_regions_sample_size.append(0)
 
         if len(mp_retrievals) > 0:
-            mp_percent_slow, mp_sample_size = data_set.percent_slow(mp_retrievals, RetrievalPhase.TOTAL)
+            mp_percent_slow, mp_sample_size = data_set.percent_slow(mp_retrievals, phase)
             mp_regions_percent_slow.append(mp_percent_slow)
             mp_regions_sample_size.append(mp_sample_size)
         else:
@@ -61,13 +61,13 @@ def plot_histo_percent_slow(data_set: DataSet):
 
     ax1.set_xlabel('Regions')
     ax1.set_ylabel('Percent Slow')
-    ax1.set_title('Percent Slow Retrievals by Region')
+    ax1.set_title(f"Retrieval {phase.name} Percent Slow Retrievals by Region")
 
     txt = f"Sample Size: {np.sum(sp_regions_sample_size)+np.sum(mp_regions_sample_size)}"
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=8)
 
 
-def plot_histo_duration(data_set: DataSet, file_size: int):
+def plot_histo_duration(data_set: DataSet, file_size: int, phase):
 
     region_labels = []
 
@@ -86,7 +86,7 @@ def plot_histo_duration(data_set: DataSet, file_size: int):
 
         if len(sp_retrievals) > 0:
             sp_regions_sample_size.append(len(retrievals))
-            sp_total_retrieval_durations = [ret.duration(RetrievalPhase.TOTAL).total_seconds() for ret in sp_retrievals]
+            sp_total_retrieval_durations = [ret.duration(phase).total_seconds() for ret in sp_retrievals]
             sp_regions_average_retrieval_duration.append(np.average(sp_total_retrieval_durations))
         else:
             sp_regions_sample_size.append(0)
@@ -94,7 +94,7 @@ def plot_histo_duration(data_set: DataSet, file_size: int):
 
         if len(mp_retrievals) > 0:
             mp_regions_sample_size.append(len(retrievals))
-            mp_total_retrieval_durations = [ret.duration(RetrievalPhase.TOTAL).total_seconds() for ret in mp_retrievals]
+            mp_total_retrieval_durations = [ret.duration(phase).total_seconds() for ret in mp_retrievals]
             mp_regions_average_retrieval_duration.append(np.average(mp_total_retrieval_durations))
         else:
             mp_regions_sample_size.append(0)
@@ -120,7 +120,7 @@ def plot_histo_duration(data_set: DataSet, file_size: int):
 
     ax1.set_xlabel('Regions')
     ax1.set_ylabel('Average Duration (sec.)')
-    ax1.set_title('Retrieval Duration by Region')
+    ax1.set_title(f"Retrieval {phase.name} Duration by Region")
 
     txt = f"File Size: {stringify.file_size(file_size)}, Sample Size: {np.sum(sp_regions_sample_size)+np.sum(mp_regions_sample_size)}"
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=8)
