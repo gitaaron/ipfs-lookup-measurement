@@ -31,15 +31,23 @@ def writeMeta(out_target_dir: str, data_set: DataSet):
     pickle.dump(meta, fpt)
     fpt.close()
 
+_files_written = {}
 
 def saveFig(out_target_dir, section_name, file_name):
-    if out_target_dir is not None:
-        if section_name in sections:
-            sections[section_name].append(file_name)
-        else:
-            sections[section_name] = [file_name]
-        plt.savefig(os.path.join(out_target_dir, file_name))
-        plt.close()
+    if out_target_dir is None:
+        return
+
+    if file_name in _files_written:
+        raise Exception(f"Already wrote : {file_name}")
+
+    _files_written[file_name] = True
+
+    if section_name in sections:
+        sections[section_name].append(file_name)
+    else:
+        sections[section_name] = [file_name]
+    plt.savefig(os.path.join(out_target_dir, file_name))
+    plt.close()
 
 def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
@@ -78,7 +86,7 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     section_name = 'File Size / Phase Comparisons'
 
     file_size_phases.plot_percent_slow(data_set, f"Retrieval Percent Slow for each Phase by File Size")
-    saveFig(out_target_dir, section_name, f"file_size_phase_durations.png")
+    saveFig(out_target_dir, section_name, f"file_size_phase_percent_slow.png")
 
     file_size_phases.plot_duration(data_set, f"Retrieval Durations for each Phase by File Size")
     saveFig(out_target_dir, section_name, f"file_size_phase_durations.png")
@@ -89,14 +97,14 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     saveFig(out_target_dir, section_name, f"single_multi_provider_durations_by_phase.png")
 
     single_multi_provider.plot_duration_by_file_size(data_set, f"Single vs Multi Provider Retrieval Durations by File Size")
-    saveFig(out_target_dir, section_name, f"single_multi_provider__durations_by_file_size.png")
+    saveFig(out_target_dir, section_name, f"single_multi_provider_durations_by_file_size.png")
 
 
     single_multi_provider.plot_percent_slow_by_phase(data_set, f"Single vs Multi Provider Retrieval Percent Slow by Phase")
-    saveFig(out_target_dir, section_name, f"single_multi_provider_durations_by_phase.png")
+    saveFig(out_target_dir, section_name, f"single_multi_provider_percent_slow_by_phase.png")
 
     single_multi_provider.plot_percent_slow_by_file_size(data_set, f"Single vs Multi Provider Retrieval Percent Slow by File Size")
-    saveFig(out_target_dir, section_name, f"single_multi_provider__durations_by_file_size.png")
+    saveFig(out_target_dir, section_name, f"single_multi_provider_percent_slow_by_file_size.png")
 
     section_name = 'First Provider Nearest Likelihood'
 
