@@ -83,7 +83,6 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
             saveFig(out_target_dir, section_name, f"trend_ret_{phase.name}_region_breakdown_fs_{file_size}_4_hour.png")
 
 
-    return
     section_name = 'Phase vs Phase Duration Comparisons'
 
     scatter.plot_phases(data_set, RetrievalPhase.GETTING_CLOSEST_PEERS, RetrievalPhase.DIALING, data_set.smallest_file_size)
