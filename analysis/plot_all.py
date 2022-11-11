@@ -52,6 +52,7 @@ def saveFig(out_target_dir, section_name, file_name):
 def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     retrievals = data_set.total_completed_retrievals
+
     for file_size in data_set.comparable_file_sizes:
         section_name = 'Trends by Phase'
         timeseries_retrievals.plot_each_phase_all_regions(file_size, data_set, 'Retrieval Duration by Phase')
@@ -102,8 +103,9 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     section_name = 'Single vs Multi Providers'
 
-    single_multi_provider.plot_duration_by_phase(data_set, f"Single vs Multi Provider Retrieval Durations by Phase", data_set.smallest_file_size)
-    saveFig(out_target_dir, section_name, f"single_multi_provider_durations_by_phase.png")
+    for file_size in data_set.comparable_file_sizes:
+        single_multi_provider.plot_duration_by_phase(data_set, f"Single vs Multi Provider Retrieval Durations by Phase", file_size)
+        saveFig(out_target_dir, section_name, f"single_multi_provider_durations_by_phase_fs_{file_size}.png")
 
     single_multi_provider.plot_duration_by_file_size(data_set, f"Single vs Multi Provider Retrieval Durations by File Size")
     saveFig(out_target_dir, section_name, f"single_multi_provider_durations_by_file_size.png")
