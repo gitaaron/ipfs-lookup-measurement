@@ -131,14 +131,13 @@ def plot_fp_distribution_by_region(data_set: DataSet) -> bool:
     retrievals = data_set.many_provider_retrievals
 
     fp_tally = {}
-    total = {}
     region_labels = []
+    sample_size = 0
 
     agents = list(data_set.agent_events_map.keys())
 
     for agent_a in agents:
         fp_tally[agent_a.region] = {}
-        total[agent_a.region] = 0
         region_labels.append(agent_a.region.name)
 
         for agent_b in agents:
@@ -148,10 +147,7 @@ def plot_fp_distribution_by_region(data_set: DataSet) -> bool:
         fp_agent = data_set.agent_from_peer_id(ret.first_provider_peer)
         if fp_agent is not None:
             fp_tally[ret.origin][fp_agent.region] += 1
-        total[ret.origin] += 1
-
-    fps_a = list(fp_tally[agents[0].region].values())
-    fps_b = list(fp_tally[agents[1].region].values())
+            sample_size += 1
 
     sorted_fp_regions = []
     for idx, agent_a in enumerate(agents):
@@ -167,11 +163,9 @@ def plot_fp_distribution_by_region(data_set: DataSet) -> bool:
         bars.append(ax1.bar(region_labels, sorted_fps, bottom=sum(previous_fps)))
         previous_fps.append(sorted_fps)
 
-    b1 = ax1.bar(region_labels, fps_a)
-    b2 = ax1.bar(region_labels, fps_b, bottom=fps_a)
     plt.legend(bars, region_labels, loc='upper right')
 
     ax1.set_ylabel('First Providers')
     ax1.set_title('First Provider Regions by Origin')
-    txt = f"Sample Size: {len(retrievals)}"
+    txt = f"Sample Size: {sample_size}"
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
