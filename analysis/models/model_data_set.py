@@ -251,23 +251,32 @@ class DataSet:
             self._non_first_provider_nearest_retrievals = []
 
             for ret in self.many_provider_retrievals:
-                try:
-                    first_provider_region = self.agent_from_peer_id(ret.first_provider_peer).region
-                    other_provider_regions = []
-                    for peer in ret.provider_peers:
-                        if ret.first_provider_peer == peer:
-                            continue
-                        other_provider_regions.append(self.agent_from_peer_id(peer).region)
-                    if(proximity.is_nearest_neighbor(
-                            ret.origin,
-                            first_provider_region,
-                            other_provider_regions) == True):
-                        self._first_provider_nearest_retrievals.append(ret)
-                    else:
-                        self._non_first_provider_nearest_retrievals.append(ret)
+                fp = self.agent_from_peer_id(ret.first_provider_peer)
+                if fp == None:
+                    print(f"skipping cid: {ret.cid} because first provider peer: {ret.first_provider_peer} is not in agent list")
+                    continue
 
-                except Exception as e:
-                    print("skipping cid: %s is_nearest_neighbor can not be calculated: %s" % (ret.cid, e))
+                first_provider_region = fp.region
+                other_provider_regions = []
+                found_unknown = False
+                for peer in ret.provider_peers:
+                    if ret.first_provider_peer == peer:
+                        continue
+                    op = self.agent_from_peer_id(peer)
+                    if op == None:
+                        print(f"skipping cid: {ret.cid} because other provider peer: {peer} is not in agent list")
+                        found_unknown = True
+                        continue
+                    other_provider_regions.append(op.region)
+                if found_unknown:
+                    continue
+                if(proximity.is_nearest_neighbor(
+                        ret.origin,
+                        first_provider_region,
+                        other_provider_regions) == True):
+                    self._first_provider_nearest_retrievals.append(ret)
+                else:
+                    self._non_first_provider_nearest_retrievals.append(ret)
 
     @property
     def first_provider_nearest_retrievals(self):
@@ -281,7 +290,10 @@ class DataSet:
 
 
     def agent_from_peer_id(self, peer):
-        return self._peer_agent_map[peer]
+        if peer in self._peer_agent_map:
+            return self._peer_agent_map[peer]
+        else:
+            return None
 
     @property
     def started_ended_at(self) -> tuple[datetime, datetime]:
