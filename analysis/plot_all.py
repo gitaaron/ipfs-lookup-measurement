@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from plot import cdf_retrievals, cdf_publications, regions, experimental_controls,\
                  timeseries_retrievals, agent_uptime,\
-                 publish_age, first_provider_nearest, file_size_phases,\
+                 publish_age, first_provider, file_size_phases,\
                  single_multi_provider
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
@@ -52,7 +52,6 @@ def saveFig(out_target_dir, section_name, file_name):
 def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     retrievals = data_set.total_completed_retrievals
-
     for file_size in data_set.comparable_file_sizes:
         section_name = 'Trends by Phase'
         timeseries_retrievals.plot_each_phase_all_regions(file_size, data_set, 'Retrieval Duration by Phase')
@@ -126,22 +125,26 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
             regions.plot_histo_duration(data_set, file_size, phase)
             saveFig(out_target_dir, section_name, f"{phase.name}_duration_region_comparison_bar_fs_{file_size}.png")
 
+    section_name = 'First Provider Distributions'
+    first_provider.plot_fp_distribution_by_region(data_set)
+    saveFig(out_target_dir, section_name, f"first_provider_distribution_by_region.png")
+
     section_name = 'First Provider Nearest Likelihood'
 
-    first_provider_nearest.plot_likelihood(data_set)
+    first_provider.plot_likelihood(data_set)
     saveFig(out_target_dir, section_name, f"fpn_likelihood.png")
 
-    first_provider_nearest.plot_fpn_likelihood_by_region(data_set)
+    first_provider.plot_fpn_likelihood_by_region(data_set)
     saveFig(out_target_dir, section_name, f"fpn_likelihood_by_region.png")
 
     section_name = 'First Provider Nearest Percent Slow'
-    did_plot = first_provider_nearest.plot_percent_slow_by_phase(data_set)
+    did_plot = first_provider.plot_percent_slow_by_phase(data_set)
     if did_plot:
         saveFig(out_target_dir, section_name, f"fpn_percent_slow_by_phase.png")
 
     section_name = 'First Provider Nearest Durations'
     for file_size in data_set.comparable_file_sizes:
-        did_plot = first_provider_nearest.plot_durations_by_phase(data_set, file_size)
+        did_plot = first_provider.plot_durations_by_phase(data_set, file_size)
         if did_plot:
             saveFig(out_target_dir, section_name, f"fpn_durations_by_phase_fs_{file_size}.png")
 
