@@ -85,7 +85,7 @@ def plot_histo_duration(data_set: DataSet, file_size: int, phase):
         region_labels.append(agent.region)
 
         if len(sp_retrievals) > 0:
-            sp_regions_sample_size.append(len(retrievals))
+            sp_regions_sample_size.append(len(sp_retrievals))
             sp_total_retrieval_durations = [ret.duration(phase).total_seconds() for ret in sp_retrievals]
             sp_regions_average_retrieval_duration.append(np.average(sp_total_retrieval_durations))
         else:
@@ -93,7 +93,7 @@ def plot_histo_duration(data_set: DataSet, file_size: int, phase):
             sp_regions_average_retrieval_duration.append(0)
 
         if len(mp_retrievals) > 0:
-            mp_regions_sample_size.append(len(retrievals))
+            mp_regions_sample_size.append(len(mp_retrievals))
             mp_total_retrieval_durations = [ret.duration(phase).total_seconds() for ret in mp_retrievals]
             mp_regions_average_retrieval_duration.append(np.average(mp_total_retrieval_durations))
         else:
