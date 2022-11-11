@@ -205,16 +205,16 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     section_name = 'Sys Health Trends'
     agent_health.plot_interval_property(data_set, '5min', 'available_mem')
-    saveFig(out_target_dir, section_name, 'available_mem.png')
+    saveFig(out_target_dir, section_name, 'available_mem_5_min.png')
 
     agent_health.plot_interval_property(data_set, '4H', 'available_mem')
-    saveFig(out_target_dir, section_name, 'available_mem.png')
+    saveFig(out_target_dir, section_name, 'available_mem_4_h.png')
 
     agent_health.plot_interval_property(data_set, '5min', 'load_avg_last_min')
-    saveFig(out_target_dir, section_name, 'available_mem.png')
+    saveFig(out_target_dir, section_name, 'load_avg_5_min.png')
 
     agent_health.plot_interval_property(data_set, '4H', 'load_avg_last_min')
-    saveFig(out_target_dir, section_name, 'available_mem.png')
+    saveFig(out_target_dir, section_name, 'load_avg_4_h.png')
 
     section_name = 'Experimental Controls'
     experimental_controls.plot_num_providers(retrievals, 'Retrieval Number Providers')
