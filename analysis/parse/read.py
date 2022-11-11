@@ -3,6 +3,7 @@ from pickled.model_log_file import LogFile
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
 from pickled.model_agent import Agent
+from pickled.model_sys_health import SysHealth
 
 from logs.model_node_log_spec import NodeLogSpec
 from parse.model_log_line import IPFSLogLine, AgentLogLine
@@ -20,6 +21,7 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
     unattempted_retrieval_cids: list[str] = []
     sealed_publications: dict[str, Publication] = {}
     sealed_retrievals: dict[str, Retrieval] = {}
+    sys_health_events: list[SysHealth] = []
 
     print("Parsing: ", log_file_spec.ipfs_path)
 
@@ -165,6 +167,8 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
                         sealed_retrievals[pll.cid].done_retrieving(pll.timestamp, pll.file_size)
                     elif (pll := log.is_get_id()):
                         agent.add_peer(pll.peer)
+                    elif (pll := log.is_sys_health()):
+                        sys_health_events.append(SysHealth(agent, pll.timestamp, pll.available_mem,  pll.load_avg_last_min))
 
                 except Exception as e:
                     print('Failed parsing Agent line.')
@@ -190,4 +194,4 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
         retrievals.append(retrieval)
 
 
-    return LogFile(started_at, ended_at, publications, retrievals, unattempted_retrieval_cids, agent)
+    return LogFile(started_at, ended_at, publications, retrievals, unattempted_retrieval_cids, agent, sys_health_events)

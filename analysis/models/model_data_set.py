@@ -1,6 +1,7 @@
 from pickled.model_log_file import LogFile
 from pickled.model_retrieval import Retrieval
 from pickled.model_publication import Publication
+from pickled.model_sys_health import SysHealth
 from models.model_region import Region
 from helpers import proximity, chronologist, map, constants, breakdowns
 from pickled.model_agent import Agent
@@ -49,6 +50,7 @@ class DataSet:
         self._file_size_retrievals: dict[int, list[Retrieval]]= None
         self._file_size_means: dict[int, dict[RetrievalPhase, Duration]] = None
         self._file_size_deviations: dict[int, dict[RetrievalPhase, Duration]] = None
+        self._sys_health_events: list[SysHealth] = []
 
         self.regions = []
         self._peer_agent_map = {}
@@ -64,9 +66,15 @@ class DataSet:
             for peer in log.agent.peer_ids:
                 self._peer_agent_map[peer] = log.agent
 
+            self._sys_health_events += log.sys_health_events
+
     @property
     def agent_events_map(self) -> dict[Agent, AgentEvents]:
         return self._agent_events_map
+
+    @property
+    def sys_health_events(self) -> list[SysHealth]:
+        return self._sys_health_events
 
     @property
     def total_retrievals(self):

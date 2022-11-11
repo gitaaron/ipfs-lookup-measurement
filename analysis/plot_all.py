@@ -6,7 +6,7 @@ from pathlib import Path
 from plot import cdf_retrievals, cdf_publications, regions, experimental_controls,\
                  timeseries_retrievals, agent_uptime,\
                  publish_age, first_provider, file_size_phases,\
-                 single_multi_provider
+                 single_multi_provider, agent_health
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
 from helpers.constants import RetrievalPhase, PlayerType, DELAY_FILE_SIZE
@@ -203,6 +203,18 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         cdf_retrievals.plot_phase_comparison(file_size, retrievals)
         saveFig(out_target_dir, section_name, f"ret_phase_comparison_fs_{file_size}_cdf.png")
 
+    section_name = 'Sys Health Trends'
+    agent_health.plot_interval_property(data_set, '5min', 'available_mem')
+    saveFig(out_target_dir, section_name, 'available_mem.png')
+
+    agent_health.plot_interval_property(data_set, '4H', 'available_mem')
+    saveFig(out_target_dir, section_name, 'available_mem.png')
+
+    agent_health.plot_interval_property(data_set, '5min', 'load_avg_last_min')
+    saveFig(out_target_dir, section_name, 'available_mem.png')
+
+    agent_health.plot_interval_property(data_set, '4H', 'load_avg_last_min')
+    saveFig(out_target_dir, section_name, 'available_mem.png')
 
     section_name = 'Experimental Controls'
     experimental_controls.plot_num_providers(retrievals, 'Retrieval Number Providers')

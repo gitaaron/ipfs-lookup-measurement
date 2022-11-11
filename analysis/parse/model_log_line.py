@@ -18,6 +18,9 @@ class ParsedLogLine:
     agent_uptime: Optional[int] # milliseconds
     error_str: Optional[str]
     count: Optional[int]
+    available_mem: Optional[int]
+    load_avg_last_min: Optional[float]
+
 
     def __init__(self, cid: str, timestamp_str: str):
         self.cid = cid
@@ -374,6 +377,23 @@ class AgentLogLine(_LogLine):
             raise Exception("Failed to parse line: ", self.line)
         parsed = ParsedLogLine(None, match.group(1))
         parsed.peer = Peer(match.group(2), "n.a.")
+        return parsed
+
+    # 2022-11-06T09:00:14.774145594Z: available_mem:1045240 load_avg_last_min:0.31","timestamp":"2022-11-06T04:00:14.958219682-05:00
+    def is_sys_health(self) -> Optional[ParsedLogLine]:
+        if "available_mem:" not in self.line or "load_avg_last_min:" not in self.line:
+            return None
+
+        match = re.search(
+                r"([^\s]+): available_mem:([1-9][0-9]*) load_avg_last_min:([0-9\.])", self.line
+        )
+
+        if match is None:
+            raise Exception("Failed to parse line: ", self.line)
+
+        parsed = ParsedLogLine(None, match.group(1))
+        parsed.available_mem = int(match.group(2))
+        parsed.load_avg_last_min = float(match.group(3))
         return parsed
 
     @staticmethod
