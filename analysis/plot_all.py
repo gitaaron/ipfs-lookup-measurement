@@ -74,11 +74,11 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
             saveFig(out_target_dir, section_name, f"trend_ret_{phase.name}_region_breakdown_fs_{file_size}.png")
 
             section_name = 'Trends by Region (every 30 min.)'
-            timeseries_retrievals.plot_interval_duration_each_region(data_set.smallest_file_size, RetrievalPhase.TOTAL, data_set, f"Retrieval TOTAL Duration by Region (30m)", '30min')
+            timeseries_retrievals.plot_interval_duration_each_region(data_set.smallest_file_size, phase, data_set, f"Retrieval {phase.name} Duration by Region (30m)", '30min')
             saveFig(out_target_dir, section_name, f"trend_ret_{phase.name}_region_breakdown_fs_{file_size}_30_min.png")
 
             section_name = 'Trends by Region (every 4 hours)'
-            timeseries_retrievals.plot_interval_duration_each_region(data_set.smallest_file_size, RetrievalPhase.TOTAL, data_set, f"Retrieval TOTAL Duration by Region (4h)", '4H')
+            timeseries_retrievals.plot_interval_duration_each_region(data_set.smallest_file_size, phase, data_set, f"Retrieval {phase.name} Duration by Region (4h)", '4H')
             saveFig(out_target_dir, section_name, f"trend_ret_{phase.name}_region_breakdown_fs_{file_size}_4_hour.png")
 
     section_name = 'File Size / Phase Comparisons (scatter)'
