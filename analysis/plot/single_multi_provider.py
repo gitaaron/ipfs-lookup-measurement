@@ -171,7 +171,7 @@ def plot_duration_by_phase(data_set: DataSet, title: str, file_size: int):
 
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=8)
 
-def plot_duration_by_file_size(data_set: DataSet, title: str):
+def plot_duration_by_file_size(data_set: DataSet, title: str, phase: RetrievalPhase):
     fig1, ax1 = plt.subplots(figsize=(12,6), dpi=80)
     file_size_labels = []
     sp_durations = []
@@ -188,14 +188,14 @@ def plot_duration_by_file_size(data_set: DataSet, title: str):
 
         if len(sp_rets) > 0:
             sp_sample_sizes.append(len(sp_rets))
-            sp_duration  = calc.avg_duration(sp_rets, RetrievalPhase.TOTAL)
+            sp_duration  = calc.avg_duration(sp_rets, phase)
         else:
             sp_sample_sizes.append(0)
             sp_duration = 0
 
         if len(mp_rets) > 0:
             mp_sample_sizes.append(len(mp_rets))
-            mp_duration = calc.avg_duration(mp_rets, RetrievalPhase.TOTAL)
+            mp_duration = calc.avg_duration(mp_rets, phase)
         else:
             mp_sample_sizes.append(0)
             mp_duration = 0
@@ -220,7 +220,7 @@ def plot_duration_by_file_size(data_set: DataSet, title: str):
 
     ax1.legend(loc='upper left')
     ax1.set_xticks(x_pos, labels=file_size_labels)
-    ax1.set_ylabel(f"Average {RetrievalPhase.TOTAL} Duration (sec.)")
+    ax1.set_ylabel(f"Average {phase.name} Duration (sec.)")
     ax1.set_title(title)
 
     txt = f"Sample Size: {np.sum(sp_sample_sizes)+np.sum(mp_sample_sizes)}"

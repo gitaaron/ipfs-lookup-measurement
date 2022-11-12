@@ -107,8 +107,9 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         single_multi_provider.plot_duration_by_phase(data_set, f"Single vs Multi Provider Retrieval Durations by Phase", file_size)
         saveFig(out_target_dir, section_name, f"single_multi_provider_durations_by_phase_fs_{file_size}.png")
 
-    single_multi_provider.plot_duration_by_file_size(data_set, f"Single vs Multi Provider Retrieval Durations by File Size")
-    saveFig(out_target_dir, section_name, f"single_multi_provider_durations_by_file_size.png")
+    for phase in RetrievalPhase:
+        single_multi_provider.plot_duration_by_file_size(data_set, f"Single vs Multi Provider Retrieval {phase.name} Durations by File Size", phase)
+        saveFig(out_target_dir, section_name, f"single_multi_provider_{phase.name}_durations_by_file_size.png")
 
 
     single_multi_provider.plot_percent_slow_by_phase(data_set, f"Single vs Multi Provider Retrieval Percent Slow by Phase")
