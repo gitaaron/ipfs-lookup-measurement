@@ -81,7 +81,7 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
             timeseries_retrievals.plot_interval_duration_each_region(data_set.smallest_file_size, phase, data_set, f"Retrieval {phase.name} Duration by Region (4h)", '4H')
             saveFig(out_target_dir, section_name, f"trend_ret_{phase.name}_region_breakdown_fs_{file_size}_4_hour.png")
 
-    section_name = 'File Size / Phase Comparisons (scatter)'
+    section_name = 'Phase Comparisons (scatter)'
 
     for file_size in data_set.comparable_file_sizes:
         file_size_phases.plot_scatter(data_set, RetrievalPhase.GETTING_CLOSEST_PEERS, RetrievalPhase.DIALING, file_size)
@@ -155,13 +155,13 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     section_name = 'Publish Age Percent Slow'
     for phase in RetrievalPhase:
         publish_age.plot_histo_percent_slow(data_set, phase, f"Retrieval {phase.name} Percent Slow by Publish Age")
-        saveFig(out_target_dir, section_name, f"publish_age_ret_{phase.name}_duration_comp_bar.png")
+        saveFig(out_target_dir, section_name, f"publish_age_{phase.name}_percent_slow.png")
 
 
     section_name = 'Publish Age Durations (Bar)'
     for phase in RetrievalPhase:
         publish_age.plot_histo_duration(data_set, phase, f"Retrieval {phase.name} Duration by Publish Age")
-        saveFig(out_target_dir, section_name, f"histo_publish_age_ret_{phase.name}_duration_comp_bar.png")
+        saveFig(out_target_dir, section_name, f"publish_age_{phase.name}_duration_comp_bar.png")
 
     section_name = 'Publish Age Durations (Scatter)'
 
