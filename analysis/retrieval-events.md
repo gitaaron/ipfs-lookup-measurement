@@ -20,16 +20,15 @@ The following is an ordered sequence of events for retrieval.
 
 ## Phases
 
-```
-  INITIATED = 1
-  GETTING_CLOSEST_PEERS = 2
-  DIALING = 3
-  FETCHING = 4
-  DONE = 5
-  DONE_WITHOUT_ASKING_PEERS = 6
-```
+| Phase Name            | Description                                                      |
+|-----------------------|------------------------------------------------------------------|
+| TOTAL                 | The total time it takes for 'CAT' request complete               |
+| INITIATED             | Agent is asking known neighbors if they have the content         |
+| GETTING CLOSEST PEERS | Walk the DHT until I find at least one content provider          |
+| DIALING               | Start opening a connection with at least one content provider    |
+| FETCHING              | Start downloading the content from at least one content provider |
 
-## Phase -> Milestone Mapping
+## Start of Phase -> Milestone Mapping
 
 ```
 {
