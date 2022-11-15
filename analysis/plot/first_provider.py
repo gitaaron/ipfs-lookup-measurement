@@ -27,13 +27,16 @@ def plot_percent_slow_by_phase(data_set: DataSet) -> bool:
             fpn_phases.append(fpn_percent_slow)
             non_fpn_phases.append(non_fpn_percent_slow)
 
-        b1 = ax1.bar(phase_labels, fpn_phases)
-        b2 = ax1.bar(phase_labels, non_fpn_phases, bottom=fpn_phases)
+        x_pos = np.arange(len(phase_labels))
+        width = 0.4
+        b1 = ax1.bar(x_pos-0.2, fpn_phases, width, align='center', label='fpn')
+        b2 = ax1.bar(x_pos+0.2, non_fpn_phases, width, align='center', label='non_fpn')
 
-        plt.legend([b1, b2], ['fpn', 'non_fpn'], loc="upper right")
+        plt.legend(loc="upper right")
 
+        ax1.set_xticks(x_pos, labels=phase_labels)
         ax1.set_ylabel('Percent Slow')
-        ax1.set_title('First Provider Nearest effects on Duration by Phase')
+        ax1.set_title('First Provider Nearest effects on Percent Slow by Phase')
         txt = f"Sample Size: [fpn={fpn_sample_size},non_fpn={non_fpn_sample_size}]"
         plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
         return True
@@ -59,11 +62,14 @@ def plot_durations_by_phase(data_set: DataSet, file_size: int) -> bool:
             fpn_durations.append(fpn_duration)
             non_fpn_durations.append(non_fpn_duration)
 
-        b1 = ax1.bar(phase_labels, fpn_durations)
-        b2 = ax1.bar(phase_labels, non_fpn_durations, bottom=fpn_durations)
+        x_pos = np.arange(len(phase_labels))
+        width=0.4
+        b1 = ax1.bar(x_pos-0.2, fpn_durations, width, align='center', label='fpn')
+        b2 = ax1.bar(x_pos+0.2, non_fpn_durations, width, align='center', label='non_fpn')
 
-        plt.legend([b1, b2], ['fpn', 'non_fpn'], loc="upper right")
+        plt.legend(loc="upper right")
 
+        ax1.set_xticks(x_pos, labels=phase_labels)
         ax1.set_ylabel('Average Durations (sec.)')
         ax1.set_title('First Provider Nearest effects on Duration by Phase')
         txt = f"File Size: {stringify.file_size(file_size)}, Sample Size: [fpn={len(fpn_rs)},non_fpn={len(non_fpn_rs)}]"
