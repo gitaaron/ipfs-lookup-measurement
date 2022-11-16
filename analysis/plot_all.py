@@ -196,10 +196,15 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     cdf_publications.plot_total_add_provider(data_set)
     saveFig(out_target_dir, section_name, 'pvd_total_add_provider.png')
 
+    section_name = 'CDF Multi Provider Retrievals by Region'
+    cdf_retrievals.plot_duration_by_region(None, RetrievalPhase.TOTAL, data_set, True)
+    saveFig(out_target_dir, section_name, f"ret_multi_provider_{RetrievalPhase.TOTAL.name}_cdf.png")
+
+
     for file_size in data_set.comparable_file_sizes:
         section_name = 'CDF Retrievals by Region'
         for phase in RetrievalPhase:
-            cdf_retrievals.plot_duration_by_region(file_size, phase, data_set)
+            cdf_retrievals.plot_duration_by_region(file_size, phase, data_set, False)
             saveFig(out_target_dir, section_name, f"ret_{phase.name}_fs_{file_size}_cdf.png")
 
         section_name = 'CDF Retrievals by Phase'
