@@ -138,12 +138,13 @@ def plot_fp_distribution_by_region(data_set: DataSet) -> bool:
 
     fp_tally = {}
     region_labels = []
-    sample_size = 0
+    region_sample_size = {}
 
     agents = list(data_set.agent_events_map.keys())
 
     for agent_a in agents:
         fp_tally[agent_a.region] = {}
+        region_sample_size[agent_a.region] = 0
         region_labels.append(agent_a.region.name)
 
         for agent_b in agents:
@@ -153,9 +154,10 @@ def plot_fp_distribution_by_region(data_set: DataSet) -> bool:
         fp_agent = data_set.agent_from_peer_id(ret.first_provider_peer)
         if fp_agent is not None:
             fp_tally[ret.origin][fp_agent.region] += 1
-            sample_size += 1
+            region_sample_size[ret.origin] += 1
 
     sorted_fp_regions = []
+    sorted_sample_sizes = []
     for idx, agent_a in enumerate(agents):
         sorted_fps = []
         for agent_b in agents:
@@ -163,15 +165,26 @@ def plot_fp_distribution_by_region(data_set: DataSet) -> bool:
 
         sorted_fp_regions.append(np.array(sorted_fps))
 
+        sorted_sample_sizes.append(region_sample_size[agent_a.region])
+
     bars = []
     previous_fps = []
     for sorted_fps in sorted_fp_regions:
         bars.append(ax1.bar(region_labels, sorted_fps, bottom=sum(previous_fps)))
         previous_fps.append(sorted_fps)
 
+    rects = [{'x':rect.get_x()+rect.get_width()/2.0, 'y':0} for rect in bars[0]]
+
+    for bar in bars:
+        for idx, rect in enumerate(bar):
+            rects[idx]['y'] += rect.get_height()
+
+    for idx,rect in enumerate(rects):
+        plt.text(rect['x'], rect['y'], f'tot:{sorted_sample_sizes[idx]}', ha='center', va='bottom')
+
     plt.legend(bars, region_labels, loc='upper right')
 
     ax1.set_ylabel('First Providers')
     ax1.set_title('First Provider Regions by Origin')
-    txt = f"Sample Size: {sample_size}"
+    txt = f"Sample Size: {np.sum(sorted_sample_sizes)}"
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
