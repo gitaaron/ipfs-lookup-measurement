@@ -27,6 +27,7 @@ class Retrieval:
     dial_started_at: Optional[datetime]
     connected_at: Optional[datetime]
     stream_opened_at: Optional[datetime]
+    last_stream_opened_at: Optional[datetime]
     # there could be more than one provider
     received_first_HAVE_at: Optional[datetime]
     done_retrieving_at: Optional[datetime]
@@ -62,6 +63,7 @@ class Retrieval:
         self.found_first_provider_at = None
         self.dial_started_at = None
         self.stream_opened_at = None
+        self.last_stream_opened_at = None
         self.connected_at = None
         self.received_first_HAVE_at = None
         self.done_retrieving_at = None
@@ -164,8 +166,12 @@ class Retrieval:
         if provider not in self.provider_peers:
             raise Exception(
                 f"Received provider {self.cid} from unknown provider {provider}")
-        self.stream_opened_at = timestamp
-        self.state = Retrieval.State.FETCHING
+        if self.state == Retrieval.State.DIALING:
+            self.stream_opened_at = self.last_stream_opened_at = timestamp
+            self.state = Retrieval.State.FETCHING
+        else:
+            self.last_stream_opened_at = timestamp
+
 
     def connected_to_provider(self, provider: Peer, pointer: Peer, timestamp: datetime):
         if self.state.value >= Retrieval.State.DONE.value:
