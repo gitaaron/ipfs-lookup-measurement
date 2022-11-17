@@ -120,6 +120,9 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     section_name = 'Regional Comparisons'
 
+    regions.plot_avg_hops_to_first_provider(data_set)
+    saveFig(out_target_dir, section_name, f"avg_hops_to_fp_by_region.png")
+
     for phase in RetrievalPhase:
         regions.plot_histo_percent_slow(data_set, phase)
         saveFig(out_target_dir, section_name, f"{phase.name}_percent_slow_region_comparison_bar.png")
@@ -132,6 +135,7 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     section_name = 'First Provider Distributions'
     first_provider.plot_fp_distribution_by_region(data_set)
     saveFig(out_target_dir, section_name, f"first_provider_distribution_by_region.png")
+
 
     section_name = 'First Referer Agents'
 

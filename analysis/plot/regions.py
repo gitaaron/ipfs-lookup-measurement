@@ -127,5 +127,38 @@ def plot_histo_duration(data_set: DataSet, file_size: int, phase):
     txt = f"File Size: {stringify.file_size(file_size)}, Sample Size: {np.sum(sp_regions_sample_size)+np.sum(mp_regions_sample_size)}"
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=8)
 
+def plot_avg_hops_to_first_provider(data_set: DataSet):
+    fig1, ax1 = plt.subplots(figsize=(12,6), dpi=80)
+
+    avg_hops_by_region = {}
+    region_sample_size = {}
+    for agent, agent_events in data_set.agent_events_map.items():
+        num_hops = []
+        for ret in agent_events.completed_retrievals:
+            num_hops.append(ret.hops_to_first_provider)
+
+        if len(num_hops) > 0:
+            avg_hops_by_region[agent.region] = np.mean(num_hops)
+            region_sample_size[agent.region] = len(num_hops)
+
+    region_labels = list(avg_hops_by_region.keys())
+    sorted_region_values = [avg_hops_by_region[region] for region in region_labels]
+    sorted_sample_sizes = [region_sample_size[region] for region in region_labels]
+
+
+    rects = ax1.bar([region.name for region in region_labels], sorted_region_values)
+
+    for idx, rect in enumerate(rects):
+        plt.text(rect.get_x() + rect.get_width() / 2.0, rect.get_height(), f'tot:{sorted_sample_sizes[idx]}', ha='center', va='bottom')
+
+
+    ax1.set_ylabel('Average Hops')
+    ax1.set_title(f"Number of hops to first provider by Region")
+
+    txt = f"Sample Size: {np.sum(sorted_sample_sizes)}"
+    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
+
+
+
 if __name__ == "__main__":
     plot()
