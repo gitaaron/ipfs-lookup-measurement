@@ -136,14 +136,13 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     section_name = 'First Referer Agents'
 
     first_provider.plot_first_referer_agents(data_set, DurationType.ALL)
-    saveFig(out_target_dir, section_name, f"first_provider_agents_all.png")
+    saveFig(out_target_dir, section_name, f"first_referer_agents_all.png")
 
     first_provider.plot_first_referer_agents(data_set, DurationType.FAST)
-    saveFig(out_target_dir, section_name, f"first_provider_agents_fast.png")
+    saveFig(out_target_dir, section_name, f"first_referer_agents_fast.png")
 
     first_provider.plot_first_referer_agents(data_set, DurationType.SLOW)
-    saveFig(out_target_dir, section_name, f"first_provider_agents_slow.png")
-
+    saveFig(out_target_dir, section_name, f"first_referer_agents_slow.png")
 
     section_name = 'First Provider Nearest Likelihood'
 
