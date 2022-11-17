@@ -134,8 +134,19 @@ class Retrieval:
     def getting_providers_from(self, target_peer: Peer, timestamp: datetime):
         if target_peer in self.get_providers_queries:
             return
-        query = GetProvidersQuery(target_peer, self.cid, timestamp)
+
+        hops = None
+        for provider_peer,query in self.get_providers_queries.items():
+            if query.closer_peers is not None and target_peer in query.closer_peers:
+                if hops == None or (query.hops_to_query + 1) < hops:
+                    hops = query.hops_to_query+1
+
+        query = GetProvidersQuery(target_peer, self.cid, timestamp, hops or 1)
         self.get_providers_queries[target_peer] = query
+
+    @property
+    def hops_to_first_provider(self):
+        return self.get_providers_queries[self.first_referer_to_fp].hops_to_query
 
     def found_providers_from(self, target_peer: Peer, timestamp: datetime, providers_count: int):
         if target_peer not in self.get_providers_queries:

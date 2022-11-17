@@ -171,8 +171,14 @@ class Publication:
         if self.is_putting_done():
             self.provide_ended_at = timestamp
 
+        hops = None
+        for provider_peer,query in self.get_provider_queries.items():
+            if query.closer_peers is not None and peer in query.closer_peers:
+                if hops == None or (query.hops_to_query + 1) < hops:
+                    hops = query.hops_to_query+1
+
         self.get_provider_queries[peer] = GetProvidersQuery(
-            peer, self.cid, timestamp)
+            peer, self.cid, timestamp, hops or 1)
 
     def is_putting_done(self):
         if len(self.add_provider_queries) != len(self.closest_peers):

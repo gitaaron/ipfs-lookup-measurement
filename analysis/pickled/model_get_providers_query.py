@@ -7,16 +7,19 @@ class GetProvidersQuery:
     cid: str
     target_peer: Peer
     started_at: datetime
+    hops_to_query: int
+
 
     ended_at: Optional[datetime]
     closer_peers: Optional[List[Peer]]
     providers_count: Optional[int]
     error_str: Optional[str]
 
-    def __init__(self, target_peer: Peer, cid: str, started_at: datetime) -> None:
+    def __init__(self, target_peer: Peer, cid: str, started_at: datetime, hops_to_query: int) -> None:
         self.cid = cid
         self.started_at = started_at
         self.target_peer = target_peer
+        self.hops_to_query = hops_to_query
         self.providers_count = None
         self.ended_at = None
         self.closer_peers = None
