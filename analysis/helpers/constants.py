@@ -14,5 +14,11 @@ class PlayerType(str, Enum):
     RETRIEVER = 'RETRIEVER'
     PUBLISHER = 'PUBLISHER'
 
+class DurationType(str, Enum):
+    FAST = 'FAST'
+    SLOW = 'SLOW'
+    ALL = 'ALL'
+
+
 DELAY_FILE_SIZE = 52439
 

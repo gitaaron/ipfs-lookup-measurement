@@ -2,7 +2,35 @@ import matplotlib.pyplot as plt
 import numpy as np
 from helpers import calc, reduce, stringify
 from models.model_data_set import DataSet
-from helpers.constants import RetrievalPhase
+from helpers.constants import RetrievalPhase, DurationType
+
+def plot_first_referer_agents(data_set: DataSet, duration_type: DurationType):
+    fig1, ax1 = plt.subplots(figsize=(12,6), dpi=80)
+
+    retrievals = data_set.total_completed_retrievals
+
+    if duration_type == DurationType.FAST:
+        retrievals = reduce.by_fast_retrievals(data_set, retrievals, RetrievalPhase.GETTING_CLOSEST_PEERS)
+    elif duration_type == DurationType.SLOW:
+        retrievals = reduce.by_slow_retrievals(data_set, retrievals, RetrievalPhase.GETTING_CLOSEST_PEERS)
+    elif duration_type != DurationType.ALL:
+        raise Exception(f"Uknown duration type {duration_type}")
+
+    agent_counts = {}
+    for ret in retrievals:
+        av = ret.first_referer_to_fp.agent_version.split('/')[0]
+        if av not in agent_counts:
+            agent_counts[av] = 1
+        else:
+            agent_counts[av] += 1
+
+    ax1.bar(list(agent_counts.keys()), list(agent_counts.values()))
+
+    ax1.set_ylabel('Count')
+    ax1.set_title(f"First Provider Agent Distribution for {duration_type} {RetrievalPhase.GETTING_CLOSEST_PEERS} ")
+
+    txt = f"Sample Size: {len(data_set.total_completed_retrievals)}"
+    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
 
 def plot_percent_slow_by_phase(data_set: DataSet) -> bool:
 

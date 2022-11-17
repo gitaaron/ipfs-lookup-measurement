@@ -38,6 +38,7 @@ class Retrieval:
 
     provider_peers: Set[Peer]
     first_provider_peer: Peer
+    first_referer_to_fp: Peer
     provider_record_storing_peers: Set[Peer]
     get_providers_queries: Dict[Peer, GetProvidersQuery]
     done_retrieving_error: Optional[str]
@@ -56,6 +57,7 @@ class Retrieval:
         self.get_providers_queries = {}
         self.provider_peers = set({})
         self.first_provider_peer = None
+        self.first_referer_to_fp = None
         self.provider_record_storing_peers = set({})
         self.marked_for_removal = False
         self.marked_as_incomplete = False

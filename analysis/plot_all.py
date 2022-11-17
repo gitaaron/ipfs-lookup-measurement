@@ -9,7 +9,7 @@ from plot import cdf_retrievals, cdf_publications, regions, experimental_control
                  single_multi_provider, agent_health
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
-from helpers.constants import RetrievalPhase, PlayerType, DELAY_FILE_SIZE
+from helpers.constants import RetrievalPhase, PlayerType, DELAY_FILE_SIZE, DurationType
 from logs.model_logs_config import LogsConfig
 from logs import load
 from models.model_data_set import DataSet
@@ -128,9 +128,22 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
             regions.plot_histo_duration(data_set, file_size, phase)
             saveFig(out_target_dir, section_name, f"{phase.name}_duration_region_comparison_bar_fs_{file_size}.png")
 
+
     section_name = 'First Provider Distributions'
     first_provider.plot_fp_distribution_by_region(data_set)
     saveFig(out_target_dir, section_name, f"first_provider_distribution_by_region.png")
+
+    section_name = 'First Referer Agents'
+
+    first_provider.plot_first_referer_agents(data_set, DurationType.ALL)
+    saveFig(out_target_dir, section_name, f"first_provider_agents_all.png")
+
+    first_provider.plot_first_referer_agents(data_set, DurationType.FAST)
+    saveFig(out_target_dir, section_name, f"first_provider_agents_fast.png")
+
+    first_provider.plot_first_referer_agents(data_set, DurationType.SLOW)
+    saveFig(out_target_dir, section_name, f"first_provider_agents_slow.png")
+
 
     section_name = 'First Provider Nearest Likelihood'
 

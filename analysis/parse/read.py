@@ -105,6 +105,7 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
                     if retrievals[pll.cid].found_first_provider_at is None or retrievals[
                             pll.cid].found_first_provider_at > pll.timestamp:
                         retrievals[pll.cid].found_first_provider_at = pll.timestamp
+                        retrievals[pll.cid].first_referer_to_fp = pll.remote_peer
                     retrievals[pll.cid].provider_record_storing_peers.add(
                         pll.remote_peer)
                     retrievals[pll.cid].provider_peers.add(pll.other_peer)
