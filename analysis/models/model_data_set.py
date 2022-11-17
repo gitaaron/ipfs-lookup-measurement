@@ -158,8 +158,7 @@ class DataSet:
 
     def is_fast(self, ret: Retrieval, phase: constants.RetrievalPhase) -> bool:
         mean = self.file_size_means[ret.file_size][phase]
-        std = self.file_size_deviations[ret.file_size][phase]
-        return ret.duration(phase).total_seconds() < (mean.duration + std.duration)
+        return ret.duration(phase).total_seconds() < mean.duration
 
     @property
     def file_size_means(self):

@@ -29,7 +29,7 @@ def plot_first_referer_agents(data_set: DataSet, duration_type: DurationType):
     ax1.set_ylabel('Count')
     ax1.set_title(f"First Provider Agent Distribution for {duration_type} {RetrievalPhase.GETTING_CLOSEST_PEERS} ")
 
-    txt = f"Sample Size: {len(data_set.total_completed_retrievals)}"
+    txt = f"Sample Size: {len(retrievals)}"
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
 
 def plot_percent_slow_by_phase(data_set: DataSet) -> bool:
