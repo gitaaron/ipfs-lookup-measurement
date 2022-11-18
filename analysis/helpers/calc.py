@@ -205,6 +205,8 @@ def agent_uptime_duration_bins(data_set: DataSet, file_size: int, phase: Retriev
     sorted_avgs = [bucket_avgs.get(i, 0) for i in range(1, len(edges))]
     sorted_sample_sizes = [sample_sizes.get(i, 0) for i in range(1, len(edges))]
 
-
     width=(edges[1] - edges[0])*0.9
     return edges[:-1], sorted_avgs, width, sorted_sample_sizes
+
+def average_hops_to_first_provider(data_set: DataSet):
+    return np.mean([ret.hops_to_first_provider for ret in data_set.total_completed_retrievals])

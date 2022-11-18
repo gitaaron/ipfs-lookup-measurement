@@ -22,7 +22,8 @@ def execute(logs_config: LogsConfig) -> dict:
     stats['num_has_first_provider'] = len(data_set.has_first_provider_retrievals)
     stats['num_many_providers'] = many_providers_count
     stats['num_single_provider'] = single_provider_count
-    stats['average_providers_per_retrieval'] = avg_providers
+    stats['average_providers_per_retrieval'] = round(avg_providers, 2)
+    stats['average_num_hops_to_first_provider'] = round(calc.average_hops_to_first_provider(data_set), 2)
     stats['phase_avg_duration'] = breakdowns.avg_duration_from_breakdown({'count': len(data_set.total_completed_retrievals), 'durations':data_set.phase_durations})
 
     if many_providers_count > 0 and len(data_set.first_provider_nearest_retrievals) > 0:
