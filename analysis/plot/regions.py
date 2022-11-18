@@ -59,7 +59,7 @@ def plot_histo_percent_slow(data_set: DataSet, phase):
     ax1.set_xticks(x_pos, labels=region_labels)
     ax1.legend(loc='upper left')
 
-    ax1.set_xlabel('Regions')
+    ax1.set_xlabel('Retriever Regions')
     ax1.set_ylabel('Percent Slow')
     ax1.set_title(f"Retrieval {phase.name} Percent Slow Retrievals by Region")
 
@@ -182,6 +182,35 @@ def plot_percent_hydras_first_referers(data_set):
 
     txt = f"Sample Size: {np.sum(sorted_sample_sizes)}"
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
+
+
+def plot_fail_success_rate(data_set):
+    fig1, ax1 = plt.subplots(figsize=(12,6), dpi=80)
+    success_rate_by_region = {}
+    fail_rate_by_region = {}
+    for agent, agent_events in data_set.agent_events_map.items():
+        success_rate_by_region[agent.region] = agent_events.num_succeeded_retrievals
+        fail_rate_by_region[agent.region] = agent_events.num_failed_retrievals
+
+    region_labels = list(success_rate_by_region.keys())
+    sorted_region_success_rate = [success_rate_by_region[region] for region in region_labels]
+    sorted_region_fail_rate = [fail_rate_by_region[region] for region in region_labels]
+    sorted_sample_sizes = [success_rate_by_region[region] + fail_rate_by_region[region] for region in region_labels]
+
+    x_pos = np.arange(len(region_labels))
+
+    width = 0.4
+    ax1.bar(x_pos-0.2, sorted_region_fail_rate, width, align='center', label='failed')
+    ax1.bar(x_pos+0.2, sorted_region_success_rate, width, align='center', label='succeeded')
+
+    ax1.set_xticks(x_pos, labels=region_labels)
+    ax1.legend(loc='upper left')
+    ax1.set_xlabel('Retriever Regions')
+    ax1.set_ylabel('Number of Retrievals')
+    ax1.set_title(f"Retrieval Success and Failure Rate by Region")
+    txt = f"Sample Size: {np.sum(sorted_sample_sizes)}"
+    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=8)
+
 
 
 if __name__ == "__main__":
