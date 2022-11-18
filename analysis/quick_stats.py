@@ -32,7 +32,7 @@ def execute(logs_config: LogsConfig) -> dict:
         if len(data_set.non_first_provider_nearest_retrievals) > 0:
             stats['avg_duration_non_fpn'] = f"{round(calc.avg_duration_non_first_provider_nearest(data_set),3)} sec."
 
-    slow = reduce.by_slow_retrievals(completed_retrievals)
+    slow = reduce.by_slow_retrievals(data_set, completed_retrievals, constants.RetrievalPhase.TOTAL)
 
     if len(slow) > 0:
         slow_stats = {}

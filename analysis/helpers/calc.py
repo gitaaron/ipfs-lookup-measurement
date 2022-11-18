@@ -26,7 +26,7 @@ def avg_duration_first_provider_nearest(data_set: DataSet) -> float:
 
 def percent_fpn_slow(data_set: DataSet) -> float:
     fpn_retrievals = data_set.first_provider_nearest_retrievals
-    slow_fpn_retrievals = reduce.by_slow_retrievals(fpn_retrievals)
+    slow_fpn_retrievals = reduce.by_slow_retrievals(data_set, fpn_retrievals, RetrievalPhase.TOTAL)
     if len(fpn_retrievals) > 0:
         return len(slow_fpn_retrievals) / len(fpn_retrievals) * 100
     else:
@@ -34,7 +34,7 @@ def percent_fpn_slow(data_set: DataSet) -> float:
 
 def percent_non_fpn_slow(data_set: DataSet) -> float:
     non_fpn_retrievals = data_set.non_first_provider_nearest_retrievals
-    slow_non_fpn_retrievals = reduce.by_slow_retrievals(non_fpn_retrievals)
+    slow_non_fpn_retrievals = reduce.by_slow_retrievals(data_set, non_fpn_retrievals, RetrievalPhase.TOTAL)
     if len(non_fpn_retrievals) > 0:
         return len(slow_non_fpn_retrievals) / len(non_fpn_retrievals) * 100
     else:
@@ -76,9 +76,9 @@ def provider_count(data_set: DataSet, slow: bool) -> tuple[int, int, float]:
 
 
     if slow:
-        retrievals = reduce.by_slow_retrievals(retrievals)
-        many_provider_retrievals = reduce.by_slow_retrievals(many_provider_retrievals)
-        single_provider_retrievals = reduce.by_slow_retrievals(single_provider_retrievals)
+        retrievals = reduce.by_slow_retrievals(data_set, retrievals, RetrievalPhase.TOTAL)
+        many_provider_retrievals = reduce.by_slow_retrievals(data_set, many_provider_retrievals, RetrievalPhase.TOTAL)
+        single_provider_retrievals = reduce.by_slow_retrievals(data_set, single_provider_retrievals, RetrievalPhase.TOTAL)
 
     total_providers = 0
 
