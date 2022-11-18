@@ -124,7 +124,7 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     saveFig(out_target_dir, section_name, f"fail_success_rate_by_region.png")
 
     regions.plot_percent_hydras_first_referers(data_set)
-    saveFig(out_target_dir, section_name, f"avg_hops_to_fp_by_region.png")
+    saveFig(out_target_dir, section_name, f"percent_hydras_first_referer_by_region.png")
 
     regions.plot_avg_hops_to_first_provider(data_set)
     saveFig(out_target_dir, section_name, f"avg_hops_to_fp_by_region.png")
