@@ -24,3 +24,6 @@ def by_main_player(retrievals: list[Retrieval], player: PlayerType):
         return list(filter(lambda ret: len(ret.provider_peers) == 1, retrievals))
     else:
         raise Exception('Invalid player type: %s' % player)
+
+def by_first_referer(retrievals: list[Retrieval], agent_name: str):
+    return list(filter(lambda ret: (agent_name in ret.first_referer_to_fp.agent_version), retrievals))

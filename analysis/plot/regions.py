@@ -158,6 +158,30 @@ def plot_avg_hops_to_first_provider(data_set: DataSet):
     txt = f"Sample Size: {np.sum(sorted_sample_sizes)}"
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
 
+def plot_percent_hydras_first_referers(data_set):
+    fig1, ax1 = plt.subplots(figsize=(12,6), dpi=80)
+    percent_hydras_by_region = {}
+    region_sample_size = {}
+    for agent, agent_events in data_set.agent_events_map.items():
+        total_rets = agent_events.completed_retrievals
+        hydra_rets = reduce.by_first_referer(total_rets, 'hydra')
+        percent_hydras_by_region[agent.region] = round(len(hydra_rets)/len(total_rets)*100, 1)
+        region_sample_size[agent.region] = len(total_rets)
+
+    region_labels = list(percent_hydras_by_region.keys())
+    sorted_region_percents = [percent_hydras_by_region[region] for region in region_labels]
+    sorted_sample_sizes = [region_sample_size[region] for region in region_labels]
+
+    rects = ax1.bar([region.name for region in region_labels], sorted_region_percents)
+
+    for idx, rect in enumerate(rects):
+        plt.text(rect.get_x() + rect.get_width() / 2.0, rect.get_height(), f'tot:{sorted_sample_sizes[idx]}', ha='center', va='bottom')
+
+    ax1.set_ylabel('% Hydras')
+    ax1.set_title('Percent Hydras as First Referers to First Provider by Region')
+
+    txt = f"Sample Size: {np.sum(sorted_sample_sizes)}"
+    plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
 
 
 if __name__ == "__main__":
