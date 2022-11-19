@@ -301,7 +301,7 @@ class DataSet:
         return self._non_first_provider_nearest_retrievals
 
 
-    def agent_from_peer_id(self, peer):
+    def agent_from_peer_id(self, peer) -> Agent:
         if peer in self._peer_agent_map:
             return self._peer_agent_map[peer]
         else:

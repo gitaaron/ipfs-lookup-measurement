@@ -138,11 +138,9 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
             regions.plot_histo_duration(data_set, file_size, phase)
             saveFig(out_target_dir, section_name, f"{phase.name}_duration_region_comparison_bar_fs_{file_size}.png")
 
-
     section_name = 'First Provider Distributions'
     first_provider.plot_fp_distribution_by_region(data_set)
     saveFig(out_target_dir, section_name, f"first_provider_distribution_by_region.png")
-
 
     section_name = 'First Referer Agents'
 

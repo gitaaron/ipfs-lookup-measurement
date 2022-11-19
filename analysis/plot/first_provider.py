@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from helpers import calc, reduce, stringify
 from models.model_data_set import DataSet
-from helpers.constants import RetrievalPhase, DurationType
+from helpers.constants import RetrievalPhase, DurationType, UNKNOWN_AGENT
 
 def plot_first_referer_agents(data_set: DataSet, duration_type: DurationType):
     fig1, ax1 = plt.subplots(figsize=(12,6), dpi=80)
@@ -151,7 +151,7 @@ def plot_fpn_likelihood_by_region(data_set: DataSet):
     ax1.set_xticks(x_pos, labels=region_labels)
     plt.legend([b1, b2], ['num_fpns', 'num_non_fpns'], loc="upper right")
 
-    ax1.set_xlabel('Regions')
+    ax1.set_xlabel('Retriever Regions')
     ax1.set_ylabel('Ratio of fpn vs non-fpn')
 
     ax1.set_title('First Provider Nearest Likelihood by Region')
@@ -169,6 +169,7 @@ def plot_fp_distribution_by_region(data_set: DataSet) -> bool:
     region_sample_size = {}
 
     agents = list(data_set.agent_events_map.keys())
+    agents.append(UNKNOWN_AGENT)
 
     for agent_a in agents:
         fp_tally[agent_a.region] = {}
@@ -179,17 +180,16 @@ def plot_fp_distribution_by_region(data_set: DataSet) -> bool:
             fp_tally[agent_a.region][agent_b.region] = 0
 
     for ret in retrievals:
-        fp_agent = data_set.agent_from_peer_id(ret.first_provider_peer)
-        if fp_agent is not None:
-            fp_tally[ret.origin][fp_agent.region] += 1
-            region_sample_size[ret.origin] += 1
+        fp_agent = data_set.agent_from_peer_id(ret.first_provider_peer) or UNKNOWN_AGENT
+        fp_tally[ret.origin][fp_agent.region] += 1
+        region_sample_size[ret.origin] += 1
 
     sorted_fp_regions = []
     sorted_sample_sizes = []
     for idx, agent_a in enumerate(agents):
         sorted_fps = []
         for agent_b in agents:
-            sorted_fps.append(fp_tally[agent_a.region][agent_b.region])
+            sorted_fps.append(fp_tally[agent_b.region][agent_a.region])
 
         sorted_fp_regions.append(np.array(sorted_fps))
 
@@ -213,6 +213,8 @@ def plot_fp_distribution_by_region(data_set: DataSet) -> bool:
     plt.legend(bars, region_labels, loc='upper right')
 
     ax1.set_ylabel('First Providers')
+    ax1.set_xlabel('Retriever Regions')
+
     ax1.set_title('First Provider Regions by Origin')
     txt = f"Sample Size: {np.sum(sorted_sample_sizes)}"
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)

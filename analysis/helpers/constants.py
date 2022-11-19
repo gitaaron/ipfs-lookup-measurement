@@ -1,4 +1,6 @@
 from enum import Enum
+from pickled.model_agent import Agent
+from models.model_region import Region
 
 
 SLOW_THRESHOLD = 4 # in sec.
@@ -22,3 +24,4 @@ class DurationType(str, Enum):
 
 DELAY_FILE_SIZE = 52439
 
+UNKNOWN_AGENT = Agent(-1, Region('unknown'))
