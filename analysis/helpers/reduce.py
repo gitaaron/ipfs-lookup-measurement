@@ -27,3 +27,6 @@ def by_main_player(retrievals: list[Retrieval], player: PlayerType):
 
 def by_first_referer(retrievals: list[Retrieval], agent_name: str):
     return list(filter(lambda ret: (agent_name in ret.first_referer_to_fp.agent_version), retrievals))
+
+def by_least_num_providers(retrievals: list[Retrieval], num_providers: int):
+    return list(filter(lambda ret: len(ret.provider_peers) >= num_providers, retrievals))

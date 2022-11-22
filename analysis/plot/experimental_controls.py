@@ -9,7 +9,6 @@ def plot_num_providers(retrievals:list[Retrieval], title: str):
     for ret in retrievals:
         num_providers_in_retrievals.append(len(ret.provider_peers))
 
-
     start_dates = [ret.retrieval_started_at for ret in retrievals]
 
     DF = pd.DataFrame(

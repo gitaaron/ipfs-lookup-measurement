@@ -141,6 +141,8 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     section_name = 'First Response Distributions'
     provider_responses.plot_num_providers_in_first_referal(data_set)
+    saveFig(out_target_dir, section_name, f"num_providers_first_referal_distribution.png")
+
 
     section_name = 'First Provider Distributions'
     first_provider.plot_fp_distribution_by_region(data_set)
