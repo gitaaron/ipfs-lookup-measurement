@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from plot import cdf_retrievals, cdf_publications, regions, experimental_controls,\
                  timeseries_retrievals, agent_uptime,\
-                 publish_age, first_provider, file_size_phases,\
+                 publish_age, first_provider, provider_responses, file_size_phases,\
                  single_multi_provider, agent_health
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
@@ -137,6 +137,10 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
         for file_size in data_set.comparable_file_sizes:
             regions.plot_histo_duration(data_set, file_size, phase)
             saveFig(out_target_dir, section_name, f"{phase.name}_duration_region_comparison_bar_fs_{file_size}.png")
+
+
+    section_name = 'First Response Distributions'
+    provider_responses.plot_num_providers_in_first_referal(data_set)
 
     section_name = 'First Provider Distributions'
     first_provider.plot_fp_distribution_by_region(data_set)

@@ -14,7 +14,7 @@ def plot_first_referer_agents(data_set: DataSet, duration_type: DurationType):
     elif duration_type == DurationType.SLOW:
         retrievals = reduce.by_slow_retrievals(data_set, retrievals, RetrievalPhase.GETTING_CLOSEST_PEERS)
     elif duration_type != DurationType.ALL:
-        raise Exception(f"Uknown duration type {duration_type}")
+        raise Exception(f"Unknown duration type {duration_type}")
 
     agent_counts = {}
     for ret in retrievals:

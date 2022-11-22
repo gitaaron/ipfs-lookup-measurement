@@ -210,3 +210,17 @@ def agent_uptime_duration_bins(data_set: DataSet, file_size: int, phase: Retriev
 
 def average_hops_to_first_provider(data_set: DataSet):
     return np.mean([ret.hops_to_first_provider for ret in data_set.total_completed_retrievals])
+
+def first_referal_num_providers_in_percent(retrievals: list[Retrieval]):
+    freqs = {}
+    for ret in retrievals:
+        num = ret.first_referal_providers_count
+        if num in freqs:
+            freqs[num] += 1
+        else:
+            freqs[num] = 1
+
+    percents = {}
+    for num,freq in freqs.items():
+        percents[num] = round(freq/len(retrievals)*100, 2)
+    return percents

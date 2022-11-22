@@ -43,6 +43,7 @@ class Retrieval:
     get_providers_queries: Dict[Peer, GetProvidersQuery]
     done_retrieving_error: Optional[str]
     finish_searching_providers_ctx_error: Optional[str]
+    _first_referal_providers_count: Optional[int]
 
     marked_as_incomplete: bool
     marked_for_removal: bool
@@ -73,6 +74,7 @@ class Retrieval:
         self.done_retrieving_error = None
         self.finish_searching_providers_ctx_error = None
         self.agent_initiated_retrieval_at = None
+        self._first_referal_providers_count = None
 
 
     @property
@@ -154,6 +156,13 @@ class Retrieval:
                 f"Unstarted query ended CID: {self.cid} target peer: {target_peer.id}")
         self.get_providers_queries[target_peer].succeeded(
             timestamp, [], providers_count)
+
+        if providers_count > 0 and self._first_referal_providers_count is None:
+            self._first_referal_providers_count = providers_count
+
+    @property
+    def first_referal_providers_count(self):
+        return self._first_referal_providers_count or 0
 
     def got_closer_peers_from(self, target_peer: Peer, timestamp: datetime, closer_peers: List[Peer]):
         if target_peer not in self.get_providers_queries:
