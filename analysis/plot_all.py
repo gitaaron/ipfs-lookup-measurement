@@ -1,6 +1,7 @@
 import os, shutil
 import pickle
 from typing import List
+from datetime import timedelta
 import matplotlib.pyplot as plt
 from pathlib import Path
 from plot import cdf_retrievals, cdf_publications, regions, experimental_controls,\
@@ -13,6 +14,7 @@ from helpers.constants import RetrievalPhase, PlayerType, DELAY_FILE_SIZE, Durat
 from logs.model_logs_config import LogsConfig
 from logs import load
 from models.model_data_set import DataSet
+from models.model_time_interval import TimeInterval
 
 # Set OUT_DIR to `None` to display the graphs with the GUI
 #OUT_DIR = None
@@ -140,8 +142,14 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
 
     section_name = 'First Response Distributions'
-    provider_responses.plot_num_providers_in_first_referal(data_set)
+    provider_responses.plot_num_providers_in_first_referal(data_set, None)
     saveFig(out_target_dir, section_name, f"num_providers_first_referal_distribution.png")
+
+    provider_responses.plot_num_providers_in_first_referal(data_set, TimeInterval(timedelta(seconds=0), timedelta(seconds=120)))
+    saveFig(out_target_dir, section_name, f"num_providers_first_referal_distribution_new.png")
+
+    provider_responses.plot_num_providers_in_first_referal(data_set, TimeInterval(timedelta(seconds=3600), timedelta(seconds=15000)))
+    saveFig(out_target_dir, section_name, f"num_providers_first_referal_distribution_old.png")
 
 
     section_name = 'First Provider Distributions'
