@@ -218,7 +218,7 @@ class DataSet:
         return cpy
 
     @property
-    def smallest_file_size(self):
+    def smallest_file_size(self) -> int:
         smallest = None
         for fs in self.comparable_file_sizes:
             if smallest is None or fs < smallest:
