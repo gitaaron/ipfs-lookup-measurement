@@ -111,7 +111,7 @@ def plot_percent_slow_by_phase(data_set: DataSet, title: str):
     ax1.set_ylabel(f"Percent Slow")
     ax1.set_title(title)
 
-    txt = f"Sample Size: {np.sum(sp_sample_sizes)+np.sum(mp_sample_sizes)}"
+    txt = f"Sample Size: {sp_sample_sizes[0]+mp_sample_sizes[0]}"
 
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=8)
 
@@ -167,7 +167,7 @@ def plot_duration_by_phase(data_set: DataSet, title: str, file_size: int):
     ax1.set_ylabel(f"Average Duration (sec.)")
     ax1.set_title(title)
 
-    txt = f"Sample Size: {np.sum(sp_sample_sizes)+np.sum(mp_sample_sizes)}, File Size: {stringify.file_size(file_size)}"
+    txt = f"Sample Size: {sp_sample_sizes[0]+mp_sample_sizes[0]}, File Size: {stringify.file_size(file_size)}"
 
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=8)
 

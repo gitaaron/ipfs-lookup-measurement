@@ -323,7 +323,6 @@ class DataSet:
 
         return self._runs
 
-
     @property
     def has_publish_age_retrievals(self):
         if self._has_publish_age_retrievals is None:
@@ -331,14 +330,12 @@ class DataSet:
                 filter(lambda ret: self.publish_age(ret) is not None, self.total_completed_retrievals))
         return self._has_publish_age_retrievals
 
-
     def publish_age(self, retrieval: Retrieval) -> timedelta:
         published_at = self.runs.first_publish_at(retrieval.cid)
         if published_at != None:
             return retrieval.retrieval_started_at - published_at
         else:
             return None
-
 
     @property
     def publish_age_stats(self) -> tuple[dict, list[Retrieval], int]:
