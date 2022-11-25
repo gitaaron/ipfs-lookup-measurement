@@ -29,21 +29,22 @@ echo "      host: $HOST_NAME" >> promtail-local-config.yaml
 # Start agent
 echo "PERF $PERFORMANCE_TEST_DIR"
 
-IPFS=/app/kubo/cmd/ipfs/ipfs IPFS_LOGGING=INFO ./agent -host=$AGENT_HOST -port=$AGENT_PORT 2>&1 | tee /app/agent.log &
-./kubo/cmd/ipfs/ipfs init
-./kubo/cmd/ipfs/ipfs config Addresses.API "/ip4/127.0.0.1/tcp/$SERVER_PORT"
-./kubo/cmd/ipfs/ipfs config Addresses.Gateway "/ip4/127.0.0.1/tcp/$GATEWAY_PORT"
-./kubo/cmd/ipfs/ipfs config --json Addresses.Swarm "[\
+IPFS=/app/go-ipfs/cmd/ipfs/ipfs IPFS_LOGGING=INFO ./agent -host=$AGENT_HOST -port=$AGENT_PORT 2>&1 | tee /app/agent.log &
+./go-ipfs/cmd/ipfs/ipfs init
+./go-ipfs/cmd/ipfs/ipfs config Addresses.API "/dns4/$HOST_NAME/tcp/$SERVER_PORT"
+./go-ipfs/cmd/ipfs/ipfs config Addresses.Gateway "/ip4/127.0.0.1/tcp/$GATEWAY_PORT"
+./go-ipfs/cmd/ipfs/ipfs config --json Addresses.Swarm "[\
   \"/ip4/0.0.0.0/tcp/$P2P_PORT\",\
   \"/ip6/::/tcp/$P2P_PORT\",\
   \"/ip4/0.0.0.0/udp/$P2P_PORT/quic\",\
   \"/ip6/::/udp/$P2P_PORT/quic\"\
 ]"
 
-./kubo/cmd/ipfs/ipfs config --json Discovery.MDNS.Enabled false
+./go-ipfs/cmd/ipfs/ipfs config --json Discovery.MDNS.Enabled false
 
-./kubo/cmd/ipfs/ipfs bootstrap rm --all
+./go-ipfs/cmd/ipfs/ipfs bootstrap rm --all
 
-./kubo/cmd/ipfs/ipfs daemon | tee /app/all.log &
+
+./go-ipfs/cmd/ipfs/ipfs daemon | tee /app/all.log &
 
 sleep infinity
