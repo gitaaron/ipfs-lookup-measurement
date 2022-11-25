@@ -4,3 +4,7 @@ datasources:
    type: loki
    url: localhost:3100
    isDefault: true
+ - name: Prometheus
+   type: prometheus
+   uid: prometheus_a
+   url: http://prometheus:9090
