@@ -15,13 +15,15 @@ func LogHealthPeriodically() {
 			meminfo, err := linuxproc.ReadMemInfo("/proc/meminfo")
 
 			if err != nil {
-				log.Fatal("mem read failed")
+				log.Error("mem read failed")
+				return
 			}
 
 			loadavg, err := linuxproc.ReadLoadAvg("/proc/loadavg")
 
 			if err != nil {
-				log.Fatal("uptime read failed")
+				log.Error("uptime read failed")
+				return
 			}
 
 			fmt.Printf("%s: available_mem:%v load_avg_last_min:%v\n", time.Now().Format(time.RFC3339Nano), meminfo.MemAvailable, loadavg.Last1Min)
