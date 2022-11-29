@@ -11,31 +11,77 @@ services:
     ports:
       - "3000:3000"
       - "3100:3100"
+    networks:
+      - net2
 
   prometheus:
-      image: prom/prometheus:latest
-      container_name: prometheus
-      restart: unless-stopped
-      volumes:
-        - ./monitor/prometheus.yml:/etc/prometheus/prometheus.yml
-        - prometheus_data:/prometheus
-      command:
-        - '--config.file=/etc/prometheus/prometheus.yml'
-        - '--storage.tsdb.path=/prometheus'
-        - '--web.console.libraries=/etc/prometheus/console_libraries'
-        - '--web.console.templates=/etc/prometheus/consoles'
-        - '--web.enable-lifecycle'
-      ports:
-        - "9090:9090"
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./monitor/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    networks:
+      - net2
+
 
   controller:
     image: controller-node
     container_name: controller
+    networks:
+      - net2
+
+
+  bootstrap0:
+    image: bootstrap-node
+    container_name: bootstrap0
     environment:
       HOST_NAME: controller
       SERVER_PORT: 5100
       GATEWAY_PORT: 8180
       P2P_PORT: 4100
+      IPFS_LOGGING: DEBUG
+    ports:
+      - "4100:4100"
+    networks:
+      - net2
+
+
+  bootstrap1:
+    image: bootstrap-node
+    container_name: bootstrap1
+    environment:
+      HOST_NAME: controller
+      SERVER_PORT: 5101
+      GATEWAY_PORT: 8181
+      P2P_PORT: 4101
+    ports:
+      - "4101:4101"
+    networks:
+      - net2
+
+
+  bootstrap2:
+    image: bootstrap-node
+    container_name: bootstrap2
+    environment:
+      HOST_NAME: controller
+      SERVER_PORT: 5102
+      GATEWAY_PORT: 8182
+      P2P_PORT: 4102
+    ports:
+      - "4102:4102"
+    networks:
+      - net2
+
 
   node0:
     image: ipfs-node
@@ -47,6 +93,9 @@ services:
       P2P_PORT: 4000
       AGENT_HOST: node0
       AGENT_PORT: 3030
+    networks:
+      - net2
+
 
   node1:
     image: ipfs-node
@@ -58,6 +107,8 @@ services:
       P2P_PORT: 4001
       AGENT_HOST: node1
       AGENT_PORT: 3031
+    networks:
+      - net2
 
   node2:
     image: ipfs-node
@@ -69,5 +120,16 @@ services:
       P2P_PORT: 4002
       AGENT_HOST: node2
       AGENT_PORT: 3032
+    networks:
+      - net2
 
-
+networks:
+  net2:
+    name: net2
+    enable_ipv6: true
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:db8:a::/64
+          gateway: 2001:db8:a::1
