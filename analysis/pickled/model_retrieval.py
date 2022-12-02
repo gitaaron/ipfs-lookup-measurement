@@ -232,13 +232,6 @@ class Retrieval:
     def finish_searching_providers(self, timestamp: datetime, error_str: Optional[str]):
         self.finish_searching_providers_ctx_error = error_str
         self.finished_searching_providers_at = timestamp
-        try:
-            self.state = Retrieval.State.DONE
-        except Exception as exc:
-            if len(self.get_providers_queries) == 0:
-                self.state = Retrieval.State.DONE_WITHOUT_ASKING_PEERS
-            else:
-                self.marked_as_incomplete = True
 
     def agent_initiated(self, timestamp: datetime, file_size: int, agent_uptime: int ):
         self.agent_initated_retrieval_at = timestamp
