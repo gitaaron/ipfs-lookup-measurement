@@ -11,6 +11,9 @@ docker-monitor:
 docker-agent:
 	rm -f controller/agent; docker build -t ipfs-node -f ./node/Dockerfile .
 
+local-docker-agent:
+	rm -f controller/agent; docker build -t ipfs-node -f ./node/Dockerfile.local .
+
 docker-controller:
 	rm -f controller/controller
 	rm -f controller/info
