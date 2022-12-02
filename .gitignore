@@ -28,3 +28,6 @@ node/agent
 *.log
 *.log.p
 .DS_Store
+
+more-logging
+output
