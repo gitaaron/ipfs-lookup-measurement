@@ -48,8 +48,8 @@ class DataSet:
         self._publish_age_retrievals: list[Retrieval] = None
         self._comparable_file_size_retrievals: dict[int, list[Retrieval]]= None
         self._file_size_retrievals: dict[int, list[Retrieval]]= None
-        self._file_size_means: dict[int, dict[RetrievalPhase, Duration]] = None
-        self._file_size_deviations: dict[int, dict[RetrievalPhase, Duration]] = None
+        self._file_size_means: dict[int, dict[constants.RetrievalPhase, Duration]] = None
+        self._file_size_deviations: dict[int, dict[constants.RetrievalPhase, Duration]] = None
         self._sys_health_events: list[SysHealth] = []
 
         self.regions = []
@@ -319,7 +319,7 @@ class DataSet:
     @property
     def runs(self) -> Runs:
         if self._runs == None:
-            self._runs = Runs(self.total_publications)
+            self._runs = Runs(self.total_publications, self.total_completed_retrievals)
 
         return self._runs
 

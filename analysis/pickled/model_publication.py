@@ -56,6 +56,7 @@ class Publication:
         self.find_node_queries = []
         self.add_provider_queries = {}
         self.get_provider_queries = {}
+        self._successful_add_queries: dict[Peer, AddProviderQuery] = None
         self.closest_peers = None
         self.invalid = False
 
@@ -200,6 +201,23 @@ class Publication:
             raise Exception(
                 f"Peer {peer.id} is not in the succeeded put providers list for {self.cid}")
         self.get_provider_queries[peer].failed(timestamp, error)
+
+
+    def _set_success_add_queries(self):
+        if self._successful_add_queries is None:
+            self._successful_add_queries = {peer:query for peer,query in self.add_provider_queries.items() if query.success == True}
+
+
+    @property
+    def num_successful_add_provider_queries(self):
+        self._set_success_add_queries()
+        return len(self._successful_add_queries.values())
+
+    @property
+    def successful_add_provider_target_peers(self) -> list[Peer]:
+        self._set_success_add_queries()
+        return [query.target_peer for _,query in self._successful_add_queries.items()]
+    
 
     def seal(self, timestamp: datetime):
         self.get_providers_ended_at = timestamp
