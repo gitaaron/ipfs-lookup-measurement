@@ -8,7 +8,7 @@ class Run:
         self.publications: list[Publication] = []
         self.retrievals: list[Retrieval] = []
         self.first_publication: Publication = None
-        self._unique_add_provider_target_peers: list[Peer] = None
+        self._unique_successful_add_provider_target_peers: list[Peer] = None
 
 
     def add_publication(self, pub: Publication):
@@ -17,26 +17,23 @@ class Run:
         self.publications.append(pub)
 
     @property
-    def num_unique_successful_add_query_peers(self) -> int:
-        unique_peers = {}
-        for pub in self.publications:
-            for p in pub.successful_add_provider_target_peers:
-                unique_peers[p] = 1
+    def unique_successful_add_provider_target_peers(self) -> list[Peer]:
+        if self._unique_successful_add_provider_target_peers is None:
+            unique_peers = {}
+            for pub in self.publications:
+                for p in pub.successful_add_provider_target_peers:
+                    unique_peers[p] = 1
 
-        return len(list(unique_peers.keys()))
+            self._unique_successful_add_provider_target_peers = list(unique_peers.keys())
 
+        return self._unique_successful_add_provider_target_peers
+
+    @property
+    def num_unique_successful_add_target_peers(self) -> int:
+        return len(self.unique_successful_add_provider_target_peers)
 
     def add_retrieval(self, ret: Retrieval):
         self.retrievals.append(ret)
 
-    @property
-    def num_add_provider_target_peers(self):
-        if self._unique_add_provider_target_peers is None:
-            u = {}
-            for pub in self.publications:
-                for ap in pub.successful_add_provider_target_peers:
-                    u[ap] = True
-
-            self._unique_add_provider_target_peers = u.keys()
-
-        return len(self._unique_add_provider_target_peers)
+    def first_referer_in_successful_add_target_peer_list(self, ret: Retrieval) -> bool:
+        return ret.first_referer_to_fp in self.unique_successful_add_provider_target_peers

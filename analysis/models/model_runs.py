@@ -17,6 +17,12 @@ class Runs:
                 self.cid_run_map[ret.cid] = Run(ret.cid)
             self.cid_run_map[ret.cid].add_retrieval(ret)
 
+    def from_cid(self, cid: str) -> Run:
+        if cid in self.cid_run_map:
+            return self.cid_run_map[cid]
+        else:
+            return None
+
 
     def first_publish_at(self, cid: str) -> datetime:
         if cid in self.cid_run_map and self.cid_run_map[cid].first_publication is not None:

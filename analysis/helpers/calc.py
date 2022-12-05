@@ -7,6 +7,7 @@ from pickled.model_publication import Publication
 from helpers.constants import RetrievalPhase
 from models.model_duration import Duration
 from models.model_run import Run
+from models.model_runs import Runs
 
 
 def avg_duration(retrievals: list[Retrieval], phase: RetrievalPhase):
@@ -231,6 +232,10 @@ def avg_add_query_publish_success(pubs: list[Publication]) -> float:
     add_query_success_nums = [pub.num_successful_add_provider_queries for pub in pubs]
     return round(np.mean(add_query_success_nums), 2)
 
-def avg_unique_add_query_peers_per_multi_publish_run(runs: dict[str, Run]) -> float:
-    unique_peers = [run.num_unique_successful_add_query_peers for cid,run in runs.items()]
+def avg_unique_add_query_peers_per_run(runs: dict[str, Run]) -> float:
+    unique_peers = [run.num_unique_successful_add_target_peers for cid,run in runs.items()]
     return round(np.mean(unique_peers), 2)
+
+def percent_retrievals_with_first_referer_in_add_query_list(rets: list[Retrieval], runs: Runs) -> float:
+    rets_with_referer_in_add_query_list = list(filter(lambda ret: runs.from_cid(ret.cid).first_referer_in_successful_add_target_peer_list(ret), rets))
+    return round(len(rets_with_referer_in_add_query_list) / len(rets) * 100, 3)
