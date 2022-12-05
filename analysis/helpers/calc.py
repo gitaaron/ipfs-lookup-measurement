@@ -3,8 +3,10 @@ import numpy as np
 from models.model_data_set import DataSet
 from helpers import reduce
 from pickled.model_retrieval import Retrieval
+from pickled.model_publication import Publication
 from helpers.constants import RetrievalPhase
 from models.model_duration import Duration
+from models.model_run import Run
 
 
 def avg_duration(retrievals: list[Retrieval], phase: RetrievalPhase):
@@ -224,3 +226,11 @@ def first_referal_num_providers_in_percent(retrievals: list[Retrieval]):
     for num,freq in freqs.items():
         percents[num] = round(freq/len(retrievals)*100, 2)
     return percents
+
+def avg_add_query_publish_success(pubs: list[Publication]) -> float:
+    add_query_success_nums = [pub.num_successful_add_provider_queries for pub in pubs]
+    return round(np.mean(add_query_success_nums), 2)
+
+def avg_unique_add_query_peers_per_multi_publish_run(runs: dict[str, Run]) -> float:
+    unique_peers = [run.num_unique_successful_add_query_peers for cid,run in runs.items()]
+    return round(np.mean(unique_peers), 2)

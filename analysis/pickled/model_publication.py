@@ -207,7 +207,6 @@ class Publication:
         if self._successful_add_queries is None:
             self._successful_add_queries = {peer:query for peer,query in self.add_provider_queries.items() if query.success == True}
 
-
     @property
     def num_successful_add_provider_queries(self):
         self._set_success_add_queries()
@@ -217,7 +216,7 @@ class Publication:
     def successful_add_provider_target_peers(self) -> list[Peer]:
         self._set_success_add_queries()
         return [query.target_peer for _,query in self._successful_add_queries.items()]
-    
+
 
     def seal(self, timestamp: datetime):
         self.get_providers_ended_at = timestamp

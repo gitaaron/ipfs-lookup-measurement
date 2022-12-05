@@ -11,8 +11,17 @@ from pickled.model_retrieval import Retrieval
 from helpers import calc, breakdowns, reduce, constants
 
 def execute(logs_config: LogsConfig) -> dict:
-    data_set: DataSet = load.latest_data_set(logs_config)
-    #data_set: DataSet = load.complete_data_set(logs_config)
+    #data_set: DataSet = load.latest_data_set(logs_config)
+    data_set: DataSet = load.complete_data_set(logs_config)
+
+    stats = {}
+
+    stats['num_runs'] = len(data_set.runs.cid_run_map.values())
+    stats['num_total_pubs'] = len(data_set.total_publications)
+
+    '''
+    for cid, run in data_set.runs.cid_run_map.items():
+        print(f'pubs: {len(run.publications)}')
 
     for cid, run in data_set.runs.many_publish_runs.items():
         print('--start--')
@@ -24,10 +33,17 @@ def execute(logs_config: LogsConfig) -> dict:
         for pub in run.publications:
             print(f'success add queries num:{pub.num_successful_add_provider_queries} peers:{[p.id for p  in pub.successful_add_provider_target_peers]}')
 
+        print('')
         print('--end--')
         print('')
+    '''
 
+    stats['avg_add_query_publish_success'] = calc.avg_add_query_publish_success(data_set.total_publications)
+    stats['avg_unique_add_query_peers_per_multi_publish_run'] = calc.avg_unique_add_query_peers_per_multi_publish_run(data_set.runs.many_publish_runs)
+
+    return stats
 
 if __name__=='__main__':
     logs_config = LogsConfig('./log_config.json')
     stats = execute(logs_config)
+    print(json.dumps(stats, indent=4, default=str))

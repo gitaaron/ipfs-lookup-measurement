@@ -16,6 +16,16 @@ class Run:
             self.first_publication = pub
         self.publications.append(pub)
 
+    @property
+    def num_unique_successful_add_query_peers(self) -> int:
+        unique_peers = {}
+        for pub in self.publications:
+            for p in pub.successful_add_provider_target_peers:
+                unique_peers[p] = 1
+
+        return len(list(unique_peers.keys()))
+
+
     def add_retrieval(self, ret: Retrieval):
         self.retrievals.append(ret)
 
