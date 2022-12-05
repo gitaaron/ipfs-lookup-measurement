@@ -51,8 +51,6 @@ def execute(logs_config: LogsConfig) -> dict:
         stats['slow'] = slow_stats
     stats['uptime'] = data_set.agent_uptime_durations
 
-
-
     hfs = reduce.by_has_file_size(completed_retrievals)
 
     if len(hfs) > 0:

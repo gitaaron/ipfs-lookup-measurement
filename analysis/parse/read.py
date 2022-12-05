@@ -109,6 +109,7 @@ def from_log_file_spec(log_file_spec: NodeLogSpec) -> LogFile:
                     retrievals[pll.cid].provider_record_storing_peers.add(
                         pll.remote_peer)
                     retrievals[pll.cid].provider_peers.add(pll.other_peer)
+                    retrievals[pll.cid].provider_peers_found.add(pll.other_peer)
                 elif (pll := log.is_bitswap_connect()) is not None:
                     for cid in retrievals:
                         if pll.remote_peer in retrievals[cid].provider_peers:

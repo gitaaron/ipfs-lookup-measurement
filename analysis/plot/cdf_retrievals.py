@@ -62,12 +62,18 @@ def plot_duration_by_region(file_size: int, phase: RetrievalPhase, data_set: Dat
     plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment='center', fontsize=6)
 
 
-def plot_phase_comparison(file_size: int, retrievals: list[Retrieval]):
+def plot_phase_comparison(file_size: int, retrievals: list[Retrieval], multi_only: bool):
     fig, axl = plt.subplots()
     sample_size = 0
     for phase in RetrievalPhase:
-        sample_size = plot_duration_line(axl, phase, file_size, retrievals, phase.name, False, False)
-    axl.set_title('CDF of Duration by Phase')
+        sample_size = plot_duration_line(axl, phase, file_size, retrievals, phase.name, False, multi_only)
+
+    if multi_only:
+        axl.set_title(f"CDF of multi provider Duration by Phase")
+    else:
+        axl.set_title(f"CDF of Duration by Phase")
+
+
     axl.set_ylabel('Number of Retrievals in %')
     axl.set_xlabel('Duration (sec.)')
     axl.legend(loc='lower right')

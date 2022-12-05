@@ -44,5 +44,11 @@ def _publish_age_within_bounds(data_set: DataSet, retrieval: Retrieval, publish_
 def by_publish_age_interval(data_set: DataSet, retrievals: list[Retrieval], publish_age_interval: TimeInterval):
     return list(filter(lambda ret: _publish_age_within_bounds(data_set, ret, publish_age_interval), retrievals))
 
-def by_referer_in_successful_add_list(rets: list[Retrieval], runs: Runs, test: bool = True):
+def by_referer_in_successful_add_list(rets: list[Retrieval], runs: Runs, test: bool = True) -> list[Retrieval]:
     return list(filter(lambda ret: runs.from_cid(ret.cid).first_referer_in_successful_add_target_peer_list(ret) == False, rets))
+
+def by_providers_found(rets: list[Retrieval], threshold_providers_found: int) -> list[Retrieval]:
+    return list(filter(lambda ret: ret.num_provider_peers_found <= threshold_providers_found, rets))
+
+def by_first_referer_provider_peers(rets: list[Retrieval], threshold_provider_peers: int) -> list[Retrieval]:
+    return list(filter(lambda ret: ret.first_referal_providers_count <= threshold_provider_peers, rets))

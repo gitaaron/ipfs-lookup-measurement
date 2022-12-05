@@ -37,6 +37,7 @@ class Retrieval:
     agent_uptime: Optional[int] # milliseconds
 
     provider_peers: Set[Peer]
+    provider_peers_found: Set[Peer]
     first_provider_peer: Peer
     first_referer_to_fp: Peer
     provider_record_storing_peers: Set[Peer]
@@ -57,6 +58,7 @@ class Retrieval:
         self._state = Retrieval.State.INITIATED
         self.get_providers_queries = {}
         self.provider_peers = set({})
+        self.provider_peers_found = set({})
         self.first_provider_peer = None
         self.first_referer_to_fp = None
         self.provider_record_storing_peers = set({})
@@ -237,3 +239,7 @@ class Retrieval:
         self.agent_initated_retrieval_at = timestamp
         self.file_size = file_size
         self.agent_uptime = agent_uptime
+
+    @property
+    def num_provider_peers_found(self):
+        return len(self.provider_peers_found)

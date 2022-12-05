@@ -244,3 +244,7 @@ def percent_agent_not_in_add_query_list(rets: list[Retrieval], runs: Runs, agent
     rets_with_referer_not_in_add_query_list = reduce.by_referer_in_successful_add_list(rets, runs, False)
     hydra_rets = reduce.by_first_referer(rets_with_referer_not_in_add_query_list, agent_name)
     return round(len(hydra_rets)/len(rets_with_referer_not_in_add_query_list)*100, 2)
+
+def avg_provider_peers_found(rets: list[Retrieval]) -> float:
+    pvr_found = [ret.num_provider_peers_found for ret in rets]
+    return round(np.mean(pvr_found), 3)

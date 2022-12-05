@@ -151,7 +151,6 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     provider_responses.plot_num_providers_in_first_referal(data_set, TimeInterval(timedelta(seconds=3600), timedelta(seconds=15000)))
     saveFig(out_target_dir, section_name, f"num_providers_first_referal_distribution_old.png")
 
-
     section_name = 'First Provider Distributions'
     first_provider.plot_fp_distribution_by_region(data_set)
     saveFig(out_target_dir, section_name, f"first_provider_distribution_by_region.png")
@@ -168,7 +167,7 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
     saveFig(out_target_dir, section_name, f"first_referer_agents_slow.png")
 
     multi_publish_runs.plot_first_referer_agents_not_in_target_add_list(data_set)
-    saveFig(out_target_dir, section_name, f"first_referer_agents_in_add_queries_list.png")
+    saveFig(out_target_dir, section_name, f"first_referer_agents_not_in_add_queries_list.png")
 
     section_name = 'First Provider Nearest Likelihood'
 
@@ -246,8 +245,12 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
             saveFig(out_target_dir, section_name, f"ret_{phase.name}_fs_{file_size}_cdf.png")
 
         section_name = 'CDF Retrievals by Phase'
-        cdf_retrievals.plot_phase_comparison(file_size, retrievals)
+        cdf_retrievals.plot_phase_comparison(file_size, retrievals, False)
         saveFig(out_target_dir, section_name, f"ret_phase_comparison_fs_{file_size}_cdf.png")
+
+        cdf_retrievals.plot_phase_comparison(file_size, retrievals, True)
+        saveFig(out_target_dir, section_name, f"multi_provider_ret_phase_comparison_fs_{file_size}_cdf.png")
+
 
     section_name = 'Sys Health Trends'
     agent_health.plot_interval_property(data_set, '5min', 'available_mem')
