@@ -237,5 +237,10 @@ def avg_unique_add_query_peers_per_run(runs: dict[str, Run]) -> float:
     return round(np.mean(unique_peers), 2)
 
 def percent_retrievals_with_first_referer_in_add_query_list(rets: list[Retrieval], runs: Runs) -> float:
-    rets_with_referer_in_add_query_list = list(filter(lambda ret: runs.from_cid(ret.cid).first_referer_in_successful_add_target_peer_list(ret), rets))
+    rets_with_referer_in_add_query_list = reduce.by_referer_in_successful_add_list(rets, runs)
     return round(len(rets_with_referer_in_add_query_list) / len(rets) * 100, 3)
+
+def percent_agent_not_in_add_query_list(rets: list[Retrieval], runs: Runs, agent_name: str) -> float:
+    rets_with_referer_not_in_add_query_list = reduce.by_referer_in_successful_add_list(rets, runs, False)
+    hydra_rets = reduce.by_first_referer(rets_with_referer_not_in_add_query_list, agent_name)
+    return round(len(hydra_rets)/len(rets_with_referer_not_in_add_query_list)*100, 2)

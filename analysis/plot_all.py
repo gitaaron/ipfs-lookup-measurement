@@ -7,7 +7,7 @@ from pathlib import Path
 from plot import cdf_retrievals, cdf_publications, regions, experimental_controls,\
                  timeseries_retrievals, agent_uptime,\
                  publish_age, first_provider, provider_responses, file_size_phases,\
-                 single_multi_provider, agent_health
+                 single_multi_provider, agent_health, multi_publish_runs
 from pickled.model_publication import Publication
 from pickled.model_retrieval import Retrieval
 from helpers.constants import RetrievalPhase, PlayerType, DELAY_FILE_SIZE, DurationType
@@ -166,6 +166,9 @@ def doPlotFromDataSet(out_target_dir, data_set: DataSet):
 
     first_provider.plot_first_referer_agents(data_set, DurationType.SLOW)
     saveFig(out_target_dir, section_name, f"first_referer_agents_slow.png")
+
+    multi_publish_runs.plot_first_referer_agents_not_in_target_add_list(data_set)
+    saveFig(out_target_dir, section_name, f"first_referer_agents_in_add_queries_list.png")
 
     section_name = 'First Provider Nearest Likelihood'
 

@@ -38,11 +38,12 @@ def execute(logs_config: LogsConfig) -> dict:
         print('')
     '''
 
-    stats['avg_add_query_publish_success'] = calc.avg_add_query_publish_success(data_set.total_publications)
+    stats['avg_add_query_publish_success_peers'] = calc.avg_add_query_publish_success(data_set.total_publications)
     mp = {}
-    mp['avg_unique_add_query_pers_per_run'] = calc.avg_unique_add_query_peers_per_run(data_set.runs.many_publish_runs)
+    mp['avg_unique_add_query_peers_per_run'] = calc.avg_unique_add_query_peers_per_run(data_set.runs.many_publish_runs)
     multi_publish_retrievals = reduce.by_main_player(data_set.total_completed_retrievals, constants.PlayerType.RETRIEVER)
     mp['percent_first_referer_in_add_query_list'] = calc.percent_retrievals_with_first_referer_in_add_query_list(multi_publish_retrievals, data_set.runs)
+    mp['percent_hydra_referer_not_in_add_query_list'] = calc.percent_agent_not_in_add_query_list(multi_publish_retrievals, data_set.runs, 'hydra')
     stats['multi_publish'] = mp
 
     return stats
