@@ -68,6 +68,41 @@ def execute(logs_config: LogsConfig) -> dict:
     stats['num_has_publish_age'] = len(has_publish_age)
     stats['publish_age(retrieval_started-first_publish_ended)'],_,_ = data_set.publish_age_stats
 
+    runs = {}
+    runs['num_runs'] = len(data_set.runs.cid_run_map.values())
+    runs['num_total_pubs'] = len(data_set.total_publications)
+    stats['avg_add_query_publish_success_peers'] = calc.avg_add_query_publish_success(data_set.total_publications)
+    mp = {}
+    mp['avg_unique_add_query_peers_per_run'] = calc.avg_unique_add_query_peers_per_run(data_set.runs.many_publish_runs)
+    multi_publish_retrievals = reduce.by_main_player(data_set.total_completed_retrievals, constants.PlayerType.RETRIEVER)
+    mp['percent_first_referer_in_add_query_list'] = calc.percent_retrievals_with_first_referer_in_add_query_list(multi_publish_retrievals, data_set.runs)
+    mp['percent_hydra_referer_not_in_add_query_list'] = calc.percent_agent_not_in_add_query_list(multi_publish_retrievals, data_set.runs, 'hydra')
+    runs['multi_publish'] = mp
+
+    stats['runs'] = runs
+
+    pr = {}
+    pr['avg_provider_peers_found'] = calc.avg_provider_peers_found(data_set.total_completed_retrievals)
+
+    mp = {}
+    many_publish_retrievals = reduce.by_main_player(data_set.total_completed_retrievals, constants.PlayerType.RETRIEVER)
+    mp['avg_provider_peers_found'] = calc.avg_provider_peers_found(many_publish_retrievals)
+
+    small_retrievals = reduce.by_file_size(many_publish_retrievals, data_set.smallest_file_size)
+    low_providers_found_small_retrievals = reduce.by_providers_found(small_retrievals, 3)
+    pr['num_many_publish_small_retrievals'] = len(small_retrievals)
+    pr['num_low_providers_found_small_retrievals'] = len(low_providers_found_small_retrievals)
+    pr['low_providers_found_durations(3)'] = breakdowns.avg_phase_duration_breakdown(low_providers_found_small_retrievals)
+
+    low_providers_in_first_referer_small_retrievals = reduce.by_first_referer_provider_peers(small_retrievals, 2)
+    pr['num_low_providers_in_first_referer'] = len(low_providers_in_first_referer_small_retrievals)
+    pr['low_providers_in_first_referer_durations(2)'] = breakdowns.avg_phase_duration_breakdown(low_providers_in_first_referer_small_retrievals)
+
+    pr['many_publish'] = mp
+
+    stats['provider_records'] = pr
+
+
 
     return stats
 
