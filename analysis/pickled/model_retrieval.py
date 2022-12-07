@@ -152,19 +152,16 @@ class Retrieval:
     def hops_to_first_provider(self):
         return self.get_providers_queries[self.first_referer_to_fp].hops_to_query
 
+    @property
+    def first_referal_providers_count(self):
+        return self.get_providers_queries[self.first_referer_to_fp].providers_count
+
     def found_providers_from(self, target_peer: Peer, timestamp: datetime, providers_count: int):
         if target_peer not in self.get_providers_queries:
             raise Exception(
                 f"Unstarted query ended CID: {self.cid} target peer: {target_peer.id}")
         self.get_providers_queries[target_peer].succeeded(
             timestamp, [], providers_count)
-
-        if providers_count > 0 and self._first_referal_providers_count is None:
-            self._first_referal_providers_count = providers_count
-
-    @property
-    def first_referal_providers_count(self):
-        return self._first_referal_providers_count or 0
 
     def got_closer_peers_from(self, target_peer: Peer, timestamp: datetime, closer_peers: List[Peer]):
         if target_peer not in self.get_providers_queries:
